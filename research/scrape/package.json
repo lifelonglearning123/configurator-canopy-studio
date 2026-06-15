@@ -1,0 +1,12 @@
+{
+  "name": "salesqueze-scrape",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "explore": "node explore.mjs",
+    "scrape": "node scrape.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

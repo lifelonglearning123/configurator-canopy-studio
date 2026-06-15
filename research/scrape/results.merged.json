@@ -1,0 +1,3938 @@
+[
+  {
+    "name": "Pristine Patio",
+    "type": "Pergola",
+    "url": "https://pristinepergola.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Pristine Patio",
+    "finalUrl": "https://pristinepergola.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Width (inch) *",
+        "allText": "Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth: Range from 84 inch to 480 inch Length (inch) * 160 Height: Range from 90 inch to 144 inch Height (inch) * 90",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width (inch) *",
+        "allText": "Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth: Range from 84 inch to 480 inch Length (inch) * 160 Height: Range from 90 inch to 144 inch Height (inch) * 90",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats rotation *",
+        "allText": "Roof Choose between a roof with adjustable slats or a solid, non-adjustable option. Slats Slats rotation Slats rotation * Left Right Slats retraction Slats retraction * Retractable Unretractable Slats direction Slats direction * Width Length Slats color : 7016 Slats color type * Gray Brown Black White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats rotation *",
+        "allText": "Slats Slats rotation Slats rotation * Left Right Slats retraction Slats retraction * Retractable Unretractable Slats direction Slats direction * Width Length Slats color : 7016 Slats color type * Gray Brown Black White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats rotation",
+        "allText": "Slats rotation",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats retraction",
+        "allText": "Slats retraction",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats direction",
+        "allText": "Slats direction",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats color type *",
+        "allText": "Slats color : 7016 Slats color type * Gray Brown Black White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Colors Structure color : 7016 Structure color type * Gray Brown Black White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Sides closing position *",
+        "allText": "Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Screen rolo Metal sheet lamellas Glass Tinted glass",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Lights *",
+        "allText": "Lights Lights * No lights Lights",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "No lights"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Lights"
+          }
+        ]
+      },
+      {
+        "heading": "Add ons *",
+        "allText": "Addons Add ons * No addons Addons",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "No addons"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Addons"
+          }
+        ]
+      },
+      {
+        "heading": "Automation *",
+        "allText": "Automation Automation * No automation Automation",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "No automation"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "Automation"
+          }
+        ]
+      },
+      {
+        "heading": "Services *",
+        "allText": "Services Services * No services Services",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_4",
+            "value": "on",
+            "label": "No services"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_4",
+            "value": "on",
+            "label": "Services"
+          }
+        ]
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth: Range from 84 inch to 480 inch Length (inch) * 160 Height: Range from 90 inch to 144 inch Height (inch) * 90 Roof Choose between a roof with adjustable slats or a solid, non-adjustable option. Slats Slats rotation Slats rotation * Left Right Slats retraction Slats retraction * Retractable Unretractable Slats direction Slats direction * Width Length Slats color : 7016 Slats color type * Gray Brown Black White Custom Colors Structure color : 7016 Structure color type * Gray Brown Black White Custom Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Screen rolo Metal sheet lamellas Glass Tinted glass Lights Lights * No lights Lights Addons Add ons * No addons Addons Automation Automation * No automation Automation Services Services * No services Services Next"
+  },
+  {
+    "name": "ALUX Group",
+    "type": "Pergola",
+    "url": "https://konfigurator.aluxpergoly.cz/cs/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://konfigurator.aluxpergoly.cz/cs/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Model *",
+        "allText": "Model Model * ALUX Bioclimatic Bioklimatická pergola s otočením lamel až o 145° Více informací ALUX Glass Prosklená střecha z bezpečnostního skla VSG 44.2 Více informací ALUX Carbo Polykarbonátová střecha dutinkový 16 mm / plný 6 mm Více informací ALUX Thermo Robustní pevná střecha z 40 mm PUR panelu s výbornými tepelně izolačními vlastnostmi Více informací Trapézový přístřešek ALUX Střecha z hliníkového plechu ve tvaru lichoběžníku Více informací",
+        "buttons": [
+          "Více informací",
+          "Více informací",
+          "Více informací",
+          "Více informací",
+          "Více informací"
+        ],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Šířka (cm) *",
+        "allText": "Rozměry 4 m 3 m 2.4 m Šířka Hloubka Výška Šířka: rozsah od 2 m do 7.99 m Šířka (cm) * 400 Hloubka: Rozsah od 2 m do 4.5 m Délka (cm) * 300 Výška: Rozsah od 2 m do 3.5 m Výška (cm) * 240",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Šířka (cm) *",
+        "allText": "Šířka: rozsah od 2 m do 7.99 m Šířka (cm) * 400 Hloubka: Rozsah od 2 m do 4.5 m Délka (cm) * 300 Výška: Rozsah od 2 m do 3.5 m Výška (cm) * 240",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Rotace lamel *",
+        "allText": "Lamely Otočení lamel Rotace lamel * Vlevo Pravá Barva lamel : 9006 Typ barvy lamel * Antracitově šedá 9006 Vlastní",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Rotace lamel *",
+        "allText": "Lamely Otočení lamel Rotace lamel * Vlevo Pravá Barva lamel : 9006 Typ barvy lamel * Antracitově šedá 9006 Vlastní",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Rotace lamel *",
+        "allText": "Otočení lamel Rotace lamel * Vlevo Pravá",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Typ barvy lamel *",
+        "allText": "Barva lamel : 9006 Typ barvy lamel * Antracitově šedá 9006 Vlastní",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Typ barvy struktury *",
+        "allText": "Barvy Barva konstrukce: 7016 Typ barvy struktury * Antracitově šedá Vlastní",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Pozice uzavírání stran *",
+        "allText": "Výplně Přední: None Zadní: None Levá: None Pravá: None Pozice uzavírání stran * Přední Zadní Vlevo Pravá Vyberte výplň Boční zapínání - přední Vybrat",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Světla *",
+        "allText": "Osvětlení Světla * Žádné osvětlení Světla",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Doplňky *",
+        "allText": "Příslušenství Doplňky * Žádné doplňky Příslušenství",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Automatizace prvků *",
+        "allText": "Ovládání Automatizace prvků * Somfy Situo IO 5-ti kanálový ovladač Somfy Patio IO 16-ti kanálový ovladač s displayem Somfy IO Wall Switch Somfy Smart Home (Tahoma)",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Výběr služeb *",
+        "allText": "Služby Výběr služeb * Žádné služby Služby Lze vybrat více možností Montáž * Montáž Nechte náš tým namontovat pergolu za vás Dodání * Doprava Cena se vypočítává na základě vzdálenosti",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Montáž *",
+        "allText": "Lze vybrat více možností Montáž * Montáž Nechte náš tým namontovat pergolu za vás Dodání * Doprava Cena se vypočítává na základě vzdálenosti",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "CS Přihlásit se 0 Načítání 3D modelu Načítání 3D modelu Pergola ALUX Bioclimatic Model Model * ALUX Bioclimatic Bioklimatická pergola s otočením lamel až o 145° Více informací ALUX Glass Prosklená střecha z bezpečnostního skla VSG 44.2 Více informací ALUX Carbo Polykarbonátová střecha dutinkový 16 mm / plný 6 mm Více informací ALUX Thermo Robustní pevná střecha z 40 mm PUR panelu s výbornými tepelně izolačními vlastnostmi Více informací Trapézový přístřešek ALUX Střecha z hliníkového plechu ve tvaru lichoběžníku Více informací Typ Typ * Volně stojící Zeď Roh Rozměry 4 m 3 m 2.4 m Šířka Hloubka Výška Šířka: rozsah od 2 m do 7.99 m Šířka (cm) * 400 Hloubka: Rozsah od 2 m do 4.5 m Délka (cm) * 300 Výška: Rozsah od 2 m do 3.5 m Výška (cm) * 240 Lamely Otočení lamel Rotace lamel * Vlevo Pravá Barva lamel : 9006 Typ barvy lamel * Antracitově šedá 9006 Vlastní Barvy Barva konstrukce: 7016 Typ barvy struktury * Antracitově šedá Vlastní Výplně Přední: None Zadní: None Levá: None Pravá: None Pozice uzavírání stran * Přední Zadní Vlevo Pravá Vyberte výplň Boční zapínání - přední Vybrat Osvětlení Světla * Žádné osvětlení Světla Příslušenství Doplňky * Žádné doplňky Příslušenství Ovládání Automatizace prvků * Somfy Situo IO 5-ti kanálový ovladač Somfy Patio IO 16-ti kanálový ovladač s displayem Somfy IO Wall Switch Somfy Smart Home (Tahoma) Služby Výběr služeb * Žádné služby Služby Lze vybrat více možností Montáž * Montáž Nechte náš tým namontovat pergolu za vás Dodání * Doprava Cena se vypočítává na základě vzdálenosti Přidat do poptávky Cookies Používáme soubory cookie ke zlepšení uživatelské zkušenosti a analýze provozu. Kliknutím na \"Přijmout vše\" souhlasíte s naším používáním souborů cookie. Můžete spravovat své preference souborů cookie nebo se dozvědět více kliknutím na \"Spravovat preference\". Přijmout vše Pouze povinné Spravovat předvolby",
+    "frames": 1,
+    "iframeTexts": [
+      {
+        "url": "https://konfigurator.aluxpergoly.cz/cs/showroom/browse",
+        "len": 1865
+      }
+    ]
+  },
+  {
+    "name": "Sunhouse Wintergärten",
+    "type": "Veranda",
+    "url": "https://konfigurator.sunhouse.at/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://konfigurator.sunhouse.at/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Dimensions type *",
+        "allText": "Dimensions 5 m 3 m 2.4 m Width Depth Height Dimensions type * Standard Custom Width: Range from 1.5 m to 6 m Width (m) * 5 Depth: Range from 1.5 m to 6 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.4",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Width: Range from 1.5 m to 6 m Width (m) * 5 Depth: Range from 1.5 m to 6 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.4",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Thickness *",
+        "allText": "Awnings Thickness Thickness * 10,76mm Awning Roof awning Under roof awning",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Thickness *",
+        "allText": "Thickness Thickness * 10,76mm Awning Roof awning Under roof awning",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Thickness *",
+        "allText": "Thickness Thickness * 10,76mm Awning Roof awning Under roof awning",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Thickness *",
+        "allText": "Thickness Thickness * 10,76mm",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Awning",
+        "allText": "Awning Roof awning Under roof awning",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Colors Construction color: RAL7016 Structure color type * 1015 6005 Anthracite 7035 8001 8003 8019 8017 Black 9006 9007 White Custom",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Sides closing position *",
+        "allText": "Enclosures Front: None Left: None Right: None Sides closing position * Front Left Right Choose your enclosures Sides closing - front Select",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Wedges",
+        "allText": "Wedges Wedges are supported element for your enclosures Wedges No wedges Wedges Tilt window",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Lights",
+        "allText": "Lights Lights No lights Lights",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Automation yes/no",
+        "allText": "Automation Automation yes/no No automation Automation",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login 0 Veranda Model Product line Glasgarten Sunhouse Light Line Sommergarten Sunhouse Eco Line Wohnwintergarten Sunhouse Superior Line Wintergarten Sunhouse Classic Line Roof type Model * Glass roof Louvered roof Polycarbonate roof Roof shape Roof shape Pitched roof Flat roof Type Veranda type * Wall-mounted Freestanding Dimensions 5 m 3 m 2.4 m Width Depth Height Dimensions type * Standard Custom Width: Range from 1.5 m to 6 m Width (m) * 5 Depth: Range from 1.5 m to 6 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.4 Awnings Thickness Thickness * 10,76mm Awning Roof awning Under roof awning Colors Construction color: RAL7016 Structure color type * 1015 6005 Anthracite 7035 8001 8003 8019 8017 Black 9006 9007 White Custom Enclosures Front: None Left: None Right: None Sides closing position * Front Left Right Choose your enclosures Sides closing - front Select Wedges Wedges are supported element for your enclosures Wedges No wedges Wedges Tilt window Lights Lights No lights Lights Sensors Addons No sensors Sensors Automation Automation yes/no No automation Automation Add to inquiry",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://konfigurator.sunhouse.at/en/showroom/browse",
+        "len": 1116
+      }
+    ]
+  },
+  {
+    "name": "Finepoint Glass (Pergola Studio)",
+    "type": "Pergola",
+    "url": "https://thepergolastudio.co.uk/configurator/",
+    "success": true,
+    "attempt": 2,
+    "title": "Configurator – The Pergola Studio",
+    "finalUrl": "https://thepergolastudio.co.uk/configurator/",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Select your model Studio Lite Manual or Motorised pergola available in standard and bespoke sizes Studio Pro Motorised pergola available in standard and bespoke sizes Studio Eclipse Motorised retractable roof pergola available in standard and bespoke sizes",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://thepergolastudio.co.uk/configurator/",
+        "len": 0
+      },
+      {
+        "url": "https://thepergolastudio.salesqueze.com/en-gb/embed/browse?nfid=1tcpo50j27wa84byna21lh&consents=accept-all",
+        "len": 256
+      }
+    ]
+  },
+  {
+    "name": "Lusisol",
+    "type": "Awning",
+    "url": "https://showroom.lusisol.pt/pt/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "Lusisol",
+    "finalUrl": "https://showroom.lusisol.pt/pt/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "PT Entrar 0 Escolha o seu produto Toldo Pérgola"
+  },
+  {
+    "name": "Smart Space",
+    "type": "Container",
+    "url": "https://configurator.smartspaceni.co.uk/en-gb/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Smart Space",
+    "finalUrl": "https://configurator.smartspaceni.co.uk/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Dimensions *",
+        "allText": "Dimensions 3.05m 2.43m 2.62m Width Depth Height Dimensions * 3.05m x 2.43m 7.41 m2 4.57m x 2.43m 11.11 m2 6.09m x 2.43m 14.8 m2 7.62m x 2.43m 18.52 m2 9.14m x 2.43m 22.21 m2 10.66m x 2.43m 25.9 m2 12.19m x 2.43m 29.62 m2",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Dimensions *",
+        "allText": "Dimensions * 3.05m x 2.43m 7.41 m2 4.57m x 2.43m 11.11 m2 6.09m x 2.43m 14.8 m2 7.62m x 2.43m 18.52 m2 9.14m x 2.43m 22.21 m2 10.66m x 2.43m 25.9 m2 12.19m x 2.43m 29.62 m2",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container construction color type *",
+        "allText": "Construction Construction color : 7016 Container construction color type * Anthracite Black Grey White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container construction color type *",
+        "allText": "Construction color : 7016 Container construction color type * Anthracite Black Grey White Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container Elements position *",
+        "allText": "Windows & Doors Container Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Front selection Double glass door (1500 x 2100) Width: 1500mm Height: 2100mm Add Windows & doors color : 9005 Container wall elements color type * Anthracite Brown Black Grey White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container wall elements color type *",
+        "allText": "Windows & doors color : 9005 Container wall elements color type * Anthracite Brown Black Grey White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container interior wall position *",
+        "allText": "Interior walls Container interior wall position * Front Back Left Right Front selection Front selection * Dry lined wall Wood slatted board",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Vinyl type *",
+        "allText": "Flooring Vinyl type * Normal Anti slip Container flooring color * Black Grey Beige Natural oak",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container addons package",
+        "allText": "Electrical package Container addons package Basic More info Addons Container addons Air-conditioning Wall heater Water heater Double socket Exterior light Extra interior light Container lighting - width LED strip lighting Longer side Container lighting - depth LED strip lighting Shorter side Interior package Container interior package Basic kitchen More info Basic bathroom More info",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container interior package",
+        "allText": "Interior package Container interior package Basic kitchen More info Basic bathroom More info",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Container services",
+        "allText": "Services Pricing includes 4 year warranty cover. Installation and delivery are subject to site survey. Container services 4 year warranty Installation Delivery",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Series 10 Container Dimensions 3.05m 2.43m 2.62m Width Depth Height Dimensions * 3.05m x 2.43m 7.41 m2 4.57m x 2.43m 11.11 m2 6.09m x 2.43m 14.8 m2 7.62m x 2.43m 18.52 m2 9.14m x 2.43m 22.21 m2 10.66m x 2.43m 25.9 m2 12.19m x 2.43m 29.62 m2 Construction Construction color : 7016 Container construction color type * Anthracite Black Grey White Custom Windows & Doors Container Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Front selection Double glass door (1500 x 2100) Width: 1500mm Height: 2100mm Add Windows & doors color : 9005 Container wall elements color type * Anthracite Brown Black Grey White Interior walls Container interior wall position * Front Back Left Right Front selection Front selection * Dry lined wall Wood slatted board Flooring Vinyl type * Normal Anti slip Container flooring color * Black Grey Beige Natural oak Electrical package Container addons package Basic More info Addons Container addons Air-conditioning Wall heater Water heater Double socket Exterior light Extra interior light Container lighting - width LED strip lighting Longer side Container lighting - depth LED strip lighting Shorter side Interior package Container interior package Basic kitchen More info Basic bathroom More info Services Pricing includes 4 year warranty cover. Installation and delivery are subject to site survey. Container services 4 year warranty Installation Delivery Send inquiry"
+  },
+  {
+    "name": "Stattus Technology",
+    "type": "Pergola",
+    "url": "https://stattus.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://stattus.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login",
+    "frames": 1,
+    "iframeTexts": [
+      {
+        "url": "https://stattus.salesqueze.com/en/showroom/browse",
+        "len": 5
+      }
+    ]
+  },
+  {
+    "name": "Eksterier",
+    "type": "Pergola",
+    "url": "https://conf.eksterier.si/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "Eksterier",
+    "finalUrl": "https://conf.eksterier.si/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Prijava 0 Izberite model AERIS Core Sodobna bioklimatska pergola, zasnovana za zanesljivo celoletno uporabo v zunanjih prostorih. Več informacij AERIS Retra Core Zložljiva bioklimatska pergola, zasnovana za celoletno uporabo in maksimalno odprtost zunanjega prostora. Več informacij Aeris Balance Napredna bioklimatska pergola z vrtljivimi aluminijastimi lamelami, zasnovana za zanesljivo in varno celoletno uporabo. Več informacij"
+  },
+  {
+    "name": "Elite Patio Solutions",
+    "type": "Pergola",
+    "url": "https://elitepatiosolutions.salesqueze.com/en/showroom",
+    "success": true,
+    "attempt": 1,
+    "title": "Elite Patio Solutions",
+    "finalUrl": "https://elitepatiosolutions.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Width (inch) *",
+        "allText": "Dimensions 128\" 169\" 108\" Width Depth Height Width: Range from 98\" to 720\" Width (inch) * 128 Length: Range from 98\" to 720\" Length (inch) * 169 Height: Range from 98\" to 144\" Height (inch) * 108",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width (inch) *",
+        "allText": "Width: Range from 98\" to 720\" Width (inch) * 128 Length: Range from 98\" to 720\" Length (inch) * 169 Height: Range from 98\" to 144\" Height (inch) * 108",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats direction *",
+        "allText": "Roof Louver direction Slats direction * Width Length Louver rotation Slats rotation * Left Right",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats direction *",
+        "allText": "Louver direction Slats direction * Width Length Louver rotation Slats rotation * Left Right",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats direction *",
+        "allText": "Louver direction Slats direction * Width Length",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats rotation *",
+        "allText": "Louver rotation Slats rotation * Left Right",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Color Structure color : RAL7016 Structure color type * Matte Ivory Dark Gray (RAL 7016) Dark Brown Metallic Silver Black (RAL 9011) White (RAL 9016) Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats color type *",
+        "allText": "Roof color : RAL7016 Slats color type * Matte Ivory Dark Gray (RAL 7016) Dark Brown Metallic Silver Black (RAL 9011) White (RAL 9016) Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Sides closing position *",
+        "allText": "Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Rolling Screen Sliding Glass",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Front"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Back"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Left"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "heading": "Lights *",
+        "allText": "Lights Lights * No lights Lights",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "No lights"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Lights"
+          }
+        ]
+      },
+      {
+        "heading": "Add ons *",
+        "allText": "Add ons Add ons * No addons Addons",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "No addons"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Addons"
+          }
+        ]
+      },
+      {
+        "heading": "Elements automation *",
+        "allText": "Automation Elements automation * Manual control with hand crank Motorized with remote control Motorized with switches on the pergola",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Services",
+        "allText": "Services Multiple values can be selected. Services Transportation Assembly 5 Year Warranty",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Services",
+        "allText": "Multiple values can be selected. Services Transportation Assembly 5 Year Warranty",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Elite Patio Solutions Pergola Dimensions 128\" 169\" 108\" Width Depth Height Width: Range from 98\" to 720\" Width (inch) * 128 Length: Range from 98\" to 720\" Length (inch) * 169 Height: Range from 98\" to 144\" Height (inch) * 108 Type Type * Freestanding Wall-mounted Roof Louver direction Slats direction * Width Length Louver rotation Slats rotation * Left Right Color Structure color : RAL7016 Structure color type * Matte Ivory Dark Gray (RAL 7016) Dark Brown Metallic Silver Black (RAL 9011) White (RAL 9016) Custom Roof color : RAL7016 Slats color type * Matte Ivory Dark Gray (RAL 7016) Dark Brown Metallic Silver Black (RAL 9011) White (RAL 9016) Custom Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Rolling Screen Sliding Glass Lights Lights * No lights Lights Add ons Add ons * No addons Addons Automation Elements automation * Manual control with hand crank Motorized with remote control Motorized with switches on the pergola Services Multiple values can be selected. Services Transportation Assembly 5 Year Warranty Next"
+  },
+  {
+    "name": "Defro",
+    "type": "Garden room",
+    "url": "https://defromodular.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "Defro Modular",
+    "finalUrl": "https://defromodular.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Model preset *",
+        "allText": "Model Model preset * Basic Alaska Aspen Dakota Denver Idaho Oklahoma Utah Wyoming",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Dimensions type *",
+        "allText": "Dimensions 3 m 6 m 2.6 m Width Length Height Dimensions type * Standard Custom Dimensions * 2.5m x 6m 2.5m x 7m 2.5m x 8m 3m x 6m 3m x 7m 3m x 8m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Standard"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Custom"
+          }
+        ]
+      },
+      {
+        "heading": "Dimensions *",
+        "allText": "Dimensions * 2.5m x 6m 2.5m x 7m 2.5m x 8m 3m x 6m 3m x 7m 3m x 8m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Attic *",
+        "allText": "Roof attic Attic * No Yes Cornering Cornering * No Yes",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "No"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Yes"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "No"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Yes"
+          }
+        ]
+      },
+      {
+        "heading": "Cladding selection *",
+        "allText": "Exterior cladding Cladding selection * Front Back Left Right Cladding type front * Panel Composite slats Cassette - Wood like Cassette - RAL Front cladding * Panel",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Cladding type front *",
+        "allText": "Cladding type front * Panel Composite slats Cassette - Wood like Cassette - RAL Front cladding * Panel",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Single window Width: 1000mm Height: 1000mm Type: Tilt & Turn Left Offset (mm) 2200 Glass door Width: 1100mm Height: 2100mm Left Offset (mm) 400 Add",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Interior walls *",
+        "allText": "Interior Interior walls Interior walls * PVC panel Silver Grey Walnut Ash Grey Dark Marble Light Gray Walnut Flooring Flooring colors * Natural Oak Grey Oak Laminate - Grey Bathroom equipment Bathroom selection * I don't need a bathroom I need a bathroom Kitchen equipment Kitchen selection * I don't need a kitchen I need a kitchen",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Interior lights",
+        "allText": "Addons Interior lights Interior lights Ceiling light 600mm x 600mm Rail light 2m External lights Lights selection * Front Back Left Right Front outdoor lights Light Electricity Electrics El. socket Addons Add-ons Air conditioning More info",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Service options",
+        "allText": "Services Service options Installation Have our team handle the assembly of the structure for you Delivery We provide safe and reliable delivery of your Garden Room directly to your location.",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login Garden room Model Model preset * Basic Alaska Aspen Dakota Denver Idaho Oklahoma Utah Wyoming Dimensions 3 m 6 m 2.6 m Width Length Height Dimensions type * Standard Custom Dimensions * 2.5m x 6m 2.5m x 7m 2.5m x 8m 3m x 6m 3m x 7m 3m x 8m Roof attic Attic * No Yes Cornering Cornering * No Yes Exterior cladding Cladding selection * Front Back Left Right Cladding type front * Panel Composite slats Cassette - Wood like Cassette - RAL Front cladding * Panel Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Single window Width: 1000mm Height: 1000mm Type: Tilt & Turn Left Offset (mm) 2200 Glass door Width: 1100mm Height: 2100mm Left Offset (mm) 400 Add Interior Interior walls Interior walls * PVC panel Silver Grey Walnut Ash Grey Dark Marble Light Gray Walnut Flooring Flooring colors * Natural Oak Grey Oak Laminate - Grey Bathroom equipment Bathroom selection * I don't need a bathroom I need a bathroom Kitchen equipment Kitchen selection * I don't need a kitchen I need a kitchen Addons Interior lights Interior lights Ceiling light 600mm x 600mm Rail light 2m External lights Lights selection * Front Back Left Right Front outdoor lights Light Electricity Electrics El. socket Addons Add-ons Air conditioning More info Services Service options Installation Have our team handle the assembly of the structure for you Delivery We provide safe and reliable delivery of your Garden Room directly to your location. Next"
+  },
+  {
+    "name": "Salu",
+    "type": "Pergola",
+    "url": "https://app.salutec.cz/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "SALU Systems",
+    "finalUrl": "https://app.salutec.cz/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login 0 Produkt Verto Fortis"
+  },
+  {
+    "name": "Solviva",
+    "type": "Veranda",
+    "url": "https://3d.solviva.be/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://3d.solviva.be/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "House build *",
+        "allText": "When was your house built? House build * Less than 10 years ago",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Material *",
+        "allText": "Material * Polycarbonate Clear Glass Opal Glass Sun-resistant Glass",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Dimensions 5 m 3 m 2.3 m Width Depth Height Width: Range from 2 m to 12 m Width (m) * 5 Depth: Range from 1 m to 5 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.3",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Width: Range from 2 m to 12 m Width (m) * 5 Depth: Range from 1 m to 5 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.3",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Colors Construction color: RAL7016 Structure color type * Anthracite Black Custom",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Sides closing position *",
+        "allText": "Enclosures Front: None Left: None Right: None Sides closing position * Front Left Right Choose your enclosures Sides closing - front Glass €2,843.50 Tinted glass €3,418.25",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Wedges *",
+        "allText": "Wedges Wedges are supported element for your enclosures Wedges * No wedges Wedges",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Bar lights",
+        "allText": "Lights Bar lights Round LED lights",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Bar lights",
+        "allText": "Bar lights Round LED lights",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "0499/908639",
+        "allText": "Delivery and installation are included in the price. Need help? Don't hesitate to contact us. 0499/908639 info@solviva.be",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login Loading 3D Model Mounting Veranda type * Wall-mounted Freestanding When was your house built? House build * Less than 10 years ago Roof material Material * Polycarbonate Clear Glass Opal Glass Sun-resistant Glass Dimensions 5 m 3 m 2.3 m Width Depth Height Width: Range from 2 m to 12 m Width (m) * 5 Depth: Range from 1 m to 5 m Depth (m) * 3 Height: Range from 2 m to 3 m Height (m) * 2.3 Awning Awning Roof awning Colors Construction color: RAL7016 Structure color type * Anthracite Black Custom Enclosures Front: None Left: None Right: None Sides closing position * Front Left Right Choose your enclosures Sides closing - front Glass €2,843.50 Tinted glass €3,418.25 Wedges Wedges are supported element for your enclosures Wedges * No wedges Wedges Lights Bar lights Round LED lights Delivery and installation are included in the price. Need help? Don't hesitate to contact us. 0499/908639 info@solviva.be €4,000.00 – €6,000.00 21% tax included Get a quote",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://3d.solviva.be/en/showroom/browse",
+        "len": 969
+      },
+      {
+        "url": "https://solviva.salesqueze.com/global/storage/assets/catalog/product/6979f4383d2c1b32d1df9d2b/media/html/cd169440-0e69-11f1-832b-dd620fea0c2e/index.html?language=en-US",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "Umbroso",
+    "type": "Pergola",
+    "url": "https://umbroso.pl/konfigurator/",
+    "success": true,
+    "attempt": 2,
+    "title": "Konfigurator – Umbroso – nowoczesne pergole tarasowe premium",
+    "finalUrl": "https://umbroso.pl/konfigurator/",
+    "productCards": [
+      {
+        "text": "Dowiedz się więcej na temat tego dostawcy",
+        "href": "https://www.cookiebot.com/goto/privacy-policy/"
+      }
+    ],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Zgoda Szczegóły O plikach cookies Niniejsza strona korzysta z plików cookie Wykorzystujemy pliki cookie do spersonalizowania treści i reklam, aby oferować funkcje społecznościowe i analizować ruch w naszej witrynie. Informacje o tym, jak korzystasz z naszej witryny, udostępniamy partnerom społecznościowym, reklamowym i analitycznym. Partnerzy mogą połączyć te informacje z innymi danymi otrzymanymi od Ciebie lub uzyskanymi podczas korzystania z ich usług. Spersonalizuj Zezwól na wszystkie Skip to the content",
+    "frames": 4,
+    "iframeTexts": [
+      {
+        "url": "https://umbroso.pl/konfigurator/",
+        "len": 512
+      },
+      {
+        "url": "about:blank",
+        "len": 0
+      },
+      {
+        "url": "https://umbroso.salesqueze.com/pl/embed?nfid=4ie00m0zbukoh3k3ko3m6m",
+        "len": 0
+      },
+      {
+        "url": "https://consentcdn.cookiebot.com/sdk/bc-v4.min.html",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "Outdoor Modular Spaces",
+    "type": "Garden room",
+    "url": "https://outdoormodularspaces.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Outdoor Modular Spaces Ltd",
+    "finalUrl": "https://outdoormodularspaces.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Garden Room Configurator Select your preferred range OMS Select LRC Range Larch, Red Grandis or PVC cladding Timber or SIPs construction Fully insulated Laminate flooring PVC fascia Standard electrics (white fittings) uPVC doors and windows as standard Groundscrew installation only 10 Year Guarantee More info Starting from £1,450.00+vat (per square meter) Configure MOST POPULAR OMS Signature CDR Range Western Red Cedar or Composite cladding Timber or SIPs construction Fully insulated Laminate flooring Aluminium fascia Standard electrics (white fittings) uPVC doors and windows as standard 10 Year Guarantee Groundscrew or Concrete Foundation More info Starting from £1,700.00+vat (per square meter) Configure OMS Premium HQC Range Architectural cladding Timber-frame, SIPs or Steel-frame Construction Fully insulated Engineered wood flooring In-house designed aluminium fascia, corners, reveals, trims 500mm Canopy and Decking as standard Upgraded electrics as standard Aluminium doors and windows as standard 10 Year Guarantee Origin Global windows & doors with 20-year guarantee Groundscrew or Concrete Foundation More info Starting from £2,000.00+vat (per square meter) Configure Ready to create your perfect garden room? Select a range above to start customising. NO OBLIGATION. EXPERT REVIEW. PLANNING GUIDANCE INCLUDED"
+  },
+  {
+    "name": "AGVerandas",
+    "type": "Veranda",
+    "url": "https://agverandas.salesqueze.com/en-gb/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://agverandas.salesqueze.com/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Sol de Algés",
+    "type": "Awning",
+    "url": "https://showroom.soldealges.pt/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "Sol de Alges",
+    "finalUrl": "https://showroom.soldealges.pt/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Width (m) *",
+        "allText": "Width: Range from 1 m to 6 m Width (m) * 3",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Projection (m) *",
+        "allText": "Projection: Range from 1.25 m to 3.5 m depending on the width Projection (m) * 1.25 m 1.5 m 1.75 m 2 m 2.25 m 2.5 m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Angle *",
+        "allText": "Angle: All awnings can be angled from 0° to 45° (For visualization purposes only) Angle * 10",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login Model Awning model * Monobloc Extendable Arms (Standard Plus) Awning with Extendable Arms (Standard) Strongbox Extendable Arms (Plus Ultra) Dimensions 3 m 1.25 m Width Projection Width: Range from 1 m to 6 m Width (m) * 3 Projection: Range from 1.25 m to 3.5 m depending on the width Projection (m) * 1.25 m 1.5 m 1.75 m 2 m 2.25 m 2.5 m Angle: All awnings can be angled from 0° to 45° (For visualization purposes only) Angle * 10 Colors Construction color: RAL9010 Structure color type * 9010 Custom Fabric color: ORC 8904 120 Orchestra Collection * Natural Polar Solar Stone Choose your Orchestra fabric Roof color * Lin Chiné Grège Gypse Piqué Craie Link Beige Hêtre Link Naturel Ivoire Dune Toast Chanvre Perle Flammé Gazelle Tweed Bruyère Chiné Moka Piqué 1 2 3 Extra shade The valance adds extra shade and helps block low-angle sun. Choose Valance for added comfort and style, or No Valance for a cleaner, minimal look. Valance * No Valance Valance Type Valance type * Fixed Retractable Shape Valance design * Straight Wavy Motorization Motorization * Manual Motorized with remote control Motorized with switch control Services Services Installation Have our team handle the assembly of the structure for you Next"
+  },
+  {
+    "name": "Media Crew",
+    "type": "Garden room",
+    "url": "https://3dtervezo.szendvicsgarazs.hu/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://3dtervezo.szendvicsgarazs.hu/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Tower Garden Rooms",
+    "type": "Garden room",
+    "url": "https://towergardenrooms.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://towergardenrooms.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Choose Your Collection Balmoral Collection Your Entry to Premium Garden Living Doncaster Collection Where Premium Quality Meets Sophisticated Design Windsor Collection The Pinnacle of Garden Room Luxury",
+    "frames": 1,
+    "iframeTexts": [
+      {
+        "url": "https://towergardenrooms.salesqueze.com/en/showroom/browse",
+        "len": 208
+      }
+    ]
+  },
+  {
+    "name": "Luxica Awnings & Pergolas",
+    "type": "Veranda",
+    "url": "https://design.luxicaawnings.co.uk/en-gb/showroom/browse",
+    "success": false,
+    "attempt": 2,
+    "error": "page.goto: net::ERR_NAME_NOT_RESOLVED at https://design.luxicaawnings.co.uk/en-gb/showroom/browse\nCall log:\n\u001b[2m  - navigating to \"https://design.luxicaawnings.co.uk/en-gb/showroom/browse\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "name": "Hifa",
+    "type": "Carport",
+    "url": "https://hifa-nadstreski.salesqueze.com/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "HIFA d.o.o.",
+    "finalUrl": "https://hifa-nadstreski.salesqueze.com/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Prijava 0 Izberite vrsto nadstreška Box Enokapnica"
+  },
+  {
+    "name": "Caribbean Blinds",
+    "type": "Pergola",
+    "url": "https://cbsolarshading.salesqueze.com/en-gb/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://cbsolarshading.salesqueze.com/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "D&I Home Improvements",
+    "type": "Garden room",
+    "url": "https://c.dandiwindows.co.uk/en-gb/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://c.dandiwindows.co.uk/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Garden room model *",
+        "allText": "Model The Indie The Amber",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Dimensions 3 m 4 m 2.5 m Width Length Height Depth: Range from 2 m to 8 m 3 Width: Range from 2 m to 8 m 4 Height: Range from 2.5 m to 4 m 2.5",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Depth: Range from 2 m to 8 m 3 Width: Range from 2 m to 8 m 4 Height: Range from 2.5 m to 4 m 2.5",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Roof type *",
+        "allText": "Roof type Flat Pitched Overhang No Yes Decking No Yes",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Overhang *",
+        "allText": "Overhang No Yes",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking No Yes",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking No Yes",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Cladding material *",
+        "allText": "Exterior cladding Wood Composite cladding Cedral Lap Cedar Spruce Pine Larch",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & doors Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection French door Width: 1500mm Height: 2100mm Left Offset (mm) 100 Add Color Anthracite White Black Agate Grey Pebble Grey Rosewood Golden Oak",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Flooring type *",
+        "allText": "Flooring type Laminate Vinyl",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Electrical package",
+        "allText": "Electrical package Standard package More info Plus package More info Premium package More info",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Add-ons",
+        "allText": "Add ons Air conditioning More info Heating More info Side canopy More info",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Service",
+        "allText": "Services Services are included in the base price. Installation Have our team handle the assembly of the structure for you Delivery We provide safe and reliable delivery of your Garden Room directly to your location. Warranty Enjoy peace of mind with our 5-year warranty, covering materials and manufacturing defects. Base work Base work is subject to a site survey to confirm ground conditions and determine the final scope required for a safe and stable installation.",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login The Indie Model The Indie The Amber Dimensions 3 m 4 m 2.5 m Width Length Height Depth: Range from 2 m to 8 m 3 Width: Range from 2 m to 8 m 4 Height: Range from 2.5 m to 4 m 2.5 Roof type Flat Pitched Overhang No Yes Decking No Yes Exterior cladding Wood Composite cladding Cedral Lap Cedar Spruce Pine Larch Windows & doors Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection French door Width: 1500mm Height: 2100mm Left Offset (mm) 100 Add Color Anthracite White Black Agate Grey Pebble Grey Rosewood Golden Oak Flooring type Laminate Vinyl Electrical package Standard package More info Plus package More info Premium package More info Add ons Air conditioning More info Heating More info Side canopy More info Services Services are included in the base price. Installation Have our team handle the assembly of the structure for you Delivery We provide safe and reliable delivery of your Garden Room directly to your location. Warranty Enjoy peace of mind with our 5-year warranty, covering materials and manufacturing defects. Base work Base work is subject to a site survey to confirm ground conditions and determine the final scope required for a safe and stable installation. Send inquiry",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://c.dandiwindows.co.uk/en-gb/showroom/browse",
+        "len": 1276
+      },
+      {
+        "url": "https://dandiwindows.salesqueze.com/global/storage/assets/catalog/product/6943d24d0b9a9fa6a08e827d/media/html/8a415640-0811-11f1-b532-53178730e41e/index.html?language=en-GB",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "Verde Garden Living",
+    "type": "Veranda",
+    "url": "https://verdegardenliving.salesqueze.com/en-gb/showroom",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://verdegardenliving.salesqueze.com/en-gb/showroom",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "The Oi",
+    "type": "Garden room",
+    "url": "https://the-oi.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "The-Oi",
+    "finalUrl": "https://the-oi.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Dimensions type *",
+        "allText": "Dimensions 4 m 4 m 2.5 m Width Length Height Dimensions type * Standard Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Standard"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Custom"
+          }
+        ]
+      },
+      {
+        "heading": "Roof type *",
+        "allText": "Roof Roof type * Flat Pitched Roof overhang Overhang * Don't include Include Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Overhang *",
+        "allText": "Roof overhang Overhang * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Cladding side *",
+        "allText": "Exterior cladding Cladding side * Front Back Left Right Cladding material Front cladding material * uPVC Composite Wood Front exterior cladding * Anthracite Waterproof uPVC Other styles and colours are available Please contact our sales team",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "Front"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "Back"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "Left"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_3",
+            "value": "on",
+            "label": "Right"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_4",
+            "value": "on",
+            "label": "uPVC"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_4",
+            "value": "on",
+            "label": "Composite"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_4",
+            "value": "on",
+            "label": "Wood"
+          }
+        ]
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection UPVC Glazed Single Door Width: 900mm Height: 2000mm Left Offset (mm) 100 Add Colour Door and window color * Black Anthracite White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_5",
+            "value": "on",
+            "label": "Front"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_5",
+            "value": "on",
+            "label": "Back"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_5",
+            "value": "on",
+            "label": "Left"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_5",
+            "value": "on",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "heading": "Interior walls *",
+        "allText": "Interior wall Interior walls * Plaster MDF",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Flooring type *",
+        "allText": "Interior flooring Flooring type * Laminate Vinyl Flooring colors * Cedar timber Grey timber",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_6",
+            "value": "on",
+            "label": "Laminate"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_6",
+            "value": "on",
+            "label": "Vinyl"
+          }
+        ]
+      },
+      {
+        "heading": "Electrical package",
+        "allText": "Electrical package Electrical package Basic package • 4 Double sockets • Spotlights Standard package • 2 Double Sockets with USB • 2 Double Sockets • Spotlights to internal • Spotlights or LED to external canopy Premium package • 4 Double sockets with USB • Spotlights internal • Ceiling Speakers • LED strip lighting to the external canopy",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Add-ons",
+        "allText": "Add-ons Add-ons Air conditioning Heating",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Canopy Garden Room Dimensions 4 m 4 m 2.5 m Width Length Height Dimensions type * Standard Custom Roof Roof type * Flat Pitched Roof overhang Overhang * Don't include Include Decking Decking * Don't include Include Exterior cladding Cladding side * Front Back Left Right Cladding material Front cladding material * uPVC Composite Wood Front exterior cladding * Anthracite Waterproof uPVC Other styles and colours are available Please contact our sales team Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection UPVC Glazed Single Door Width: 900mm Height: 2000mm Left Offset (mm) 100 Add Colour Door and window color * Black Anthracite White Interior wall Interior walls * Plaster MDF Interior flooring Flooring type * Laminate Vinyl Flooring colors * Cedar timber Grey timber Electrical package Electrical package Basic package • 4 Double sockets • Spotlights Standard package • 2 Double Sockets with USB • 2 Double Sockets • Spotlights to internal • Spotlights or LED to external canopy Premium package • 4 Double sockets with USB • Spotlights internal • Ceiling Speakers • LED strip lighting to the external canopy Add-ons Add-ons Air conditioning Heating Submit My Design"
+  },
+  {
+    "name": "SOLA Pergolas",
+    "type": "Pergola",
+    "url": "https://solapergolas.co.uk/design-your-pergola",
+    "success": true,
+    "attempt": 2,
+    "title": "Design Your Pergola Online | Aluminium Pergola Designer",
+    "finalUrl": "https://www.solapergolas.co.uk/sola-configurator",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Cabin Planet",
+    "type": "Garden room",
+    "url": "https://cabinplanet.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Cabin Planet",
+    "finalUrl": "https://cabinplanet.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Garden room model *",
+        "allText": "Model Garden room model * Basic No decking or overhang Standard Front roof overhang and front decking Premium Overhang and decking on all sides",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Dimensions 3 m 4 m 2.5 m Width Length Height Width: Range from 1.8 m to 4.8 m Width (m) * 3 Length: Range from 2.4 m to 6.3 m Length (m) * 4 Height: Range from 2.5 m to 3 m Height (m) * 2.5 Height above 2.5m requires local council consent",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width (m) *",
+        "allText": "Width: Range from 1.8 m to 4.8 m Width (m) * 3 Length: Range from 2.4 m to 6.3 m Length (m) * 4 Height: Range from 2.5 m to 3 m Height (m) * 2.5 Height above 2.5m requires local council consent",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Roof type *",
+        "allText": "Roof Roof type * Flat Pitched",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Exterior cladding *",
+        "allText": "Exterior cladding Exterior cladding * Cedar Siberian Larch Composite Anthracite Composite Black Composite Grey Composite Brown Composite White Composite Oak",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Single door glass Width: 940mm Height: 2000mm Single window Width: 500mm Height: 1000mm Left Offset (mm) 2200 Add Color Door and window color * Anthracite Black Grey Brown White Oak",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Flooring type *",
+        "allText": "Flooring Flooring type * Laminate LVT",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Electrical package",
+        "allText": "Electrical package Electrical package Basic package Standard package Premium package",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Add-ons",
+        "allText": "Add-ons Add-ons Air conditioning Heating Electrical wall heaters Tints Mirror effect for privacy Furniture Interior design Landscaping Patios, Astroturf",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "checkbox",
+            "name": "",
+            "value": "on",
+            "label": "Air conditioning"
+          },
+          {
+            "type": "checkbox",
+            "name": "",
+            "value": "on",
+            "label": "Heating"
+          },
+          {
+            "type": "checkbox",
+            "name": "",
+            "value": "on",
+            "label": "Tints"
+          },
+          {
+            "type": "checkbox",
+            "name": "",
+            "value": "on",
+            "label": "Furniture"
+          },
+          {
+            "type": "checkbox",
+            "name": "",
+            "value": "on",
+            "label": "Landscaping"
+          }
+        ]
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login GARDEN ROOM Model Garden room model * Basic No decking or overhang Standard Front roof overhang and front decking Premium Overhang and decking on all sides Dimensions 3 m 4 m 2.5 m Width Length Height Width: Range from 1.8 m to 4.8 m Width (m) * 3 Length: Range from 2.4 m to 6.3 m Length (m) * 4 Height: Range from 2.5 m to 3 m Height (m) * 2.5 Height above 2.5m requires local council consent Roof Roof type * Flat Pitched Exterior cladding Exterior cladding * Cedar Siberian Larch Composite Anthracite Composite Black Composite Grey Composite Brown Composite White Composite Oak Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Single door glass Width: 940mm Height: 2000mm Single window Width: 500mm Height: 1000mm Left Offset (mm) 2200 Add Color Door and window color * Anthracite Black Grey Brown White Oak Flooring Flooring type * Laminate LVT Electrical package Electrical package Basic package Standard package Premium package Add-ons Add-ons Air conditioning Heating Electrical wall heaters Tints Mirror effect for privacy Furniture Interior design Landscaping Patios, Astroturf Next"
+  },
+  {
+    "name": "Easy Units",
+    "type": "Garden room",
+    "url": "https://easyunits.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "Easy Units",
+    "finalUrl": "https://easyunits.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Garden room model *",
+        "allText": "Model Garden room model * In-frame Our in-frame system sets the cladding within the steel framework, giving a sleek, contemporary appearance while maintaining full insulation and structural integrity. Over-frame Our overframe system adds additional insulation, smart concealed drainage, and fully wrapped cladding for a sleek, high-quality finish.",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Dimensions type *",
+        "allText": "Dimension type 2.4 m 3 m 2.45 m Width Length Height Dimensions type * Standard Custom Room width Width selection * 2.4m 3m 3.6m Dimensions Dimensions * 2.4m x 2.4m 2.4m x 3m 2.4m x 3.6m 2.4m x 4m 2.4m x 5m 2.4m x 6m 2.4m x 7m 2.4m x 8m 2.4m x 9m 2.4m x 10m For units larger than shown on the configurator, please get in touch with us via info@easyunits.co.uk. For non-standard height units, please get in touch. All Easy Units are designed to meet the maximum permitted development height (our units are 2.45m)",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Standard"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Custom"
+          }
+        ]
+      },
+      {
+        "heading": "Width selection *",
+        "allText": "Room width Width selection * 2.4m 3m 3.6m Dimensions Dimensions * 2.4m x 2.4m 2.4m x 3m 2.4m x 3.6m 2.4m x 4m 2.4m x 5m 2.4m x 6m 2.4m x 7m 2.4m x 8m 2.4m x 9m 2.4m x 10m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Frame cornering color *",
+        "allText": "Frame color Frame cornering color * Anthracite White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Cladding selection *",
+        "allText": "Exterior cladding Cladding selection * Front Back Left Right Front cladding * Classic - Timber Goosewing White - Panel Anthracite - Panel Lux - Grey Lux - Coffee Lux - Anthracite Lux - Wood Sleek - Coffee Sleek - Grey Sleek - Anthracite Sleek - Wood",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Full glass door Width: 955mm Height: 2000mm Opening direction: Left Open outwards £484.36 Left Offset (mm) 100 Add Color Door and window color * Anthracite White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Flooring type *",
+        "allText": "Flooring type Flooring type * Vinyl Laminate None Flooring colors * Dark Grey Light Grey Walnut Biscuit Add Internal wall Interior walls Dividing wall run front to back £649.92 Dividing wall run front to back with door £1,097.92",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Vinyl"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Laminate"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "None"
+          }
+        ]
+      },
+      {
+        "heading": "Electrical package",
+        "allText": "Electrical package Electrical package Small (Supply only) £570.72 More info Small (Installed) £1,465.00 More info Medium (Supply only) £627.05 More info Medium (Installed) £1,939.99 More info Large (Supply only) £978.48 More info Large (Installed) £2,539.99 More info",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Add-ons",
+        "allText": "Add ons Add-ons Air conditioning More info £2,280.00 Floor insulation Under floor insulation 75mm PIR underfloor insulation Price per m2 £24.00 Electrics Additional internal Light (installed) £102.00 Additional internal Light (supply only) £27.30 Additonal Socket (installed) £120.00 Additonal Socket (supply only) £10.08 Additional external Light (installed) £102.00 Additional external Light (supply only) £32.40 External Socket (installed) £120.00 External Socket (supply only) £30.00",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Service options *",
+        "allText": "Services Services are included in the base price. Service options * Delivery We provide safe and reliable delivery of your Garden Room directly to your location. Installation Have our team handle the assembly of the structure for you Warranty Every Easy Unit is backed by a multi-layered warranty covering the structure, panels, flooring, windows, doors and installation, ensuring confidence and durability for years to come.",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Garden Room Design Studio Model Garden room model * In-frame Our in-frame system sets the cladding within the steel framework, giving a sleek, contemporary appearance while maintaining full insulation and structural integrity. Over-frame Our overframe system adds additional insulation, smart concealed drainage, and fully wrapped cladding for a sleek, high-quality finish. Dimension type 2.4 m 3 m 2.45 m Width Length Height Dimensions type * Standard Custom Room width Width selection * 2.4m 3m 3.6m Dimensions Dimensions * 2.4m x 2.4m 2.4m x 3m 2.4m x 3.6m 2.4m x 4m 2.4m x 5m 2.4m x 6m 2.4m x 7m 2.4m x 8m 2.4m x 9m 2.4m x 10m For units larger than shown on the configurator, please get in touch with us via info@easyunits.co.uk. For non-standard height units, please get in touch. All Easy Units are designed to meet the maximum permitted development height (our units are 2.45m) Frame color Frame cornering color * Anthracite White Exterior cladding Cladding selection * Front Back Left Right Front cladding * Classic - Timber Goosewing White - Panel Anthracite - Panel Lux - Grey Lux - Coffee Lux - Anthracite Lux - Wood Sleek - Coffee Sleek - Grey Sleek - Anthracite Sleek - Wood Windows & doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection Full glass door Width: 955mm Height: 2000mm Opening direction: Left Open outwards £484.36 Left Offset (mm) 100 Add Color Door and window color * Anthracite White Flooring type Flooring type * Vinyl Laminate None Flooring colors * Dark Grey Light Grey Walnut Biscuit Add Internal wall Interior walls Dividing wall run front to back £649.92 Dividing wall run front to back with door £1,097.92 Electrical package Electrical package Small (Supply only) £570.72 More info Small (Installed) £1,465.00 More info Medium (Supply only) £627.05 More info Medium (Installed) £1,939.99 More info Large (Supply only) £978.48 More info Large (Installed) £2,539.99 More info Add ons Add-ons Air conditioning More info £2,280.00 Floor insulation Under floor insulation 75mm PIR underfloor insulation Price per m2 £24.00 Electrics Additional internal Light (installed) £102.00 Additional internal Light (supply only) £27.30 Additonal Socket (installed) £120.00 Additonal Socket (supply only) £10.08 Additional external Light (installed) £102.00 Additional external Light (supply only) £32.40 External Socket (installed) £120.00 External Socket (supply only) £30.00 Services Services are included in the base price. Service options * Delivery We provide safe and reliable delivery of your Garden Room directly to your location. Installation Have our team handle the assembly of the structure for you Warranty Every Easy Unit is backed by a multi-layered warranty covering the structure, panels, flooring, windows, doors and installation, ensuring confidence and durability for years to come. £6,951.71 20% tax included Next"
+  },
+  {
+    "name": "New Timber Spaces",
+    "type": "Garden room",
+    "url": "https://new-timber-spaces.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "New Timber Spaces Ltd",
+    "finalUrl": "https://new-timber-spaces.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Garden room model *",
+        "allText": "Model Garden room model * Waverley Bewley",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width *",
+        "allText": "Size 3 m Width 3 m Length 2.5 m Height The Waverly garden room has a maximum area of 24m2 Width: Range from 3 m to 6 m Width * 3m Length: Range from 3 m to 6 m Length * 3m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Width *",
+        "allText": "The Waverly garden room has a maximum area of 24m2 Width: Range from 3 m to 6 m Width * 3m Length: Range from 3 m to 6 m Length * 3m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Overhang *",
+        "allText": "Overhang Overhang * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Overhang *",
+        "allText": "Overhang Overhang * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Decking *",
+        "allText": "Decking Decking * Don't include Include",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Don't include"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Include"
+          }
+        ]
+      },
+      {
+        "heading": "Exterior cladding selection *",
+        "allText": "Exterior cladding Exterior cladding selection * Havanna Composite Panel Silver Birch Composite Panel Spiced Oak Composite Panel Midnight Composite Panel Silver Birch Composite Slatted Spiced Oak Composite Slatted Midnight Composite Slatted",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Elements position *",
+        "allText": "Windows & Doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection French door (1.5m) Width: 1500mm Height: 2000mm £0.00 Left Offset (mm) 100 Add Color Door and window color * Wood Chartwell Green Cream Foil Irish Oak Rosewood Anthracite Black",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Front"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Back"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Left"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Right"
+          }
+        ]
+      },
+      {
+        "heading": "Flooring type selection *",
+        "allText": "Flooring Flooring type selection * Old Oak Oiled Newcastle Oak Brown Venice Oak Grey",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Electrical package",
+        "allText": "Electrical package Electrical package Standard package Included in price. More info Smart Room upgrade Priced per request. More info Heater and socket color Heater color * White Silver Black",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Heater color *",
+        "allText": "Heater and socket color Heater color * White Silver Black",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Lights *",
+        "allText": "Lights Lights * Pair of up & down lights Included in price",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "",
+            "value": "on",
+            "label": "Pair of up & down lights"
+          }
+        ]
+      },
+      {
+        "heading": "Add-ons",
+        "allText": "Add-ons Add-ons Air conditioning Electric underfloor heating",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Service options *",
+        "allText": "Services Service options * Installation Included in price",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "",
+            "value": "on",
+            "label": "Installation"
+          }
+        ]
+      },
+      {
+        "heading": "We also offer additional bespoke options on request - Mains connected toilet complete with Building Regs (£POA) - Shower rooms with electric hot water system (£POA) - Kitchenette £POA subject to specification Contact us at roy@newtimberspaces.com +44 (0)7771 604360",
+        "allText": "We also offer additional bespoke options on request - Mains connected toilet complete with Building Regs (£POA) - Shower rooms with electric hot water system (£POA) - Kitchenette £POA subject to specification Contact us at roy@newtimberspaces.com +44 (0)7771 604360",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login Waverley Garden Room Model Garden room model * Waverley Bewley Size 3 m Width 3 m Length 2.5 m Height The Waverly garden room has a maximum area of 24m2 Width: Range from 3 m to 6 m Width * 3m Length: Range from 3 m to 6 m Length * 3m Overhang Overhang * Don't include Include Decking Decking * Don't include Include Exterior cladding Exterior cladding selection * Havanna Composite Panel Silver Birch Composite Panel Spiced Oak Composite Panel Midnight Composite Panel Silver Birch Composite Slatted Spiced Oak Composite Slatted Midnight Composite Slatted Windows & Doors Elements position * Front Back Left Right A 100 mm gap is automatically set between wall elements and the edges of the structure. Front selection French door (1.5m) Width: 1500mm Height: 2000mm £0.00 Left Offset (mm) 100 Add Color Door and window color * Wood Chartwell Green Cream Foil Irish Oak Rosewood Anthracite Black Flooring Flooring type selection * Old Oak Oiled Newcastle Oak Brown Venice Oak Grey Electrical package Electrical package Standard package Included in price. More info Smart Room upgrade Priced per request. More info Heater and socket color Heater color * White Silver Black Lights Lights * Pair of up & down lights Included in price Add-ons Add-ons Air conditioning Electric underfloor heating Services Service options * Installation Included in price We also offer additional bespoke options on request - Mains connected toilet complete with Building Regs (£POA) - Shower rooms with electric hot water system (£POA) - Kitchenette £POA subject to specification Contact us at roy@newtimberspaces.com +44 (0)7771 604360 £15,000.00 Next"
+  },
+  {
+    "name": "Aluroll",
+    "type": "Pergola",
+    "url": "https://aluroll.salesqueze.com/en/showroom/products/68f6323cb9f0864173b6ab78",
+    "success": true,
+    "attempt": 2,
+    "title": "Aluroll",
+    "finalUrl": "https://aluroll.salesqueze.com/en/showroom/products/68f6323cb9f0864173b6ab78",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Model *",
+        "allText": "Model Model * ECO pergola Standard dimensions only LUX pergola Custom dimensions only",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Dimensions *",
+        "allText": "Dimensions 3 m 4 m 2.77 m Width Length Height Dimensions * 4m x 3m 4m x 4m 6m x 3m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Dimensions *",
+        "allText": "Dimensions * 4m x 3m 4m x 4m 6m x 3m",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats isolation *",
+        "allText": "Roof Slats isolation Slats isolation * Standard Isolated Slats rotation Slats rotation * Left Right Slats color : 9016 Slats color type * White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Standard"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Isolated"
+          }
+        ]
+      },
+      {
+        "heading": "Slats isolation *",
+        "allText": "Slats isolation Slats isolation * Standard Isolated Slats rotation Slats rotation * Left Right Slats color : 9016 Slats color type * White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Standard"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Isolated"
+          }
+        ]
+      },
+      {
+        "heading": "Slats isolation",
+        "allText": "Slats isolation",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats rotation",
+        "allText": "Slats rotation",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats color type *",
+        "allText": "Slats color : 9016 Slats color type * White",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Colors Profile color : 7016 Structure color type * Anthracite",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Sides closing position *",
+        "allText": "Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Screen system Slide glass Guillotine glass",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Sensors",
+        "allText": "Addons Sensors Rain sensor Wnd sensor Sun sensor Heaters Heaters Water outlet * Water outlet Water outlet placements Water outlet placements * Front left Front right Back left Back right Solar panels Solar panels",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Water outlet placements",
+        "allText": "Water outlet placements",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Automation *",
+        "allText": "Control type Automation * Hand crank Remote control",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Hand crank"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Remote control"
+          }
+        ]
+      },
+      {
+        "heading": "Services",
+        "allText": "Services Services Delivery Pergola is delivered to your location. Installation Have our team handle the assembly of the structure for you",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login ECO pergola Model Model * ECO pergola Standard dimensions only LUX pergola Custom dimensions only Type Type * Freestanding Wall-mounted Dimensions 3 m 4 m 2.77 m Width Length Height Dimensions * 4m x 3m 4m x 4m 6m x 3m Roof Slats isolation Slats isolation * Standard Isolated Slats rotation Slats rotation * Left Right Slats color : 9016 Slats color type * White Colors Profile color : 7016 Structure color type * Anthracite Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Screen system Slide glass Guillotine glass Addons Sensors Rain sensor Wnd sensor Sun sensor Heaters Heaters Water outlet * Water outlet Water outlet placements Water outlet placements * Front left Front right Back left Back right Solar panels Solar panels Control type Automation * Hand crank Remote control Services Services Delivery Pergola is delivered to your location. Installation Have our team handle the assembly of the structure for you Next"
+  },
+  {
+    "name": "Mypergolas",
+    "type": "Pergola",
+    "url": "https://mypergolas.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "ROYAL TEAM PLUS Sp. z o. o.",
+    "finalUrl": "https://mypergolas.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Length *",
+        "allText": "Dimensions Length*: 232.11cm Length * 2321 Width*: 300cm Width (mm) * 3000 Height*: 250cm Height (mm) * 2500",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Additional Legs",
+        "allText": "Additional Posts Add an extra post on any side of your pergola. Additional Legs Front Rear Left Right",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Front Enclosure",
+        "allText": "Side enclosures Enhance your pergola with sleek enclosures like sliding glass, zip screens and movable slats for year-round comfort, privacy and style. Front Enclosure Add Back Enclosure Add Left Enclosure Add Right Enclosure Add",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Front Enclosure",
+        "allText": "Front Enclosure Add",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Back Enclosure",
+        "allText": "Back Enclosure Add",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Left Enclosure",
+        "allText": "Left Enclosure Add",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Edge lights",
+        "allText": "Edge lights Edge LED lights Structure lights Structure LED lights",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      },
+      {
+        "heading": "Heaters",
+        "allText": "Heaters Heaters",
+        "buttons": [],
+        "selectOptions": [],
+        "ranges": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login 0 PB125 Installation Type * Freestanding Mounted Nested Roof only Slats Type * Wavy Flat Dimensions Length*: 232.11cm Length * 2321 Width*: 300cm Width (mm) * 3000 Height*: 250cm Height (mm) * 2500 Additional Posts Add an extra post on any side of your pergola. Additional Legs Front Rear Left Right Structure color: TIGER 29/80081 Color type * Standard RAL Wood Special Structure color * TIGER 29/80081 TIGER 029/10797 RAL 7016 STRUCTURE Slats color: TIGER 29/80081 Color type * Standard RAL Special Slats color * TIGER 29/80081 TIGER 029/10797 RAL 7016 STRUCTURE Side enclosures Enhance your pergola with sleek enclosures like sliding glass, zip screens and movable slats for year-round comfort, privacy and style. Front Enclosure Add Back Enclosure Add Left Enclosure Add Right Enclosure Add Services Electrical package * Nello Simpler option with no sensor connection. Somfy More advanced option with the ability to connect to external sensors. Lights Edge lights Edge LED lights Structure lights Structure LED lights Addons Heaters Heaters PLN 19,983.50 Next",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://mypergolas.salesqueze.com/en/showroom/browse",
+        "len": 1072
+      },
+      {
+        "url": "https://mypergolas.salesqueze.com/global/storage/assets/catalog/product/68638306d609229b7959e466/media/html/a95deb50-bb14-11f0-98d7-13a8e896b5a0/index.html?language=en-US",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "Pergomax",
+    "type": "Pergola",
+    "url": "https://pergomax.salesqueze.com/fr/showroom",
+    "success": true,
+    "attempt": 1,
+    "title": "Pergomax by SoluSpa",
+    "finalUrl": "https://pergomax.salesqueze.com/fr/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Modèle *",
+        "allText": "Modèle Modèle * ALTO SIGNATURE Comparer les modèles",
+        "buttons": [
+          "Comparer les modèles"
+        ],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Longueur (mm) *",
+        "allText": "Dimensions 3 m 4 m 2.5 m Largeur Profondeur Hauteur Largeur Longueur (mm) * 3000 Longueur Largeur (mm) * 4000 Hauteur Hauteur (mm) * 2500",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Longueur (mm) *",
+        "allText": "Largeur Longueur (mm) * 3000 Longueur Largeur (mm) * 4000 Hauteur Hauteur (mm) * 2500",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Direction des lames *",
+        "allText": "Toit Direction des lames Direction des lames * Largeur Longueur",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Direction des lames *",
+        "allText": "Direction des lames Direction des lames * Largeur Longueur",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Direction des lames",
+        "allText": "Direction des lames",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Type de couleur de structure *",
+        "allText": "Couleurs Type de couleur de structure * Gris Anthracite Noir Intense Blanc Blanc + Gris Anthracite Personnalisé Avec frais",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Position de fermeture des côtés *",
+        "allText": "Fermetures Devant: Aucun Arrière : Aucun Gauche: Aucun Droite : Aucun Choisissez votre fermeture Position de fermeture des côtés * Devant Dos Gauche Droite Fermeture latérale - devant Écran motorisé Persiennes coulissantes Verre Verre teinté",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Lumières à lames *",
+        "allText": "Lumières Lumières à lames * Lumières à lames LED linéaires Couleur Couleur des lumières * Chaud Froid Remarque: Les options de couleur d'éclairage sont présentées à titre indicatif uniquement. La pergola est disponible dans les deux couleurs et vous pouvez facilement passer de l'une à l'autre grâce à la télécommande.",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Couleur",
+        "allText": "Couleur",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Capteur de pluie",
+        "allText": "Accessoires Plusieurs accessoires peuvent être sélectionnés. Capteur de pluie Capteur de pluie Chauffages Chauffage 80 cm Chauffage 150 cm",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Système d'ouverture des lames *",
+        "allText": "Ouverture Système d'ouverture des lames * Commande manuelle avec manivelle Motorisé avec télécommande",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Services",
+        "allText": "Services Services Installation",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "FR Connexion Pergomax ALTO Modèle Modèle * ALTO SIGNATURE Comparer les modèles Fixation Type * Autonome Fixé au mur Imbriqué Intégré Dimensions 3 m 4 m 2.5 m Largeur Profondeur Hauteur Largeur Longueur (mm) * 3000 Longueur Largeur (mm) * 4000 Hauteur Hauteur (mm) * 2500 Toit Direction des lames Direction des lames * Largeur Longueur Couleurs Type de couleur de structure * Gris Anthracite Noir Intense Blanc Blanc + Gris Anthracite Personnalisé Avec frais Fermetures Devant: Aucun Arrière : Aucun Gauche: Aucun Droite : Aucun Choisissez votre fermeture Position de fermeture des côtés * Devant Dos Gauche Droite Fermeture latérale - devant Écran motorisé Persiennes coulissantes Verre Verre teinté Lumières Lumières à lames * Lumières à lames LED linéaires Couleur Couleur des lumières * Chaud Froid Remarque: Les options de couleur d'éclairage sont présentées à titre indicatif uniquement. La pergola est disponible dans les deux couleurs et vous pouvez facilement passer de l'une à l'autre grâce à la télécommande. Accessoires Plusieurs accessoires peuvent être sélectionnés. Capteur de pluie Capteur de pluie Chauffages Chauffage 80 cm Chauffage 150 cm Ouverture Système d'ouverture des lames * Commande manuelle avec manivelle Motorisé avec télécommande Services Services Installation PERGOMAX Découvrez notre marque Pergomax www.pergomax.fr | hello@pergomax.fr Demandez un devis"
+  },
+  {
+    "name": "Relaxure",
+    "type": "Pergola",
+    "url": "https://relaxureliving.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "IRONSPAN INDUSTRIES INC",
+    "finalUrl": "https://relaxureliving.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Louvers color *",
+        "allText": "Louvers color : Dark Gray Louvers color * Dark Gray Dark Brown Black White Teak Woodgrain",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login 0 Loading 3D Model Light-duty Design your perfect pergola in just a few steps. Customize dimensions, colors, and features to match your space and style Model Model * Light-duty Heavy-duty Type * Freestanding Wall-mounted Dimensions Dimensions are shown from baseplate to baseplate. 10′ 10′ 8′ 10″ Width Length Height Dimensions type * Standard Custom Dimensions * 10' x 10' 10' x 13' 13' x 13' 13' x 19' Louvers Louvers rotation * Left Right Louvers direction * Width Length Colors Structure color : Dark Gray Structure color * Dark Gray Dark Brown Black White Louvers color : Dark Gray Louvers color * Dark Gray Dark Brown Black White Teak Woodgrain Lights Lighting is included in the price. Louver lights are available in two color options, while edge lights come exclusively in RGB. Louver lights color : Warm & Cool Slats lights color * Warm & Cool Edge lights color : RGB Edge lights color * RGB Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Sunshade Price per Sq/Ft. $14.00 Frameless sliding glass door Price per Sq/Ft. $22.43 Power Cord Power Cord * Power Cord Already included in the price. Position Power Cord position * Front Left Front Right Back Left Back Right Length Power Cord length * 8.2' 24.6' Addons Multiple values can be selected. Heaters Heaters $280.00 Additional beam Fan beam (fan not included) Price per Ft. $45.72 Services The following services are already included in your pergola. Services * Shipping Free door to door shipping. Full insurance Free full insurance. Lifetime Warranty Enjoy peace of mind with our lifetime warranty, covering materials and manufacturing defects. Additional Additional requirements Promo code $5,297.00 Next"
+  },
+  {
+    "name": "Sunparadise",
+    "type": "Veranda",
+    "url": "https://sunparadise.salesqueze.com/sv/showroom",
+    "success": true,
+    "attempt": 2,
+    "title": "SUNPARADISE SVERIGE AB",
+    "finalUrl": "https://sunparadise.salesqueze.com/sv/showroom",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "SV Logga in 1 / 1 Prime Plats Din plats Välj plats Kontrollerar plats Dimensioner Bredd 3m Djup 3m Mått Standard Anpassade mått Bredd x Djup (m) 3m x 3m 4m x 3m 5m x 3m 4m x 4m 5m x 4m 6m x 4m Färg RAL 7016 Färg RAL 7016 RAL 9005 RAL 9006 RAL 9016 LED Ingen Belysning Ingen LED-system Främre öppning Ingen Främre Ingen Vikparti Skjutparti Vänster öppning Ingen Vänster Ingen Vikparti Skjutparti Höger öppning Ingen Höger Ingen Vikparti Skjutparti Nästa",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://sunparadise.salesqueze.com/sv/showroom/browse",
+        "len": 452
+      },
+      {
+        "url": "https://sunparadise.salesqueze.com/global/storage/assets/catalog/product/67aaee7499a5d4274694ad57/media/html/c17d5370-ab1e-11f0-9b61-75cf196189a7/index.html?language=sv-SE",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "Kauffman Lawn Furniture",
+    "type": "Pergola",
+    "url": "https://kauffmanlawnfurniture.salesqueze.com/en/showroom",
+    "success": true,
+    "attempt": 2,
+    "title": "Kauffman Lawn Furniture",
+    "finalUrl": "https://kauffmanlawnfurniture.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [
+      "Basics",
+      "1",
+      "/",
+      "1"
+    ],
+    "bodyText": "Login Basics 1 / 1 Pergola X The Smartest Pergola Ever Built​​ 170° louvers Heaters App controlled Weatherproof Model * Pivot 6 Pivot 6 XL Type * Freestanding Wall-mounted Post size Pergola post shape * 6\" x 6\" 8\" x 8\" Dimensions Width*: 12′ 0″ Width (inch) * 144 Length*: 16′ 0″ Length (inch) * 192 Height*: 9′ 0″ Height (inch) * 108 Structure color: 9016 Structure color * Grey Adobe Bronze White Beige Black Slats color: Grey Slats color * Grey Adobe Bronze White Beige Black Decorative features: Standard Add caps, collars, and rise elements to give your pergola a refined, elegant finish. Cornice * Side enclosures Add side enclosures to block wind, add privacy, and enjoy more comfort in any weather. ZIP Screen Motorized screens Superior MagnaTrack Motorized Screens Motorized screen positions Front Rear Left Right Slat wall Slat walls Slat wall positions Front Rear Left Right Additional beams Beams let you add lights, heaters, or fans for a more comfortable outdoor experience. Beam 1: None Beam 1 Beam 2: None Beam 2 Beam 3: None Beam 3 Next"
+  },
+  {
+    "name": "Zetović",
+    "type": "Pergola",
+    "url": "https://zetovic.salesqueze.com/hr/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Zetović d.o.o.",
+    "finalUrl": "https://zetovic.salesqueze.com/hr/showroom/browse",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Širina (cm) *",
+        "allText": "Dimenzije 3 m 4 m 2 m Širina Duljina Visina Unesite dimenzije Širina: Raspon od 1.5 m do 13.4 m Širina (cm) * 300 Duljina: Raspon od 1.5 m do 13.4 m Duljina (cm) * 400 Visina: Raspon od 1 m do 3.3 m Visina (cm) * 200",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Širina (cm) *",
+        "allText": "Unesite dimenzije Širina: Raspon od 1.5 m do 13.4 m Širina (cm) * 300 Duljina: Raspon od 1.5 m do 13.4 m Duljina (cm) * 400 Visina: Raspon od 1 m do 3.3 m Visina (cm) * 200",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Slats isolation *",
+        "allText": "Lamele Izolacija lamela Slats isolation * Bez izolacije Sa izolacijom Rotacija lamela Rotacija lamela * Lijevo Desno Orijentacija lamela Orijentacija lamela * Po širini Po duljini",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Bez izolacije"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Sa izolacijom"
+          }
+        ]
+      },
+      {
+        "heading": "Slats isolation *",
+        "allText": "Lamele Izolacija lamela Slats isolation * Bez izolacije Sa izolacijom Rotacija lamela Rotacija lamela * Lijevo Desno Orijentacija lamela Orijentacija lamela * Po širini Po duljini",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Bez izolacije"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_0",
+            "value": "on",
+            "label": "Sa izolacijom"
+          }
+        ]
+      },
+      {
+        "heading": "Izolacija lamela",
+        "allText": "Izolacija lamela",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Rotacija lamela",
+        "allText": "Rotacija lamela",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Orijentacija lamela",
+        "allText": "Orijentacija lamela",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Structure color type *",
+        "allText": "Boje Boja konstrukcije : 7016 Structure color type * 7016 - Antracit siva DB703 9006 9007 9010 Custom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Položaj bočnog zatvaranja *",
+        "allText": "Zatvaranja Naprijed: Nema Straga: Nema Lijevo: Nema Desno: Nema Položaj bočnog zatvaranja * Naprijed Straga Lijevo Desno Odaberite vrstu zatvaranja Bočno zatvaranje - naprijed Zip rolo platno Aluminijska klizna sjenila Staklena klizna stijena Staklena klizna stijena - tonirano staklo",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Svjetla *",
+        "allText": "Svjetla Svjetla * Bez rasvjete Sa rasvjetom",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Bez rasvjete"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_1",
+            "value": "on",
+            "label": "Sa rasvjetom"
+          }
+        ]
+      },
+      {
+        "heading": "Add ons *",
+        "allText": "Dodaci Add ons * Bez dodataka Sa dodacima",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Bez dodataka"
+          },
+          {
+            "type": "radio",
+            "name": "segmented_2",
+            "value": "on",
+            "label": "Sa dodacima"
+          }
+        ]
+      },
+      {
+        "heading": "Elementi automatike *",
+        "allText": "Automatika Elementi automatike * Motor i daljinski uređaj Motor i daljinski uređaj + pametno upravljanje Somfy TaHoma",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "HR Prijava Pergola Lumo Aria L Vrsta pergole Vrsta * Samostojeća Zidna Ugrađena Dimenzije 3 m 4 m 2 m Širina Duljina Visina Unesite dimenzije Širina: Raspon od 1.5 m do 13.4 m Širina (cm) * 300 Duljina: Raspon od 1.5 m do 13.4 m Duljina (cm) * 400 Visina: Raspon od 1 m do 3.3 m Visina (cm) * 200 Lamele Izolacija lamela Slats isolation * Bez izolacije Sa izolacijom Rotacija lamela Rotacija lamela * Lijevo Desno Orijentacija lamela Orijentacija lamela * Po širini Po duljini Boje Boja konstrukcije : 7016 Structure color type * 7016 - Antracit siva DB703 9006 9007 9010 Custom Zatvaranja Naprijed: Nema Straga: Nema Lijevo: Nema Desno: Nema Položaj bočnog zatvaranja * Naprijed Straga Lijevo Desno Odaberite vrstu zatvaranja Bočno zatvaranje - naprijed Zip rolo platno Aluminijska klizna sjenila Staklena klizna stijena Staklena klizna stijena - tonirano staklo Svjetla Svjetla * Bez rasvjete Sa rasvjetom Dodaci Add ons * Bez dodataka Sa dodacima Automatika Elementi automatike * Motor i daljinski uređaj Motor i daljinski uređaj + pametno upravljanje Somfy TaHoma Pošalji upit"
+  },
+  {
+    "name": "Robeta",
+    "type": "Campervan",
+    "url": "https://robetamobil.salesqueze.com/en/commerce/products/b2c-configurator",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://robetamobil.salesqueze.com/en/commerce/products/b2c-configurator",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Lumbix (Flexi Glass Veranda)",
+    "type": "Veranda",
+    "url": "https://lumbix.salesqueze.com/es/showroom/products/veranda",
+    "success": true,
+    "attempt": 1,
+    "title": "Lumbix Solutions S.L.",
+    "finalUrl": "https://lumbix.salesqueze.com/es/showroom/products/veranda",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [
+      "Lo esencial",
+      "1",
+      "/",
+      "6"
+    ],
+    "bodyText": "ES Iniciar sesión Lo esencial 1 / 6 Tipo de instalación * Montado en la pared Independiente Ancho del techo móvil (m) 3.5 Longitud del techo móvil (m) * 4.5 Altura frontal del techo móvil (m) 2.3 Inclinación del techo móvil (º) * 10 Siguiente Cookies Utilizamos cookies para mejorar la experiencia del usuario y analizar el tráfico. Al hacer clic en \"Aceptar todo\" usted consiente nuestro uso de cookies. Puede gestionar o aprender más sobre sus preferencias de cookies haciendo clic en \"Gestionar preferencias\". Consentimientos Además de las cookies, requerimos su consentimiento para las siguientes políticas: Estoy de acuerdo y acepto la Política de Cookies. * Al hacer clic aquí indicas que has leído y estás de acuerdo con la Política de Cookies . Puede gestionar sus consentimientos haciendo clic en \"Administrar preferencias\". Aceptar todo Solo obligatorias Gestionar preferencias",
+    "frames": 2,
+    "iframeTexts": [
+      {
+        "url": "https://lumbix.salesqueze.com/es/showroom/products/veranda",
+        "len": 887
+      },
+      {
+        "url": "https://lumbix.salesqueze.com/global/storage/assets/catalog/product/680a5b9846f2b3d9f9106385/media/html/5ec0fc90-78f2-11f0-9b4d-6fa6b51a808d/index.html?language=es-ES",
+        "len": 23
+      }
+    ]
+  },
+  {
+    "name": "AMR Log Cabins",
+    "type": "Garden room",
+    "url": "https://amrlogcabins.salesqueze.com/en-gb/showroom",
+    "success": true,
+    "attempt": 1,
+    "title": "AMR Log Cabins Ltd",
+    "finalUrl": "https://amrlogcabins.salesqueze.com/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login 0 Choose your Model Choose between a pre-configured option and adjust to your liking or start from scratch Edinburgh Dimensions (width x depth): 4.5m x 3.5m Exterior: Turner oak composite cladding Door: Bifolding door Windows: None Lights: Spotlight Glasgow Dimensions (width x depth): 5m x 3m Exterior: Cedar cladding Door: French door Windows: Full length window Lights: Spotlight Falkirk Dimensions (width x depth): 4m x 3m Exterior: Slatted spiced oak cladding Door: French door Windows: Standard window (2x) Lights: Spotlight Striling Dimensions (width x depth): 3m x 3m Exterior: Silver birch cladding Door: French door with side panels Windows: None Lights: Up & Down Manchester Dimensions (width x depth): 4.2m x 3.2m Exterior: Anthracite grey cladding Door: Sliding door with fixed panels Windows: None Lights: Spotlight From Scratch Custom configuration"
+  },
+  {
+    "name": "Pečarstvo Hrovat",
+    "type": "Fireplace",
+    "url": "https://pecarstvo-hrovat.salesqueze.com/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://pecarstvo-hrovat.salesqueze.com/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Spolding & Sons",
+    "type": "Garden room",
+    "url": "https://spoldingandsons.salesqueze.com/en/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://spoldingandsons.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Nordin",
+    "type": "Pergola",
+    "url": "https://nordin.salesqueze.com/en/showroom",
+    "success": true,
+    "attempt": 1,
+    "title": "MB Nordin Group",
+    "finalUrl": "https://nordin.salesqueze.com/en/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "EN Login NORDIN pergolas Scandinavian quality, adapted to all weather conditions. Model: C4S Popular Automatic pergola with LED perimeter lighting. Model * M2S Smart C4S Popular C7 Elite Type * Freestanding Wall-mounted Dimensions (Length x Width x Height) Dimensions * 3 x 3 x 2.75m 4 x 3 x 2.75m 4 x 4 x 2.75m 6 x 3 x 2.75m 6 x 4 x 2.75m Color Only RAL 7016 is in stock. Other colors are available by order. Structure color * 7016 9005 9016 Lights included in price Included in the model. Edge lights * Edge lights Edge lights color * Warm Cool Enclosures Front side: No enclosure Front enclosures Left side: No enclosure Left enclosures Right side: No enclosure Right enclosures Add-ons Heaters Heaters Sensors Rain sensor Installation selection Installation service Next"
+  },
+  {
+    "name": "YourPergola",
+    "type": "Pergola",
+    "url": "https://yourpergola.salesqueze.com/en/showroom",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://yourpergola.salesqueze.com/en/showroom",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Distinctive Outdoor Structures",
+    "type": "Pergola",
+    "url": "https://distinctiveos.salesqueze.com/en/showroom/products/pergola-x-simplified",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://distinctiveos.salesqueze.com/en/showroom/products/pergola-x-simplified",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "MKL Systems",
+    "type": "Garage door",
+    "url": "https://mkl-systems.salesqueze.com/en/showroom",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://mkl-systems.salesqueze.com/en/showroom",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Lumbix (Flexi Glass Pergola)",
+    "type": "Pergola",
+    "url": "https://lumbix.salesqueze.com/en/showroom/products/pergola",
+    "success": true,
+    "attempt": 2,
+    "title": "Lumbix Solutions S.L.",
+    "finalUrl": "https://lumbix.salesqueze.com/en/showroom/products/pergola",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [
+      "Basics",
+      "1",
+      "/",
+      "4"
+    ],
+    "bodyText": "EN Login Basics 1 / 4 Type * Freestanding Wall-mounted Dimensions * Standard Custom Width & Length * 3m x 3m 3m x 4m 3m x 5m 4m x 3m 4m x 4m 4m x 5m Height * 2.3m 2.5m 2.8m Next"
+  },
+  {
+    "name": "Spa Solutions (Whirlpool)",
+    "type": "Whirlpool",
+    "url": "https://spa-solutions.salesqueze.com/de/s/whirlpool-konfigurator/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://spa-solutions.salesqueze.com/de/s/whirlpool-konfigurator/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Hosekra",
+    "type": "Container",
+    "url": "https://hosekra.salesqueze.com/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://hosekra.salesqueze.com/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Garden Spirit",
+    "type": "Pergola",
+    "url": "https://garden-spirit.salesqueze.com/cs/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "Garden Spirit s.r.o.",
+    "finalUrl": "https://garden-spirit.salesqueze.com/cs/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "CS Přihlásit se VÍTEJTE Vyberte si pergolu, která vyhovuje vašemu stylu Elegantní zastínění pro dokonalý zážitek z pergoly. Pergola Comfort Komfort bez starostí, od 74,900 Kč Více informací Od 74,900 Kč Konfigurovat Pergola Elite Více než jen pergola, od 149,900 Kč Více informací Od 149,900 Kč Konfigurovat Pergola Ultimate Pro Řešení bez limitů, od 259,900 Kč Více informací Od 259,900 Kč Konfigurovat Cookies Používáme soubory cookie ke zlepšení uživatelské zkušenosti a analýze provozu. Kliknutím na \"Přijmout vše\" souhlasíte s naším používáním souborů cookie. Můžete spravovat své preference souborů cookie nebo se dozvědět více kliknutím na \"Spravovat preference\". Přijmout vše Pouze povinné Spravovat předvolby",
+    "frames": 1,
+    "iframeTexts": [
+      {
+        "url": "https://garden-spirit.salesqueze.com/cs/showroom/browse",
+        "len": 717
+      }
+    ]
+  },
+  {
+    "name": "CS Garden Offices",
+    "type": "Garden room",
+    "url": "https://cs-gardenoffices.salesqueze.com/en-gb/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://cs-gardenoffices.salesqueze.com/en-gb/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Login 0 Select your Garden office Office without partition wall Office with one partition wall Office with two partition walls",
+    "frames": 1,
+    "iframeTexts": [
+      {
+        "url": "https://cs-gardenoffices.salesqueze.com/en-gb/showroom/browse",
+        "len": 126
+      }
+    ]
+  },
+  {
+    "name": "Spa Solutions (Pergola)",
+    "type": "Pergola",
+    "url": "https://spa-solutions.salesqueze.com/de/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://spa-solutions.salesqueze.com/de/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Tagarno",
+    "type": "Microscope",
+    "url": "https://tagarno.com/configurator/",
+    "success": true,
+    "attempt": 1,
+    "title": "Product overview: Digital microscopes | TAGARNO",
+    "finalUrl": "https://tagarno.com/digital-microscopes-solution/",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Industries Products Resources Contact EN FR DE DA Industries Digital microscopes Software Accessories Contact Other things to explore Ressources Support and updates TAGARNO digital microscopes Compare the TAGARNO microscopes side-by-side or use the filters to find the right microscope for your needs. Magnification UP TO 53X UP TO 133X UP TO 330X UP TO 660X On-board applications YES NO Integrated light YES NO Image capture BUILT-IN USB 3.0 WITH GENERIC DRIVERS BOTH Camera quality 4K FHD ZIP+ Entry level model for high quality magnification tasks where no on-board apps are required Get price Learn more about product ZAP+ Microscope with multiple mounting options for high quality magnification tasks where no on-board apps are required Get price Learn more about product TREND+ This bestseller with on-board apps is perfect for large and small samples due to the long camera arm that can be turned away when not in use Get price Learn more about product T50 4K microscope with motorized height adjustment, unique accessories and on-board apps for an extraordinary user experience. Get price Learn more about product PRESTIGE Discontinued in April 2026. Get price Learn more about product No microscopes available Unfortunately, no microscope matches your filters. Show all microscopes Book a free consultation with a microscopy expert Choosing the right digital microscope depends on your specific tasks and requirements. In a one-on-one meeting, our specialists will guide you through your options, answer your questions, and help you find the ideal solution for your application. When you fill out this form, you will receive a booking link to the calendar of your local consultant so you can book a meeting at a time that suits you. This offer is currently exclusively available for customers in Germany, Switzerland, Austria., Hungary, and United States of America. Other customers are encouraged to fill out a regular contact form. Industries Agriculture Electronics Foods Metal Plastic Medical devices Forensics Digital microscopes TAGARNO T50 TAGARNO PRESTIGE TAGARNO TREND+ TAGARNO ZAP+ TAGARNO ZIP+ Microscope software TAGARNO Open API Color analyzer app DXF overlay app Focus stacking app Image comparison app Measurement software Particle analyzer app PNG reference app Ruler app Trichinoscope app Speck counter app Verification lines app Watermark app Resources Guides Downloads Blog Our customers Cases Expert room Support Support Download firmware Request license Product manuals Video tutorials About Terms Career News PartnerHub TAGARNO Denmark Finlandsvej 2 / 8700 Horsens / Denmark CVR 26584582 TAGARNO USA Inc. 210 South Pinellas Avenue, Suite 176 Tarpon Springs, FL 34689 +45 76251111 mail@tagarno.com (770) 349-6335 mailusa@tagarno.com Privacy policy Manage cookies"
+  },
+  {
+    "name": "Nabo",
+    "type": "Fence",
+    "url": "https://nabo.si/konfigurator/",
+    "success": true,
+    "attempt": 2,
+    "title": "Konfigurator | Ograje in ograjni sistemi NABO",
+    "finalUrl": "https://nabo.si/konfigurator/",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Glideaway",
+    "type": "Garage door",
+    "url": "https://glideaway.co.nz/quote-configurator",
+    "success": true,
+    "attempt": 2,
+    "title": "Quote Configurator - Glideaway Garage Doors NZ",
+    "finalUrl": "https://www.glideaway.co.nz/quote-configurator",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "We use cookies to improve user experience and analyze website traffic. By clicking “Accept all cookies“, you agree to our website's cookie use as described in our Privacy Policy. You can change your cookie settings by clicking “Manage cookies.” Accept all cookies Functional only Manage cookies",
+    "frames": 3,
+    "iframeTexts": [
+      {
+        "url": "https://www.glideaway.co.nz/quote-configurator",
+        "len": 0
+      },
+      {
+        "url": "https://glideaway.salesqueze.com/en-nz/commerce/products/sectional-doors",
+        "len": 294
+      },
+      {
+        "url": "https://sidebar.bugherd.com/sidebar/embed_html?apikey=gpekj2amycfodpi4ogt43g",
+        "len": 0
+      }
+    ]
+  },
+  {
+    "name": "IMP Armature",
+    "type": "Valves",
+    "url": "https://imp-ta.salesqueze.com/en/commerce/home",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://imp-ta.salesqueze.com/en/commerce/home",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Petrovič (Steely)",
+    "type": "Carport",
+    "url": "https://steely-petrovic.salesqueze.com/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://steely-petrovic.salesqueze.com/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Riko Ekos",
+    "type": "Reel splitter",
+    "url": "https://riko-ekos.salesqueze.com/en/public/form/order",
+    "success": true,
+    "attempt": 2,
+    "title": "Riko Ekos d.o.o. order | Riko Ekos d.o.o.",
+    "finalUrl": "https://riko-ekos.salesqueze.com/en/public/form/order",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [
+      "1. Model",
+      "1. Model",
+      "2. Tables",
+      "2. Tables",
+      "3. Addons",
+      "3. Addons",
+      "4. Extras",
+      "4. Extras",
+      "5. Summary",
+      "5. Summary",
+      "6. Additional info",
+      "6. Additional info",
+      "7. Info",
+      "7. Info"
+    ],
+    "bodyText": "1. Model 2. Tables 3. Addons 4. Extras 5. Summary 6. Additional info 7. Info Select model G25 Select size G25 ( 1500 x 850 ) Info Working width Working height Cutting force 1500 mm 850 mm 1 x 25 = 25 T More info Reel Splitter Next"
+  },
+  {
+    "name": "Dekor Senčila (Screen Rolo)",
+    "type": "Shades",
+    "url": "https://dekorsencila.salesqueze.com/sl/public/form/screenrolo",
+    "success": false,
+    "attempt": 2,
+    "error": "page.goto: Timeout 25000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://dekorsencila.salesqueze.com/sl/public/form/screenrolo\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "name": "Dekor Senčila (Pergola)",
+    "type": "Pergola",
+    "url": "https://dekorsencila.salesqueze.com/en/public/form/pergola",
+    "success": true,
+    "attempt": 2,
+    "title": "Dekor senčila - pergola | Dekor senčila d.o.o.",
+    "finalUrl": "https://dekorsencila.salesqueze.com/en/public/form/pergola",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [
+      "1. Model",
+      "1. Model",
+      "2. Dimension",
+      "2. Dimension",
+      "3. Colors",
+      "3. Colors",
+      "4. Screen blinds",
+      "4. Screen blinds",
+      "5. Additionally",
+      "5. Additionally",
+      "6. Cart",
+      "6. Cart",
+      "7. Conclusion",
+      "7. Conclusion"
+    ],
+    "bodyText": "1. Model 2. Dimension 3. Colors 4. Screen blinds 5. Additionally 6. Cart 7. Conclusion Choose a model Bioclimatic pergola ELIZA check Pergola VICTORIA check Dekor senčila Next"
+  },
+  {
+    "name": "Veriga Lesce",
+    "type": "Vehicle equipment",
+    "url": "https://veriga-lesce.salesqueze.com/en/commerce/home",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://veriga-lesce.salesqueze.com/en/commerce/home",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Aplast",
+    "type": "Water collectors",
+    "url": "https://aplast.salesqueze.com/sl/public/form/order",
+    "success": false,
+    "attempt": 2,
+    "error": "page.goto: Timeout 25000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://aplast.salesqueze.com/sl/public/form/order\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  },
+  {
+    "name": "Armat",
+    "type": "Carport",
+    "url": "https://armat-si.salesqueze.com/sl/s/slovenija/showroom/browse",
+    "success": true,
+    "attempt": 1,
+    "title": "ARMAT d. o. o.",
+    "finalUrl": "https://armat-si.salesqueze.com/sl/s/slovenija/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": "Prijava Nadstreški ARMAT Seveda lahko vsak nadstrešek ukrojimo in izvedemo v butik izvedbi, po želji kupca. Nadstrešek na stebrih Konzolni nadstrešek Terasni nadstrešek Box Nadstrešek z lopo Konzolni nadstrešek z lopo Lebdeči nadstrešek Lopa"
+  },
+  {
+    "name": "Meblo Jogi",
+    "type": "Beds",
+    "url": "https://meblo-jogi.salesqueze.com/sl/showroom/browse",
+    "success": true,
+    "attempt": 2,
+    "title": "",
+    "finalUrl": "https://meblo-jogi.salesqueze.com/sl/showroom/browse",
+    "productCards": [],
+    "formGroups": [],
+    "looseSelects": [],
+    "tabs": [],
+    "bodyText": ""
+  },
+  {
+    "name": "Qubino",
+    "type": "Smart home",
+    "url": "https://qubino.com/smart-home-configurator-en/",
+    "success": true,
+    "attempt": 1,
+    "title": "Qubino",
+    "finalUrl": "https://qubino.com/smart-home-configurator-en/",
+    "productCards": [],
+    "formGroups": [
+      {
+        "heading": "Get a notification about Qubino new manual releases, don't miss exciting news in smart home and stay updated with Qubino novelties.",
+        "allText": "Get a notification about Qubino new manual releases, don't miss exciting news in smart home and stay updated with Qubino novelties. I agree to Qubino Privacy Policy",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": [
+          {
+            "type": "checkbox",
+            "name": "fld_7834967[opt1369553]",
+            "value": "I agree to Qubino Privacy Policy",
+            "label": "I agree to Qubino Privacy Policy"
+          }
+        ]
+      },
+      {
+        "heading": "Name",
+        "allText": "Name",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Surname",
+        "allText": "Surname",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "Country",
+        "allText": "Country Select country Afghanistan Åland Islands Albania Algeria American Samoa Andorra Angola Anguilla Antarctica Antigua and Barbuda Argentina Armenia Aruba Australia Austria Azerbaijan Bahamas Bahrain Bangladesh Barbados Belarus Belgium Belize Benin Bermuda Bhutan Bolivia, Plurinational State of Bonaire, Sint Eustatius and Saba Bosnia and Herzegovina Botswana Bouvet Island Brazil British Indian Ocean Territory Brunei Darussalam Bulgaria Burkina Faso Burundi Cambodia Cameroon Canada Cape Verde Cayman Islands Central African Republic Chad Chile China Christmas Island Cocos (Keeling) Islands Colombia Comoros Congo Congo, the Democratic Republic of the Cook Islands Costa Rica Côte d'Ivoire Croatia Cuba Curaçao Cyprus Czech Republic Denmark Djibouti Dominica Dominican Republic Ecuador Egypt El Salvador Equatorial Guinea Eritrea Estonia Ethiopia Falkland Islands (Malvinas) Faroe Islands Fiji Finland France French Guiana French Polynesia French Southern Territories Gabon Gambia Georgia Germany Ghana Gibraltar Greece Greenland Grenada Guadeloupe Guam Guatemala Guernsey Guinea Guinea-Bissau Guyana Haiti Heard Island and McDonald Islands Holy See (Vatican City State) Honduras Hong Kong Hungary Iceland India Indonesia Iran, Islamic Republic of Iraq Ireland Isle of Man Israel Italy Jamaica Japan Jersey Jordan Kazakhstan Kenya Kiribati Korea, Democratic People's Republic of Korea, Republic of Kuwait Kyrgyzstan Lao People's Democratic Republic Latvia Lebanon Lesotho Liberia Libya Liechtenstein Lithuania Luxembourg Macao Macedonia, the former Yugoslav Republic of Madagascar Malawi Malaysia Maldives Mali Malta Marshall Islands Martinique Mauritania Mauritius Mayotte Mexico Micronesia, Federated States of Moldova, Republic of Monaco Mongolia Montenegro Montserrat Morocco Mozambique Myanmar Namibia Nauru Nepal Netherlands New Caledonia New Zealand Nicaragua Niger Nigeria Niue Norfolk Island Northern Mariana Islands Norway Oman Pakistan Palau Palestinian Territory, Occupied Panama Papua New Guinea Paraguay Peru Philippines Pitcairn Poland Portugal Puerto Rico Qatar Réunion Romania Russian Federation Rwanda Saint Barthélemy Saint Helena, Ascension and Tristan da Cunha Saint Kitts and Nevis Saint Lucia Saint Martin (French part) Saint Pierre and Miquelon Saint Vincent and the Grenadines Samoa San Marino Sao Tome and Principe Saudi Arabia Senegal Serbia Seychelles Sierra Leone Singapore Sint Maarten (Dutch part) Slovakia Slovenia Solomon Islands Somalia South Africa South Georgia and the South Sandwich Islands South Sudan Spain Sri Lanka Sudan Suriname Svalbard and Jan Mayen Swaziland Sweden Switzerland Syrian Arab Republic Taiwan, Province of China Tajikistan Tanzania, United Republic of Thailand Timor-Leste Togo Tokelau Tonga Trinidad and Tobago Tunisia Turkey Turkmenistan Turks and Caicos Islands Tuvalu Uganda Ukraine United Arab Emirates United Kingdom United States United States Minor Outlying Islands Uruguay Uzbekistan Vanuatu Venezuela, Bolivarian Republic of Viet Nam Virgin Islands, British Virgin Islands, U.S. Wallis and Futuna Western Sahara Yemen Zambia Zimbabwe",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [
+          "Select country",
+          "Afghanistan",
+          "Åland Islands",
+          "Albania",
+          "Algeria",
+          "American Samoa",
+          "Andorra",
+          "Angola",
+          "Anguilla",
+          "Antarctica",
+          "Antigua and Barbuda",
+          "Argentina",
+          "Armenia",
+          "Aruba",
+          "Australia",
+          "Austria",
+          "Azerbaijan",
+          "Bahamas",
+          "Bahrain",
+          "Bangladesh",
+          "Barbados",
+          "Belarus",
+          "Belgium",
+          "Belize",
+          "Benin",
+          "Bermuda",
+          "Bhutan",
+          "Bolivia, Plurinational State of",
+          "Bonaire, Sint Eustatius and Saba",
+          "Bosnia and Herzegovina",
+          "Botswana",
+          "Bouvet Island",
+          "Brazil",
+          "British Indian Ocean Territory",
+          "Brunei Darussalam",
+          "Bulgaria",
+          "Burkina Faso",
+          "Burundi",
+          "Cambodia",
+          "Cameroon",
+          "Canada",
+          "Cape Verde",
+          "Cayman Islands",
+          "Central African Republic",
+          "Chad",
+          "Chile",
+          "China",
+          "Christmas Island",
+          "Cocos (Keeling) Islands",
+          "Colombia",
+          "Comoros",
+          "Congo",
+          "Congo, the Democratic Republic of the",
+          "Cook Islands",
+          "Costa Rica",
+          "Côte d'Ivoire",
+          "Croatia",
+          "Cuba",
+          "Curaçao",
+          "Cyprus",
+          "Czech Republic",
+          "Denmark",
+          "Djibouti",
+          "Dominica",
+          "Dominican Republic",
+          "Ecuador",
+          "Egypt",
+          "El Salvador",
+          "Equatorial Guinea",
+          "Eritrea",
+          "Estonia",
+          "Ethiopia",
+          "Falkland Islands (Malvinas)",
+          "Faroe Islands",
+          "Fiji",
+          "Finland",
+          "France",
+          "French Guiana",
+          "French Polynesia",
+          "French Southern Territories",
+          "Gabon",
+          "Gambia",
+          "Georgia",
+          "Germany",
+          "Ghana",
+          "Gibraltar",
+          "Greece",
+          "Greenland",
+          "Grenada",
+          "Guadeloupe",
+          "Guam",
+          "Guatemala",
+          "Guernsey",
+          "Guinea",
+          "Guinea-Bissau",
+          "Guyana",
+          "Haiti",
+          "Heard Island and McDonald Islands",
+          "Holy See (Vatican City State)",
+          "Honduras",
+          "Hong Kong",
+          "Hungary",
+          "Iceland",
+          "India",
+          "Indonesia",
+          "Iran, Islamic Republic of",
+          "Iraq",
+          "Ireland",
+          "Isle of Man",
+          "Israel",
+          "Italy",
+          "Jamaica",
+          "Japan",
+          "Jersey",
+          "Jordan",
+          "Kazakhstan",
+          "Kenya",
+          "Kiribati",
+          "Korea, Democratic People's Republic of",
+          "Korea, Republic of",
+          "Kuwait",
+          "Kyrgyzstan",
+          "Lao People's Democratic Republic",
+          "Latvia",
+          "Lebanon",
+          "Lesotho",
+          "Liberia",
+          "Libya",
+          "Liechtenstein",
+          "Lithuania",
+          "Luxembourg",
+          "Macao",
+          "Macedonia, the former Yugoslav Republic of",
+          "Madagascar",
+          "Malawi",
+          "Malaysia",
+          "Maldives",
+          "Mali",
+          "Malta",
+          "Marshall Islands",
+          "Martinique",
+          "Mauritania",
+          "Mauritius",
+          "Mayotte",
+          "Mexico",
+          "Micronesia, Federated States of",
+          "Moldova, Republic of",
+          "Monaco",
+          "Mongolia",
+          "Montenegro",
+          "Montserrat",
+          "Morocco",
+          "Mozambique",
+          "Myanmar",
+          "Namibia",
+          "Nauru",
+          "Nepal",
+          "Netherlands",
+          "New Caledonia",
+          "New Zealand",
+          "Nicaragua",
+          "Niger",
+          "Nigeria",
+          "Niue",
+          "Norfolk Island",
+          "Northern Mariana Islands",
+          "Norway",
+          "Oman",
+          "Pakistan",
+          "Palau",
+          "Palestinian Territory, Occupied",
+          "Panama",
+          "Papua New Guinea",
+          "Paraguay",
+          "Peru",
+          "Philippines",
+          "Pitcairn",
+          "Poland",
+          "Portugal",
+          "Puerto Rico",
+          "Qatar",
+          "Réunion",
+          "Romania",
+          "Russian Federation",
+          "Rwanda",
+          "Saint Barthélemy",
+          "Saint Helena, Ascension and Tristan da Cunha",
+          "Saint Kitts and Nevis",
+          "Saint Lucia",
+          "Saint Martin (French part)",
+          "Saint Pierre and Miquelon",
+          "Saint Vincent and the Grenadines",
+          "Samoa",
+          "San Marino",
+          "Sao Tome and Principe",
+          "Saudi Arabia",
+          "Senegal",
+          "Serbia",
+          "Seychelles",
+          "Sierra Leone",
+          "Singapore",
+          "Sint Maarten (Dutch part)",
+          "Slovakia",
+          "Slovenia",
+          "Solomon Islands",
+          "Somalia",
+          "South Africa",
+          "South Georgia and the South Sandwich Islands",
+          "South Sudan",
+          "Spain",
+          "Sri Lanka",
+          "Sudan",
+          "Suriname",
+          "Svalbard and Jan Mayen",
+          "Swaziland",
+          "Sweden",
+          "Switzerland",
+          "Syrian Arab Republic",
+          "Taiwan, Province of China",
+          "Tajikistan",
+          "Tanzania, United Republic of",
+          "Thailand",
+          "Timor-Leste",
+          "Togo",
+          "Tokelau",
+          "Tonga",
+          "Trinidad and Tobago",
+          "Tunisia",
+          "Turkey",
+          "Turkmenistan",
+          "Turks and Caicos Islands",
+          "Tuvalu",
+          "Uganda",
+          "Ukraine",
+          "United Arab Emirates",
+          "United Kingdom",
+          "United States",
+          "United States Minor Outlying Islands",
+          "Uruguay",
+          "Uzbekistan",
+          "Vanuatu",
+          "Venezuela, Bolivarian Republic of",
+          "Viet Nam",
+          "Virgin Islands, British",
+          "Virgin Islands, U.S.",
+          "Wallis and Futuna",
+          "Western Sahara",
+          "Yemen",
+          "Zambia",
+          "Zimbabwe"
+        ],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "E-mail",
+        "allText": "E-mail",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "recaptcha",
+        "allText": "recaptcha",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      },
+      {
+        "heading": "",
+        "allText": "",
+        "buttons": [],
+        "swatches": [],
+        "selectOptions": [],
+        "ranges": [],
+        "checkboxes": []
+      }
+    ],
+    "looseSelects": [
+      {
+        "name": "fld_2409717",
+        "options": [
+          "Select country",
+          "Afghanistan",
+          "Åland Islands",
+          "Albania",
+          "Algeria",
+          "American Samoa",
+          "Andorra",
+          "Angola",
+          "Anguilla",
+          "Antarctica",
+          "Antigua and Barbuda",
+          "Argentina",
+          "Armenia",
+          "Aruba",
+          "Australia",
+          "Austria",
+          "Azerbaijan",
+          "Bahamas",
+          "Bahrain",
+          "Bangladesh",
+          "Barbados",
+          "Belarus",
+          "Belgium",
+          "Belize",
+          "Benin",
+          "Bermuda",
+          "Bhutan",
+          "Bolivia, Plurinational State of",
+          "Bonaire, Sint Eustatius and Saba",
+          "Bosnia and Herzegovina",
+          "Botswana",
+          "Bouvet Island",
+          "Brazil",
+          "British Indian Ocean Territory",
+          "Brunei Darussalam",
+          "Bulgaria",
+          "Burkina Faso",
+          "Burundi",
+          "Cambodia",
+          "Cameroon",
+          "Canada",
+          "Cape Verde",
+          "Cayman Islands",
+          "Central African Republic",
+          "Chad",
+          "Chile",
+          "China",
+          "Christmas Island",
+          "Cocos (Keeling) Islands",
+          "Colombia",
+          "Comoros",
+          "Congo",
+          "Congo, the Democratic Republic of the",
+          "Cook Islands",
+          "Costa Rica",
+          "Côte d'Ivoire",
+          "Croatia",
+          "Cuba",
+          "Curaçao",
+          "Cyprus",
+          "Czech Republic",
+          "Denmark",
+          "Djibouti",
+          "Dominica",
+          "Dominican Republic",
+          "Ecuador",
+          "Egypt",
+          "El Salvador",
+          "Equatorial Guinea",
+          "Eritrea",
+          "Estonia",
+          "Ethiopia",
+          "Falkland Islands (Malvinas)",
+          "Faroe Islands",
+          "Fiji",
+          "Finland",
+          "France",
+          "French Guiana",
+          "French Polynesia",
+          "French Southern Territories",
+          "Gabon",
+          "Gambia",
+          "Georgia",
+          "Germany",
+          "Ghana",
+          "Gibraltar",
+          "Greece",
+          "Greenland",
+          "Grenada",
+          "Guadeloupe",
+          "Guam",
+          "Guatemala",
+          "Guernsey",
+          "Guinea",
+          "Guinea-Bissau",
+          "Guyana",
+          "Haiti",
+          "Heard Island and McDonald Islands",
+          "Holy See (Vatican City State)",
+          "Honduras",
+          "Hong Kong",
+          "Hungary",
+          "Iceland",
+          "India",
+          "Indonesia",
+          "Iran, Islamic Republic of",
+          "Iraq",
+          "Ireland",
+          "Isle of Man",
+          "Israel",
+          "Italy",
+          "Jamaica",
+          "Japan",
+          "Jersey",
+          "Jordan",
+          "Kazakhstan",
+          "Kenya",
+          "Kiribati",
+          "Korea, Democratic People's Republic of",
+          "Korea, Republic of",
+          "Kuwait",
+          "Kyrgyzstan",
+          "Lao People's Democratic Republic",
+          "Latvia",
+          "Lebanon",
+          "Lesotho",
+          "Liberia",
+          "Libya",
+          "Liechtenstein",
+          "Lithuania",
+          "Luxembourg",
+          "Macao",
+          "Macedonia, the former Yugoslav Republic of",
+          "Madagascar",
+          "Malawi",
+          "Malaysia",
+          "Maldives",
+          "Mali",
+          "Malta",
+          "Marshall Islands",
+          "Martinique",
+          "Mauritania",
+          "Mauritius",
+          "Mayotte",
+          "Mexico",
+          "Micronesia, Federated States of",
+          "Moldova, Republic of",
+          "Monaco",
+          "Mongolia",
+          "Montenegro",
+          "Montserrat",
+          "Morocco",
+          "Mozambique",
+          "Myanmar",
+          "Namibia",
+          "Nauru",
+          "Nepal",
+          "Netherlands",
+          "New Caledonia",
+          "New Zealand",
+          "Nicaragua",
+          "Niger",
+          "Nigeria",
+          "Niue",
+          "Norfolk Island",
+          "Northern Mariana Islands",
+          "Norway",
+          "Oman",
+          "Pakistan",
+          "Palau",
+          "Palestinian Territory, Occupied",
+          "Panama",
+          "Papua New Guinea",
+          "Paraguay",
+          "Peru",
+          "Philippines",
+          "Pitcairn",
+          "Poland",
+          "Portugal",
+          "Puerto Rico",
+          "Qatar",
+          "Réunion",
+          "Romania",
+          "Russian Federation",
+          "Rwanda",
+          "Saint Barthélemy",
+          "Saint Helena, Ascension and Tristan da Cunha",
+          "Saint Kitts and Nevis",
+          "Saint Lucia",
+          "Saint Martin (French part)",
+          "Saint Pierre and Miquelon",
+          "Saint Vincent and the Grenadines",
+          "Samoa",
+          "San Marino",
+          "Sao Tome and Principe",
+          "Saudi Arabia",
+          "Senegal",
+          "Serbia",
+          "Seychelles",
+          "Sierra Leone",
+          "Singapore",
+          "Sint Maarten (Dutch part)",
+          "Slovakia",
+          "Slovenia",
+          "Solomon Islands",
+          "Somalia",
+          "South Africa",
+          "South Georgia and the South Sandwich Islands",
+          "South Sudan",
+          "Spain",
+          "Sri Lanka",
+          "Sudan",
+          "Suriname",
+          "Svalbard and Jan Mayen",
+          "Swaziland",
+          "Sweden",
+          "Switzerland",
+          "Syrian Arab Republic",
+          "Taiwan, Province of China",
+          "Tajikistan",
+          "Tanzania, United Republic of",
+          "Thailand",
+          "Timor-Leste",
+          "Togo",
+          "Tokelau",
+          "Tonga",
+          "Trinidad and Tobago",
+          "Tunisia",
+          "Turkey",
+          "Turkmenistan",
+          "Turks and Caicos Islands",
+          "Tuvalu",
+          "Uganda",
+          "Ukraine",
+          "United Arab Emirates",
+          "United Kingdom",
+          "United States",
+          "United States Minor Outlying Islands",
+          "Uruguay",
+          "Uzbekistan",
+          "Vanuatu",
+          "Venezuela, Bolivarian Republic of",
+          "Viet Nam",
+          "Virgin Islands, British",
+          "Virgin Islands, U.S.",
+          "Wallis and Futuna",
+          "Western Sahara",
+          "Yemen",
+          "Zambia",
+          "Zimbabwe"
+        ]
+      }
+    ],
+    "tabs": [],
+    "bodyText": "Where to buy Get a notification about Qubino new manual releases, don't miss exciting news in smart home and stay updated with Qubino novelties. I agree to Qubino Privacy Policy Name Surname Country Select country Afghanistan Åland Islands Albania Algeria American Samoa Andorra Angola Anguilla Antarctica Antigua and Barbuda Argentina Armenia Aruba Australia Austria Azerbaijan Bahamas Bahrain Bangladesh Barbados Belarus Belgium Belize Benin Bermuda Bhutan Bolivia, Plurinational State of Bonaire, Sint Eustatius and Saba Bosnia and Herzegovina Botswana Bouvet Island Brazil British Indian Ocean Territory Brunei Darussalam Bulgaria Burkina Faso Burundi Cambodia Cameroon Canada Cape Verde Cayman Islands Central African Republic Chad Chile China Christmas Island Cocos (Keeling) Islands Colombia Comoros Congo Congo, the Democratic Republic of the Cook Islands Costa Rica Côte d'Ivoire Croatia Cuba Curaçao Cyprus Czech Republic Denmark Djibouti Dominica Dominican Republic Ecuador Egypt El Salvador Equatorial Guinea Eritrea Estonia Ethiopia Falkland Islands (Malvinas) Faroe Islands Fiji Finland France French Guiana French Polynesia French Southern Territories Gabon Gambia Georgia Germany Ghana Gibraltar Greece Greenland Grenada Guadeloupe Guam Guatemala Guernsey Guinea Guinea-Bissau Guyana Haiti Heard Island and McDonald Islands Holy See (Vatican City State) Honduras Hong Kong Hungary Iceland India Indonesia Iran, Islamic Republic of Iraq Ireland Isle of Man Israel Italy Jamaica Japan Jersey Jordan Kazakhstan Kenya Kiribati Korea, Democratic People's Republic of Korea, Republic of Kuwait Kyrgyzstan Lao People's Democratic Republic Latvia Lebanon Lesotho Liberia Libya Liechtenstein Lithuania Luxembourg Macao Macedonia, the former Yugoslav Republic of Madagascar Malawi Malaysia Maldives Mali Malta Marshall Islands Martinique Mauritania Mauritius Mayotte Mexico Micronesia, Federated States of Moldova, Republic of Monaco Mongolia Montenegro Montserrat Morocco Mozambique Myanmar Namibia Nauru Nepal Netherlands New Caledonia New Zealand Nicaragua Niger Nigeria Niue Norfolk Island Northern Mariana Islands Norway Oman Pakistan Palau Palestinian Territory, Occupied Panama Papua New Guinea Paraguay Peru Philippines Pitcairn Poland Portugal Puerto Rico Qatar Réunion Romania Russian Federation Rwanda Saint Barthélemy Saint Helena, Ascension and Tristan da Cunha Saint Kitts and Nevis Saint Lucia Saint Martin (French part) Saint Pierre and Miquelon Saint Vincent and the Grenadines Samoa San Marino Sao Tome and Principe Saudi Arabia Senegal Serbia Seychelles Sierra Leone Singapore Sint Maarten (Dutch part) Slovakia Slovenia Solomon Islands Somalia South Africa South Georgia and the South Sandwich Islands South Sudan Spain Sri Lanka Sudan Suriname Svalbard and Jan Mayen Swaziland Sweden Switzerland Syrian Arab Republic Taiwan, Province of China Tajikistan Tanzania, United Republic of Thailand Timor-Leste Togo Tokelau Tonga Trinidad and Tobago Tunisia Turkey Turkmenistan Turks and Caicos Islands Tuvalu Uganda Ukraine United Arab Emirates United Kingdom United States United States Minor Outlying Islands Uruguay Uzbekistan Vanuatu Venezuela, Bolivarian Republic of Viet Nam Virgin Islands, British Virgin Islands, U.S. Wallis and Futuna Western Sahara Yemen Zambia Zimbabwe E-mail recaptcha PROCEED TO DOWNLOADS ABOUT PRODUCTS WHERE TO BUY PARTNERSHIP CONTACT US Configurator EN Configurator SI Configurator IT Configurator FR Configurator ES Configurator NL Configurator DE Works With Support News Blog Downloads Partner Login Z-Wave Hub: Which One To Pick? [Full Guide 2020] MARCH 19, 2020 0 Smart shades are the new sexy NOVEMBER 8, 2021 0 If you go ten years back and think of mobile phones, you will remember there was a huge difference between a regular and a smartphone. Regular phones had smaller screens… Read More Dicover Qubino Webinar: Answers to Your Questions OCTOBER 18, 2021 0 In the last Qubino webinar, we were discovering the Qubino brand and the range of Qubino products. As some of the questions remained unanswered, we collected them in this blog… Read More Case Study: How Smart Technology Saved 24-Year-Old Skylights? SEPTEMBER 8, 2021 0 It’s never pleasant if something that is essential for safe and comfortable living in your house breaks down. The inconvenience is even greater, if the broken thing is, for example,… Read More Kako hitro in preprosto do pametnih senčil? MAY 5, 2021 0 Kupujete ali že imate motorna senčila in jih želite upravljati preko telefona? Ali še bolje, nastaviti uro in dan in vaša senčila se bodo samodejno dvigala in spuščala? Za navdih… Read More 5 Tips – How to Make Your Home Smart(er) for the Summer? JULY 2, 2020 0 What if this summer you wouldn’t have to worry about watering your lawn, cleaning your pool, keeping your home cool, etc. Sounds too good to be true? Well, the good… Read More Everything you need to know about Smart Dimmers – Full Guide [2020], Part 2 MAY 6, 2020 0 In the first part of the article, we’ve guided you through everything you need to know about dimming. Now that you’re already a »dimming expert«, turning your lights smart and… Read More Everything you need to know about dimmers – Full Guide [2020], Part 1 APRIL 30, 2020 0 The times when the lights were used only to illuminate the space are far gone. With dimmers and new lighting solutions coming to the market and with the different options… Read More Z-Wave: 9 Features That Make It Awesome OCTOBER 25, 2019 0 Smart houses are a prime example of how technology can directly improve our lives. The basic principle of any smart home is having all the devices and appliances do the… Read More Smart Appliances Can Make Your Everyday Easier OCTOBER 16, 2019 0 Household appliances are an essential part of our lives. Though we could go through our day without them, they make everything easier and more convenient. Sure, we wouldn’t die without… Read More Posts navigation PAGE 1 PAGE 2 PAGE 3 > © Qubino by GOAP / Privacy Policy Company Goap d.o.o. Nova Gorica Ulica Klementa Juga 7 5250 Solkan, Slovenia Phone +386 5 3359 500 Products Support Partners Login Where to buy Contacts News [caldera_form_modal id=\"CF5cb86ae8b924a\" width=\"1000\"]Downloads[/caldera_form_modal] Warranty T&C [mc4wp_form id=\"381\"]"
+  },
+  {
+    "name": "Dekor Senčila (Mosquito Net)",
+    "type": "Mosquito net",
+    "url": "https://dekorsencila.salesqueze.com/sl/public/form/komarnik",
+    "success": false,
+    "attempt": 2,
+    "error": "page.goto: Timeout 25000ms exceeded.\nCall log:\n\u001b[2m  - navigating to \"https://dekorsencila.salesqueze.com/sl/public/form/komarnik\", waiting until \"domcontentloaded\"\u001b[22m\n"
+  }
+]

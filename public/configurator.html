@@ -1,0 +1,2394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Canopy Studio — Outdoor living showroom</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = { theme: { extend: {
+    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'], serif: ['Instrument Serif','serif'] },
+    colors: { ink: { 50:'#fafaf9',100:'#f5f5f4',200:'#e7e5e4',300:'#d6d3d1',400:'#a8a29e',500:'#78716c',600:'#57534e',700:'#44403c',800:'#292524',900:'#1c1917',950:'#0c0a09' } },
+  }}}
+</script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+  html,body{font-family:'Inter',ui-sans-serif,system-ui,sans-serif;letter-spacing:-0.011em;-webkit-font-smoothing:antialiased}
+  .serif{font-family:'Instrument Serif',serif;letter-spacing:-0.02em}
+  .chip{transition:all .18s cubic-bezier(.2,.8,.2,1)}
+  .chip[aria-pressed="true"]{background:#1c1917;color:#fff;border-color:#1c1917}
+  .swatch{box-shadow:inset 0 0 0 1px rgba(0,0,0,.06), 0 2px 6px rgba(0,0,0,.04);transition:transform .18s,box-shadow .18s}
+  .swatch:hover{transform:translateY(-1px)}
+  .swatch[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #1c1917, 0 0 0 3px #fff, 0 0 0 5px #1c1917, 0 4px 12px rgba(0,0,0,.08)}
+  input[type=range]{-webkit-appearance:none;appearance:none;height:3px;background:linear-gradient(to right,#1c1917 var(--v,50%),#e7e5e4 var(--v,50%));border-radius:2px;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;border:2px solid #1c1917;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;cursor:pointer;border:2px solid #1c1917;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+  .accordion-content{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s cubic-bezier(.2,.8,.2,1)}
+  details[open] .accordion-content{grid-template-rows:1fr}
+  .accordion-content > div{overflow:hidden}
+  .scrollbar-thin::-webkit-scrollbar{width:6px}
+  .scrollbar-thin::-webkit-scrollbar-thumb{background:#d6d3d1;border-radius:3px}
+  details>summary{list-style:none;cursor:pointer;user-select:none}
+  details>summary::-webkit-details-marker{display:none}
+  details[open] .chev{transform:rotate(180deg)}
+  .chev{transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+  .fade-in{animation:fadeIn .4s ease both}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  .price-pulse{animation:pulse .5s ease}
+  @keyframes pulse{0%{transform:scale(1)}40%{transform:scale(1.04);color:#16a34a}100%{transform:scale(1)}}
+  #stage{background:#0e1116}
+  #stage canvas{display:block;width:100%;height:100%;cursor:grab}
+  #stage.grabbing canvas{cursor:grabbing}
+  .glass-bg{background:rgba(255,255,255,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .glass-dark{background:rgba(20,18,16,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+  .row-pop{animation:rowPop .3s ease both}
+  @keyframes rowPop{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+  .seg-btn{transition:all .2s ease}
+  .seg-btn[aria-pressed="true"]{background:#1c1917;color:#fff}
+  .pill{transition:transform .15s ease}
+  .pill:active{transform:scale(.96)}
+  .hover-lift{transition:transform .2s ease, box-shadow .2s ease}
+  .hover-lift:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .loader{position:fixed;inset:0;display:grid;place-items:center;background:#101418;z-index:80;transition:opacity .6s}
+  .loader.hidden{opacity:0;pointer-events:none}
+  .spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.15);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .prod-card{transition:transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s}
+  .prod-card:hover{transform:translateY(-4px);box-shadow:0 24px 48px -16px rgba(28,25,23,.25)}
+  .prod-card:hover .prod-cta{background:#1c1917;color:#fff}
+  .prod-thumb{aspect-ratio:3/2;background:linear-gradient(135deg,#dbe4ea,#c9bfa8);overflow:hidden}
+  .prod-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+  .prod-card:hover .prod-thumb img{transform:scale(1.05)}
+  .view{display:none}
+  .view.active{display:block}
+</style>
+</head>
+<body class="bg-ink-50 text-ink-900 min-h-screen">
+
+<!-- Boot loader -->
+<div class="loader" id="loader">
+  <div class="text-center">
+    <div class="spinner mx-auto mb-4"></div>
+    <div class="serif text-2xl text-white/90 mb-1">Canopy Studio</div>
+    <div class="text-[10px] uppercase tracking-[0.22em] text-white/50" id="loader-msg">Preparing showroom</div>
+  </div>
+</div>
+
+<!-- Header -->
+<header class="border-b border-ink-200 bg-white sticky top-0 z-30">
+  <div class="mx-auto max-w-[1700px] px-5 lg:px-7 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <button id="btn-home" class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-md bg-ink-900 grid place-items-center">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 11 12 4l9 7v10H3V11Z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="leading-tight text-left">
+          <div class="font-semibold tracking-tight text-[15px]">Canopy Studio</div>
+          <div class="text-[10px] uppercase tracking-[0.18em] text-ink-500">Outdoor living showroom</div>
+        </div>
+      </button>
+      <div id="crumb" class="hidden md:flex items-center gap-2 ml-4 text-xs text-ink-500">
+        <button id="btn-back-showroom" class="hidden hover:text-ink-900 underline-offset-2 hover:underline">Showroom</button>
+        <span id="crumb-sep" class="hidden">›</span>
+        <span id="crumb-product" class="text-ink-900 font-medium"></span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/#product-grid" target="_top" class="pill text-xs px-3 py-1.5 rounded-md border border-ink-200 hover:bg-ink-50 hidden sm:inline-flex items-center">Demo</a>
+      <a href="/sign-in" target="_top" class="pill text-xs px-3 py-1.5 rounded-md border border-ink-200 hover:bg-ink-50 hidden sm:inline-flex items-center">Sign in</a>
+      <a href="/sign-up" target="_top" class="pill text-xs px-3 py-1.5 rounded-md bg-ink-900 text-white hover:bg-black inline-flex items-center">Start free trial</a>
+      <span class="hidden sm:inline-block w-px h-5 bg-ink-200 mx-1"></span>
+      <button id="btn-share" class="pill text-xs px-3 py-1.5 rounded-md border border-ink-200 hover:bg-ink-50 hidden sm:flex items-center gap-1.5">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Share
+      </button>
+      <button id="btn-reset" class="pill text-xs px-3 py-1.5 rounded-md border border-ink-200 hover:bg-ink-50 hidden" data-configurator-only>Reset</button>
+      <button id="btn-quote-top" class="pill text-xs px-3 py-1.5 rounded-md bg-ink-900 text-white hover:bg-black hidden" data-configurator-only>Get quote →</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SHOWROOM VIEW ============ -->
+<div id="view-showroom" class="view active">
+  <section class="mx-auto max-w-[1280px] px-5 lg:px-7 pt-14 pb-10">
+    <div class="max-w-2xl">
+      <div class="text-[10px] uppercase tracking-[0.22em] text-ink-500 mb-3">Browse · Configure · Quote</div>
+      <h1 class="serif text-5xl lg:text-6xl leading-[1.05]">Design your outdoor room, <em>in real time.</em></h1>
+      <p class="text-sm text-ink-600 mt-4 leading-relaxed max-w-lg">Pick a structure below, then shape every detail in a live photoreal 3D scene — dimensions, roof, glazing, lighting — and watch the price build as you go.</p>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-[1280px] px-5 lg:px-7 pb-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="product-grid"><!-- cards injected --></div>
+
+    <div class="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-6 border-t border-ink-200 pt-8 text-[11px] text-ink-600">
+      <div class="flex items-start gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span><span class="font-medium text-ink-900 block">10-year warranty</span>structural aluminium frame</span></div>
+      <div class="flex items-start gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span><span class="font-medium text-ink-900 block">130 km/h wind rated</span>tested to EN 1090</span></div>
+      <div class="flex items-start gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span><span class="font-medium text-ink-900 block">Free UK survey</span>before any deposit</span></div>
+      <div class="flex items-start gap-2"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span><span class="font-medium text-ink-900 block">0% finance</span>on orders over £5,000</span></div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ CONFIGURATOR VIEW ============ -->
+<div id="view-configurator" class="view">
+<main class="mx-auto max-w-[1700px] grid grid-cols-12">
+
+  <!-- LEFT: options -->
+  <aside class="col-span-12 lg:col-span-3 border-r border-ink-200 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto scrollbar-thin bg-white">
+    <div class="p-6 border-b border-ink-100">
+      <div class="text-[10px] uppercase tracking-[0.18em] text-ink-500 mb-1.5">Configure</div>
+      <h2 class="serif text-3xl" id="panel-title">Pergola <em>Lux.</em></h2>
+      <p class="text-xs text-ink-500 mt-2 leading-relaxed">Drag the scene to orbit · scroll to zoom · changes render live.</p>
+    </div>
+
+    <details class="accordion border-b border-ink-100" open>
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Structure</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6">
+        <div class="grid grid-cols-2 gap-2" data-group="structure">
+          <button class="chip text-xs px-3 py-3 rounded-lg border border-ink-200 hover:bg-ink-50 flex flex-col items-center gap-2" data-value="freestanding" aria-pressed="true">
+            <svg width="34" height="22" viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h30M3 4v18M31 4v18"/></svg>
+            <span>Free-standing</span>
+          </button>
+          <button class="chip text-xs px-3 py-3 rounded-lg border border-ink-200 hover:bg-ink-50 flex flex-col items-center gap-2" data-value="wallmounted">
+            <svg width="34" height="22" viewBox="0 0 34 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2v20M2 4h30M31 4v18"/></svg>
+            <span>Wall-mounted</span>
+          </button>
+        </div>
+      </div></div>
+    </details>
+
+    <details class="accordion border-b border-ink-100" open>
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Frame finish</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6">
+        <div class="flex gap-3" data-group="frameColor">
+          <button class="swatch w-10 h-10 rounded-full" style="background:#3a3a3a" data-value="anthracite" aria-pressed="true" title="Anthracite"></button>
+          <button class="swatch w-10 h-10 rounded-full" style="background:#fafaf7" data-value="white" title="White"></button>
+          <button class="swatch w-10 h-10 rounded-full" style="background:#0d0d0d" data-value="black" title="Black"></button>
+          <button class="swatch w-10 h-10 rounded-full" style="background:#e8dcc4" data-value="cream" title="Cream"></button>
+        </div>
+        <p class="text-[11px] text-ink-500 mt-3 leading-relaxed" id="frame-color-label">Anthracite — matte powder-coated aluminium</p>
+      </div></div>
+    </details>
+
+    <details class="accordion border-b border-ink-100" open>
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Dimensions</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-5">
+        <div>
+          <div class="flex justify-between text-xs mb-2"><span class="text-ink-600">Width</span><span class="tabular-nums font-medium"><span id="length-val">5.0</span> m</span></div>
+          <input type="range" id="length" min="1" max="10" step="0.1" value="5" class="w-full"/>
+          <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>1 m</span><span>10 m</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-2"><span class="text-ink-600">Projection</span><span class="tabular-nums font-medium"><span id="depth-val">3.5</span> m</span></div>
+          <input type="range" id="depth" min="0.05" max="5" step="0.05" value="3.5" class="w-full"/>
+          <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>0.05 m</span><span>5 m</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-2"><span class="text-ink-600">Height</span><span class="tabular-nums font-medium"><span id="height-val">2.60</span> m</span></div>
+          <input type="range" id="height" min="2.0" max="3.5" step="0.05" value="2.6" class="w-full"/>
+          <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>2.0 m</span><span>3.5 m</span></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-ink-100">
+          <div class="text-[10px] uppercase tracking-wider text-ink-500">Footprint</div>
+          <div class="text-[10px] text-right tabular-nums font-medium" id="area-note">17.5 m²</div>
+        </div>
+      </div></div>
+    </details>
+
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="flex items-center gap-2"><span class="font-medium text-sm">Roof system</span><span class="text-[10px] px-1.5 py-0.5 rounded bg-ink-100 text-ink-600" id="roof-badge">Louvred</span></span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6">
+        <div class="grid grid-cols-1 gap-1.5" data-group="roof">
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="louvred-retract" aria-pressed="true"><span>Louvred — retractable</span><span class="text-[10px] text-ink-500">+£3,200</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="louvred-fixed"><span>Louvred — fixed angle</span><span class="text-[10px] text-ink-500">+£2,100</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="glass-flat"><span>Glass — flat</span><span class="text-[10px] text-ink-500">+£2,400</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="glass-sloped"><span>Glass — sloped</span><span class="text-[10px] text-ink-500">+£2,000</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="poly-sloped"><span>Polycarbonate — sloped</span><span class="text-[10px] text-ink-500">+£1,100</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="fabric-retract"><span>Fabric — retractable</span><span class="text-[10px] text-ink-500">+£950</span></button>
+          <button class="chip text-left text-xs px-3 py-2.5 rounded-lg border border-ink-200 hover:bg-ink-50 flex items-center justify-between" data-value="fabric-fixed"><span>Fabric — fixed</span><span class="text-[10px] text-ink-500">+£650</span></button>
+        </div>
+      </div></div>
+    </details>
+
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Walls & enclosures</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-4">
+        <p class="text-[11px] text-ink-500 leading-relaxed">Click a side on the plan to cycle treatments, or use the dropdowns.</p>
+        <div class="mx-auto w-full max-w-[200px] aspect-square relative">
+          <svg viewBox="0 0 200 200" class="w-full h-full">
+            <rect x="40" y="40" width="120" height="120" fill="#fafaf9" stroke="#d6d3d1" stroke-width="1"/>
+            <rect x="40" y="40" width="120" height="120" fill="none" stroke="#1c1917" stroke-width="1" stroke-dasharray="2 3" opacity=".3"/>
+            <text x="100" y="100" text-anchor="middle" font-size="9" fill="#a8a29e">PLAN</text>
+            <text x="100" y="115" text-anchor="middle" font-size="8" fill="#a8a29e" id="plan-dims">5.0 × 3.5 m</text>
+          </svg>
+          <button data-side="back" class="side-btn pill absolute top-0 left-1/2 -translate-x-1/2 text-[9px] font-medium px-2 py-1 rounded bg-white border border-ink-300 hover:border-ink-900 hover:bg-ink-900 hover:text-white transition">BACK · <span class="side-state">open</span></button>
+          <button data-side="front" class="side-btn pill absolute bottom-0 left-1/2 -translate-x-1/2 text-[9px] font-medium px-2 py-1 rounded bg-white border border-ink-300 hover:border-ink-900 hover:bg-ink-900 hover:text-white transition">FRONT · <span class="side-state">open</span></button>
+          <button data-side="left" class="side-btn pill absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 rotate-[-90deg] text-[9px] font-medium px-2 py-1 rounded bg-white border border-ink-300 hover:border-ink-900 hover:bg-ink-900 hover:text-white transition">LEFT · <span class="side-state">open</span></button>
+          <button data-side="right" class="side-btn pill absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rotate-90 text-[9px] font-medium px-2 py-1 rounded bg-white border border-ink-300 hover:border-ink-900 hover:bg-ink-900 hover:text-white transition">RIGHT · <span class="side-state">open</span></button>
+        </div>
+        <div class="space-y-2 text-xs">
+          <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-14">Front</span>
+            <select data-wall="front" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+              <option value="none">— open —</option><option value="sliding">Sliding glass doors (+£1,800)</option><option value="glass">Fixed glass wall (+£1,200)</option><option value="tinted">Tinted glass wall (+£1,400)</option><option value="alu">Aluminium panel (+£600)</option><option value="metal">Metal sheet lamellas (+£1,100)</option><option value="zip">Zip blind (+£450)</option><option value="screen">Screen rolo (+£520)</option><option value="louvre">Louvred panel (+£900)</option>
+            </select></label>
+          <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-14">Back</span>
+            <select data-wall="back" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+              <option value="none">— open —</option><option value="sliding">Sliding glass doors (+£1,800)</option><option value="glass">Fixed glass wall (+£1,200)</option><option value="tinted">Tinted glass wall (+£1,400)</option><option value="alu">Aluminium panel (+£600)</option><option value="metal">Metal sheet lamellas (+£1,100)</option><option value="zip">Zip blind (+£450)</option><option value="screen">Screen rolo (+£520)</option><option value="louvre">Louvred panel (+£900)</option>
+            </select></label>
+          <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-14">Left</span>
+            <select data-wall="left" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+              <option value="none">— open —</option><option value="sliding">Sliding glass doors (+£1,400)</option><option value="glass">Fixed glass wall (+£950)</option><option value="tinted">Tinted glass wall (+£1,100)</option><option value="alu">Aluminium panel (+£500)</option><option value="metal">Metal sheet lamellas (+£850)</option><option value="zip">Zip blind (+£380)</option><option value="screen">Screen rolo (+£430)</option><option value="louvre">Louvred panel (+£700)</option>
+            </select></label>
+          <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-14">Right</span>
+            <select data-wall="right" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+              <option value="none">— open —</option><option value="sliding">Sliding glass doors (+£1,400)</option><option value="glass">Fixed glass wall (+£950)</option><option value="tinted">Tinted glass wall (+£1,100)</option><option value="alu">Aluminium panel (+£500)</option><option value="metal">Metal sheet lamellas (+£850)</option><option value="zip">Zip blind (+£380)</option><option value="screen">Screen rolo (+£430)</option><option value="louvre">Louvred panel (+£700)</option>
+            </select></label>
+        </div>
+      </div></div>
+    </details>
+
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Add-ons</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-2">
+        <label class="hover-lift flex items-center justify-between gap-3 text-xs p-3 rounded-lg border border-ink-200 cursor-pointer"><span class="flex items-center gap-3"><input type="checkbox" data-addon="lighting" class="w-4 h-4 accent-ink-900"/><span>LED perimeter lighting</span></span><span class="text-[10px] text-ink-500">+£480</span></label>
+        <label class="hover-lift flex items-center justify-between gap-3 text-xs p-3 rounded-lg border border-ink-200 cursor-pointer"><span class="flex items-center gap-3"><input type="checkbox" data-addon="bar" class="w-4 h-4 accent-ink-900"/><span>Linear bar lights</span></span><span class="text-[10px] text-ink-500">+£380</span></label>
+        <label class="hover-lift flex items-center justify-between gap-3 text-xs p-3 rounded-lg border border-ink-200 cursor-pointer"><span class="flex items-center gap-3"><input type="checkbox" data-addon="heater" class="w-4 h-4 accent-ink-900"/><span>Infrared heating (×2)</span></span><span class="text-[10px] text-ink-500">+£720</span></label>
+        <label class="hover-lift flex items-center justify-between gap-3 text-xs p-3 rounded-lg border border-ink-200 cursor-pointer"><span class="flex items-center gap-3"><input type="checkbox" data-addon="speakers" class="w-4 h-4 accent-ink-900"/><span>Integrated ceiling speakers</span></span><span class="text-[10px] text-ink-500">+£540</span></label>
+      </div></div>
+    </details>
+
+    <!-- Slats advanced (louvred roofs only) -->
+    <details class="accordion border-b border-ink-100" id="acc-slats">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Slats advanced</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-4">
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-ink-500 mb-2">Slat direction</div>
+          <div class="grid grid-cols-2 gap-2" data-group="slatDirection">
+            <button class="chip text-xs px-3 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="width">Across width</button>
+            <button class="chip text-xs px-3 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="length">Along length</button>
+          </div>
+        </div>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-ink-500 mb-2">Slat tilt direction</div>
+          <div class="grid grid-cols-2 gap-2" data-group="slatRotation">
+            <button class="chip text-xs px-3 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="left">Tilt left</button>
+            <button class="chip text-xs px-3 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="right">Tilt right</button>
+          </div>
+        </div>
+        <label class="hover-lift flex items-center justify-between gap-3 text-xs p-3 rounded-lg border border-ink-200 cursor-pointer">
+          <span class="flex items-center gap-3"><input type="checkbox" id="slat-iso" class="w-4 h-4 accent-ink-900"/><span>Insulated slats</span></span>
+          <span class="text-[10px] text-ink-500">+£820</span>
+        </label>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-ink-500 mb-2">Slat colour</div>
+          <div class="flex gap-3" data-group="slatColor">
+            <button class="swatch w-8 h-8 rounded-full" style="background:#3a3a3a" data-value="anthracite" title="Anthracite"></button>
+            <button class="swatch w-8 h-8 rounded-full" style="background:#fafaf7" data-value="white" title="White"></button>
+            <button class="swatch w-8 h-8 rounded-full" style="background:#0d0d0d" data-value="black" title="Black"></button>
+            <button class="swatch w-8 h-8 rounded-full" style="background:#e8dcc4" data-value="cream" title="Cream"></button>
+          </div>
+          <p class="text-[10px] text-ink-500 mt-2 leading-relaxed" id="slat-color-label">Anthracite — matches structure</p>
+        </div>
+      </div></div>
+    </details>
+
+    <!-- Geometry advanced: overhang + angle -->
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Geometry advanced</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-5">
+        <div>
+          <div class="flex justify-between text-xs mb-2"><span class="text-ink-600">Roof overhang</span><span class="tabular-nums font-medium"><span id="overhang-val">0.20</span> m</span></div>
+          <input type="range" id="overhang" min="0" max="0.6" step="0.05" value="0.2" class="w-full"/>
+          <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>0 m</span><span>0.6 m</span></div>
+        </div>
+        <div>
+          <div class="flex justify-between text-xs mb-2"><span class="text-ink-600">Roof angle</span><span class="tabular-nums font-medium"><span id="angle-val">0</span>°</span></div>
+          <input type="range" id="angle" min="0" max="15" step="1" value="0" class="w-full"/>
+          <div class="flex justify-between text-[10px] text-ink-400 mt-1"><span>0°</span><span>15°</span></div>
+          <p class="text-[10px] text-ink-500 mt-2 leading-relaxed">Only applies to glass / polycarbonate roofs.</p>
+        </div>
+      </div></div>
+    </details>
+
+    <!-- Materials -->
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Materials</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-3 text-xs">
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-24">Cladding</span>
+          <select data-mat="cladding" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="none">— none —</option>
+            <option value="timber">Timber larch (+£1,200)</option>
+            <option value="cedar">Western red cedar (+£2,100)</option>
+            <option value="composite">Composite (+£1,800)</option>
+            <option value="pvc">PVC (+£900)</option>
+          </select></label>
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-24">Flooring</span>
+          <select data-mat="flooring" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="none">— existing patio —</option>
+            <option value="laminate">Laminate (+£600)</option>
+            <option value="tile">Porcelain tile (+£900)</option>
+            <option value="wood">Engineered wood (+£1,500)</option>
+            <option value="concrete">Polished concrete (+£400)</option>
+          </select></label>
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-24">Interior walls</span>
+          <select data-mat="interiorWalls" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="none">— no finish —</option>
+            <option value="plaster">Plastered (+£850)</option>
+            <option value="wood">Wood-panelled (+£1,200)</option>
+            <option value="paint">Painted plasterboard (+£600)</option>
+          </select></label>
+        <p class="text-[10px] text-ink-500 mt-2 leading-relaxed">Cladding and interior walls apply to enclosed builds (e.g. Garden Room).</p>
+      </div></div>
+    </details>
+
+    <!-- Smart features -->
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Smart features</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-3 text-xs">
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-24">Automation</span>
+          <select data-smart="automation" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="none">Manual</option>
+            <option value="basic">Motorised + remote (+£680)</option>
+            <option value="smart">Smart app + sensors (+£1,450)</option>
+            <option value="premium">Premium home-automation (+£2,600)</option>
+          </select></label>
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-24">Electrical</span>
+          <select data-smart="electrical" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="none">— no package —</option>
+            <option value="standard">Standard sockets + RCD (+£780)</option>
+            <option value="premium">Premium USB-C + zoned (+£1,650)</option>
+          </select></label>
+        <div>
+          <div class="text-[10px] uppercase tracking-wider text-ink-500 mb-2">Elements position</div>
+          <div class="grid grid-cols-3 gap-2" data-group="elementsPosition">
+            <button class="chip text-[11px] px-2 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="perimeter">Perimeter</button>
+            <button class="chip text-[11px] px-2 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="corners">Corners</button>
+            <button class="chip text-[11px] px-2 py-2 rounded-lg border border-ink-200 hover:bg-ink-50" data-value="centred">Centred</button>
+          </div>
+          <p class="text-[10px] text-ink-500 mt-2 leading-relaxed">Where lights, heaters, and speakers are placed.</p>
+        </div>
+      </div></div>
+    </details>
+
+    <!-- Service & delivery -->
+    <details class="accordion border-b border-ink-100">
+      <summary class="px-6 py-4 flex items-center justify-between hover:bg-ink-50/50">
+        <span class="font-medium text-sm">Service & delivery</span>
+        <svg class="chev text-ink-400" width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </summary>
+      <div class="accordion-content"><div class="px-6 pb-6 space-y-2 text-xs">
+        <label class="flex items-center justify-between gap-2"><span class="text-ink-600 w-20">Service tier</span>
+          <select data-smart="service" class="flex-1 px-2 py-1.5 rounded border border-ink-200 bg-white text-xs focus:outline-none focus:border-ink-900">
+            <option value="delivery">Delivery only (+£300)</option>
+            <option value="install">Standard installation (+£1,400)</option>
+            <option value="surveyInstall">Free survey + installation (+£1,900)</option>
+            <option value="premium">Premium install + 5-yr service (+£3,300)</option>
+          </select></label>
+      </div></div>
+    </details>
+
+    <div class="p-6 text-[10px] text-ink-500 leading-relaxed">
+      Scene is illustrative — exact finishes and proportions are confirmed with physical samples at your free survey.
+    </div>
+  </aside>
+
+  <!-- CENTER: WebGL stage -->
+  <section id="stage" class="col-span-12 lg:col-span-6 h-[60vh] lg:h-[calc(100vh-3.5rem)] relative overflow-hidden">
+    <canvas id="canvas3d"></canvas>
+
+    <div class="absolute top-4 left-4 right-4 z-10 flex items-start justify-between pointer-events-none">
+      <div class="flex flex-col gap-2 pointer-events-auto">
+        <div class="glass-bg rounded-xl p-1 border border-ink-200 inline-flex gap-0.5 shadow-sm" id="view-toggle">
+          <button data-view="iso" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg" aria-pressed="true">Orbit</button>
+          <button data-view="front" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg">Front</button>
+          <button data-view="side" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg">Side</button>
+          <button data-view="top" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg">Top</button>
+        </div>
+        <div class="glass-bg rounded-xl px-2 py-1.5 border border-ink-200 shadow-sm inline-flex items-center gap-1.5 text-[11px]">
+          <button id="btn-spin" class="pill text-[11px] px-2 py-1 rounded bg-ink-900 text-white">Auto-orbit</button>
+          <button id="btn-roof" class="pill text-[11px] px-2 py-1 rounded border border-ink-200 hover:bg-ink-50">Open roof</button>
+          <button id="btn-snap" class="pill text-[11px] px-2 py-1 rounded border border-ink-200 hover:bg-ink-50">Snapshot</button>
+        </div>
+      </div>
+      <div class="flex flex-col items-end gap-2 pointer-events-auto">
+        <div class="glass-bg rounded-xl p-1 border border-ink-200 shadow-sm inline-flex gap-0.5" id="time-presets">
+          <button data-time="13" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg" aria-pressed="true">Day</button>
+          <button data-time="19.2" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg">Sunset</button>
+          <button data-time="21.8" class="seg-btn text-[11px] px-3 py-1.5 rounded-lg">Night</button>
+        </div>
+        <div class="glass-bg rounded-xl px-3 py-2 border border-ink-200 shadow-sm flex items-center gap-2.5">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="#f59e0b"/><g stroke="#f59e0b" stroke-width="2" stroke-linecap="round"><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></g></svg>
+          <input type="range" id="time" min="5.5" max="22" step="0.1" value="13" class="w-28"/>
+          <span class="text-[11px] text-ink-600 w-10 tabular-nums" id="time-val">13:00</span>
+        </div>
+        <div class="glass-bg rounded-xl px-3 py-1.5 border border-ink-200 shadow-sm text-[11px] text-ink-500 flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+          <span>WebGL · <span id="fps">60</span> fps</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 pointer-events-none">
+      <div class="glass-bg rounded-xl px-4 py-3 border border-ink-200 shadow-sm pointer-events-auto max-w-md">
+        <div class="text-[10px] uppercase tracking-[0.18em] text-ink-500 mb-1">Your build</div>
+        <div class="font-medium text-sm" id="config-title">Custom canopy</div>
+        <div class="text-[11px] text-ink-600 mt-1 leading-relaxed" id="config-summary">5.0 × 3.5 m</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: summary -->
+  <aside class="col-span-12 lg:col-span-3 border-l border-ink-200 lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto scrollbar-thin bg-white flex flex-col">
+    <div class="p-6 border-b border-ink-100">
+      <div class="text-[10px] uppercase tracking-[0.18em] text-ink-500 mb-1.5">Summary</div>
+      <h2 class="serif text-3xl">Your <em>quote.</em></h2>
+    </div>
+    <div class="px-6 py-5 space-y-2.5 text-xs flex-1" id="summary-list"></div>
+    <div class="px-6 py-5 border-t border-ink-100 bg-ink-50/60">
+      <div class="flex items-baseline justify-between mb-1">
+        <span class="text-[10px] uppercase tracking-[0.18em] text-ink-500">Total</span>
+        <span class="text-[10px] text-ink-400">ex. VAT, ex. delivery</span>
+      </div>
+      <div class="flex items-baseline gap-1 tabular-nums"><span class="serif text-5xl tracking-tight" id="price-total">£0</span></div>
+      <div class="text-[10px] text-ink-500 mt-2 leading-relaxed">Indicative. Final price confirmed after free on-site survey.</div>
+    </div>
+    <div class="p-6 border-t border-ink-100 space-y-2">
+      <button id="btn-quote" class="pill w-full px-4 py-3 rounded-lg bg-ink-900 text-white text-sm font-medium hover:bg-black">Request detailed quote →</button>
+      <button id="btn-copy" class="pill w-full px-4 py-2.5 rounded-lg border border-ink-200 text-xs hover:bg-ink-50">Copy config link</button>
+    </div>
+    <div class="p-6 border-t border-ink-100 text-[11px] text-ink-600 grid grid-cols-2 gap-3">
+      <div class="flex items-start gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span>10-yr warranty</span></div>
+      <div class="flex items-start gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span>130 km/h wind rating</span></div>
+      <div class="flex items-start gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span>Free UK survey</span></div>
+      <div class="flex items-start gap-1.5"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" class="mt-0.5 shrink-0"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg><span>0% finance avail.</span></div>
+    </div>
+  </aside>
+</main>
+
+<div class="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-ink-200 px-4 py-3 flex items-center justify-between shadow-lg" data-configurator-only>
+  <div><div class="text-[10px] uppercase tracking-[0.18em] text-ink-500">Total</div><div class="serif text-2xl" id="price-total-mobile">£0</div></div>
+  <button id="btn-quote-mobile" class="pill px-4 py-2.5 rounded-lg bg-ink-900 text-white text-sm font-medium">Get quote →</button>
+</div>
+</div><!-- /view-configurator -->
+
+<!-- Quote modal -->
+<div id="quote-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+  <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+    <div class="flex items-start justify-between mb-4">
+      <div><h3 class="serif text-2xl">Request a quote</h3><p class="text-xs text-ink-500 mt-1">We'll send a fully priced spec within 1 working day.</p></div>
+      <button id="modal-close" class="text-ink-400 hover:text-ink-900"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2"/></svg></button>
+    </div>
+    <form id="quote-form" class="space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">First name</span><input required name="first" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"/></label>
+        <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">Last name</span><input required name="last" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"/></label>
+      </div>
+      <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">Email</span><input required type="email" name="email" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"/></label>
+      <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">Phone (optional)</span><input type="tel" name="phone" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"/></label>
+      <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">Postcode</span><input required name="postcode" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"/></label>
+      <label class="block"><span class="text-[10px] uppercase tracking-wider text-ink-600">Notes (optional)</span><textarea name="notes" rows="3" class="mt-1 w-full px-3 py-2 rounded-lg border border-ink-200 text-sm focus:outline-none focus:border-ink-900"></textarea></label>
+      <div class="bg-ink-50 rounded-lg p-3 text-[11px] text-ink-600">
+        <div class="text-[10px] uppercase tracking-wider text-ink-500 mb-1">Your configuration</div>
+        <div id="modal-config" class="leading-relaxed"></div>
+        <div class="mt-2 pt-2 border-t border-ink-200 flex justify-between"><span>Estimated total</span><span class="font-semibold text-ink-900" id="modal-price">£0</span></div>
+      </div>
+      <button type="submit" class="pill w-full px-4 py-3 rounded-lg bg-ink-900 text-white font-medium hover:bg-black text-sm">Send request</button>
+    </form>
+    <div id="quote-success" class="hidden text-center py-8">
+      <div class="w-14 h-14 mx-auto rounded-full bg-green-100 grid place-items-center mb-3"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="#16a34a" stroke-width="2.5"/></svg></div>
+      <h3 class="serif text-2xl">Request received.</h3><p class="text-xs text-ink-500 mt-1">We'll be in touch within 1 working day.</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="fixed bottom-20 lg:bottom-6 left-1/2 -translate-x-1/2 bg-ink-900 text-white text-sm px-4 py-2.5 rounded-lg shadow-lg opacity-0 pointer-events-none transition-opacity z-50"></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { Sky } from 'three/addons/objects/Sky.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+// =============================================================
+// CATALOG + PRICING (pricing unchanged)
+// =============================================================
+const FRAME_COLORS = {
+  anthracite:{hex:'#3a3a3a', label:'Anthracite — matte powder-coated aluminium', metalness:.3, roughness:.5},
+  white:     {hex:'#f5f3ec', label:'White — RAL 9016 powder-coated',             metalness:.05, roughness:.6},
+  black:     {hex:'#101010', label:'Black — matte powder-coated',                metalness:.4, roughness:.42},
+  cream:     {hex:'#e8dcc4', label:'Cream — RAL 9001 powder-coated',             metalness:.08, roughness:.6},
+};
+const ROOF = {
+  'louvred-retract':{label:'Louvred retractable roof',  short:'Louvred retract.', price:3200, perM2:180},
+  'louvred-fixed':  {label:'Louvred fixed-angle roof',  short:'Louvred fixed',    price:2100, perM2:130},
+  'glass-flat':     {label:'Flat glass roof',           short:'Flat glass',       price:2400, perM2:160},
+  'glass-sloped':   {label:'Sloped glass roof',         short:'Sloped glass',     price:2000, perM2:140},
+  'poly-sloped':    {label:'Sloped polycarbonate roof', short:'Sloped poly',      price:1100, perM2: 80},
+  'fabric-retract': {label:'Retractable fabric awning', short:'Fabric retract.',  price:950,  perM2:120},
+  'fabric-fixed':   {label:'Fixed fabric canopy',       short:'Fabric fixed',     price:650,  perM2: 90},
+};
+const WALL = {
+  none:    {label:'open',                   priceFB:0,    priceLR:0   },
+  sliding: {label:'sliding glass doors',    priceFB:1800, priceLR:1400},
+  glass:   {label:'fixed glass wall',       priceFB:1200, priceLR:950 },
+  tinted:  {label:'tinted glass wall',      priceFB:1400, priceLR:1100},
+  alu:     {label:'aluminium panel',        priceFB:600,  priceLR:500 },
+  metal:   {label:'metal sheet lamellas',   priceFB:1100, priceLR:850 },
+  zip:     {label:'zip blind',              priceFB:450,  priceLR:380 },
+  screen:  {label:'screen rolo',            priceFB:520,  priceLR:430 },
+  louvre:  {label:'louvred panel',          priceFB:900,  priceLR:700 },
+};
+const ADDONS = {
+  lighting:{label:'LED perimeter lighting', price:480},
+  bar:     {label:'Linear bar lights',      price:380},
+  heater:  {label:'Infrared heating (×2)',  price:720},
+  speakers:{label:'Ceiling speakers',       price:540},
+};
+
+// ============== SaleSqueze-parity option dictionaries ==============
+const SLAT_COLORS = FRAME_COLORS; // re-use palette for slats
+const CLADDING = {
+  none:     {label:'No cladding',                price:0,    hex:'#ddd3c2'},
+  timber:   {label:'Timber larch cladding',      price:1200, hex:'#a67a47'},
+  cedar:    {label:'Western red cedar cladding', price:2100, hex:'#7b4a32'},
+  composite:{label:'Composite cladding',         price:1800, hex:'#5e5247'},
+  pvc:      {label:'PVC cladding',               price:900,  hex:'#e8e4dc'},
+};
+const FLOORING = {
+  none:    {label:'No flooring (existing patio)', price:0   },
+  laminate:{label:'Laminate flooring',            price:600 },
+  tile:    {label:'Porcelain tile',               price:900 },
+  wood:    {label:'Engineered wood',              price:1500},
+  concrete:{label:'Polished concrete',            price:400 },
+};
+const INTERIOR_WALLS = {
+  none:   {label:'No interior finish', price:0   },
+  plaster:{label:'Plastered walls',    price:850 },
+  wood:   {label:'Wood-panelled walls',price:1200},
+  paint:  {label:'Painted plasterboard',price:600},
+};
+const AUTOMATION = {
+  none:   {label:'Manual control',            price:0   },
+  basic:  {label:'Motorised roof + remote',   price:680 },
+  smart:  {label:'Smart app + sensors',       price:1450},
+  premium:{label:'Premium home-automation kit',price:2600},
+};
+const ELECTRICAL = {
+  none:    {label:'No electrical package',     price:0   },
+  standard:{label:'Standard sockets + RCD',    price:780 },
+  premium: {label:'Premium (USB-C + zoned)',   price:1650},
+};
+const SERVICE = {
+  delivery:       {label:'Delivery only',                  price:300 },
+  install:        {label:'Standard installation',          price:1400},
+  surveyInstall:  {label:'Free survey + installation',     price:1900},
+  premium:        {label:'Premium install + 5-yr service', price:3300},
+};
+const ROOF_DIR  = { width:'Width', length:'Length' };
+const ROOF_ROT  = { left:'Left tilt', right:'Right tilt' };
+
+const PRODUCTS = {
+  pergola:{ name:'Pergola Lux', em:'Lux', tagline:'Free-standing louvred pergola with motorised slats',
+    preset:{structure:'freestanding', roof:'louvred-retract', length:5, depth:3.5, overhang:0.2,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'none',back:'none',left:'none',right:'none'},
+      addons:{lighting:true,bar:false,heater:false,speakers:false},
+      cladding:'none', flooring:'none', interiorWalls:'none',
+      automation:'basic', electrical:'standard', service:'install',
+      elementsPosition:'perimeter', angle:0
+    } },
+  veranda:{ name:'Veranda Glass', em:'Glass', tagline:'Wall-mounted glass veranda with side glazing',
+    preset:{structure:'wallmounted', roof:'glass-sloped', length:5, depth:3, overhang:0.15,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'none',back:'none',left:'glass',right:'glass'},
+      addons:{lighting:false,bar:true,heater:true,speakers:false},
+      cladding:'none', flooring:'none', interiorWalls:'none',
+      automation:'basic', electrical:'standard', service:'surveyInstall',
+      elementsPosition:'corners', angle:8} },
+  carport:{ name:'Carport Pro', em:'Pro', tagline:'Sheltered parking with polycarbonate canopy', scene:'car',
+    preset:{structure:'freestanding', roof:'poly-sloped', length:5.5, depth:4, overhang:0.3,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'none',back:'alu',left:'none',right:'none'},
+      addons:{lighting:false,bar:false,heater:false,speakers:false},
+      cladding:'none', flooring:'concrete', interiorWalls:'none',
+      automation:'none', electrical:'standard', service:'delivery',
+      elementsPosition:'perimeter', angle:5} },
+  studio:{ name:'Garden Room', em:'Room', tagline:'Fully enclosed outdoor room, glazed front',
+    preset:{structure:'freestanding', roof:'glass-flat', length:4.5, depth:3.5, overhang:0.25,
+      slatDirection:'width', slatRotation:'left', slatIsolation:true, slatColor:'anthracite',
+      walls:{front:'sliding',back:'alu',left:'alu',right:'glass'},
+      addons:{lighting:true,bar:false,heater:false,speakers:true},
+      cladding:'cedar', flooring:'wood', interiorWalls:'plaster',
+      automation:'smart', electrical:'premium', service:'premium',
+      elementsPosition:'centred', angle:0} },
+
+  awning:{ name:'Awning Flex', em:'Flex', tagline:'Wall-mounted retractable fabric awning', scene:'awning',
+    preset:{structure:'wallmounted', roof:'fabric-retract', length:3.5, depth:2.2, overhang:0,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'none',back:'none',left:'none',right:'none'},
+      addons:{lighting:false,bar:true,heater:false,speakers:false},
+      cladding:'none', flooring:'none', interiorWalls:'none',
+      automation:'basic', electrical:'standard', service:'install',
+      elementsPosition:'perimeter', angle:12} },
+
+  container:{ name:'Container Studio', em:'Studio', tagline:'Converted shipping container garden room', scene:'container',
+    preset:{structure:'freestanding', roof:'glass-flat', length:6.05, depth:2.44, overhang:0,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'sliding',back:'alu',left:'alu',right:'glass'},
+      addons:{lighting:true,bar:false,heater:true,speakers:false},
+      cladding:'composite', flooring:'laminate', interiorWalls:'plaster',
+      automation:'smart', electrical:'premium', service:'surveyInstall',
+      elementsPosition:'centred', angle:0} },
+
+  fence:{ name:'Fence Line', em:'Line', tagline:'Composite slatted boundary fence', scene:'fence',
+    preset:{structure:'freestanding', roof:'louvred-fixed', length:6, depth:0.06, overhang:0,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'louvre',back:'louvre',left:'none',right:'none'},
+      addons:{lighting:false,bar:false,heater:false,speakers:false},
+      cladding:'composite', flooring:'none', interiorWalls:'none',
+      automation:'none', electrical:'none', service:'install',
+      elementsPosition:'perimeter', angle:0} },
+
+  garage:{ name:'Garage Door Pro', em:'Pro', tagline:'Sectional insulated garage door', scene:'garage',
+    preset:{structure:'wallmounted', roof:'glass-flat', length:3.0, depth:0.25, overhang:0,
+      slatDirection:'width', slatRotation:'left', slatIsolation:true, slatColor:'anthracite',
+      walls:{front:'metal',back:'none',left:'none',right:'none'},
+      addons:{lighting:true,bar:false,heater:false,speakers:false},
+      cladding:'none', flooring:'concrete', interiorWalls:'none',
+      automation:'basic', electrical:'standard', service:'install',
+      elementsPosition:'corners', angle:0} },
+
+  glassroom:{ name:'Glass Room', em:'Room', tagline:'Fully glazed sunroom enclosure',
+    preset:{structure:'freestanding', roof:'glass-flat', length:5, depth:3.5, overhang:0.2,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'sliding',back:'glass',left:'glass',right:'glass'},
+      addons:{lighting:true,bar:false,heater:true,speakers:false},
+      cladding:'none', flooring:'tile', interiorWalls:'none',
+      automation:'smart', electrical:'premium', service:'surveyInstall',
+      elementsPosition:'perimeter', angle:0} },
+
+  enclosure:{ name:'Pool Enclosure', em:'Enclosure', tagline:'Retractable glazed pool/spa cover',
+    preset:{structure:'freestanding', roof:'glass-sloped', length:6, depth:4, overhang:0.1,
+      slatDirection:'width', slatRotation:'left', slatIsolation:false, slatColor:'anthracite',
+      walls:{front:'sliding',back:'glass',left:'glass',right:'glass'},
+      addons:{lighting:true,bar:false,heater:false,speakers:false},
+      cladding:'none', flooring:'tile', interiorWalls:'none',
+      automation:'smart', electrical:'standard', service:'install',
+      elementsPosition:'perimeter', angle:10} },
+};
+
+const DEFAULT_STATE = {
+  product:'pergola',
+  structure:'freestanding', frameColor:'anthracite', slatColor:'anthracite',
+  length:5.0, depth:3.5, height:2.6, overhang:0.2, angle:0,
+  roof:'louvred-retract',
+  slatDirection:'width', slatRotation:'left', slatIsolation:false,
+  walls:{front:'none',back:'none',left:'none',right:'none'},
+  addons:{lighting:false,bar:false,heater:false,speakers:false},
+  cladding:'none', flooring:'none', interiorWalls:'none',
+  automation:'none', electrical:'none', service:'install',
+  elementsPosition:'perimeter',
+
+  view:'iso', time:13, spin:false, roofOpen:false,
+};
+let state = structuredClone(DEFAULT_STATE);
+let prevSubtotal = 0;
+
+const $ =(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(s instanceof Element ? s.querySelectorAll(r) : document.querySelectorAll(s));
+const fmt = n => n.toLocaleString('en-GB');
+const cap = s => s[0].toUpperCase()+s.slice(1);
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp = (a,b,t)=>a+(b-a)*t;
+
+function priceBreakdown(st=state){
+  const items=[]; const area = st.length*st.depth;
+  items.push({label:`Base (${st.structure==='wallmounted'?'wall-mounted':'free-standing'})`, value: st.structure==='wallmounted'?1800:2200});
+  const roof = ROOF[st.roof];
+  items.push({label:`${roof.label} · ${area.toFixed(1)} m²`, value: roof.price + Math.round(roof.perM2*area)});
+  // Slat upgrades (louvred roofs only)
+  if (st.roof.startsWith('louvred') && st.slatIsolation) items.push({label:'Insulated slats', value: 820});
+  if (st.slatColor !== st.frameColor) items.push({label:`Two-tone slat colour (${FRAME_COLORS[st.slatColor].label.split(' — ')[0]})`, value: 240});
+  // Overhang
+  if (st.overhang > 0.05) items.push({label:`Roof overhang (+${st.overhang.toFixed(2)} m)`, value: Math.round(st.overhang * 380 * Math.max(st.length, st.depth))});
+  // Walls (per side)
+  for(const side of ['front','back','left','right']){
+    const w = st.walls[side]; if(w==='none') continue;
+    items.push({label:`${cap(side)}: ${WALL[w].label}`, value:(side==='front'||side==='back')?WALL[w].priceFB:WALL[w].priceLR});
+  }
+  // Materials
+  if (st.cladding !== 'none')       items.push({label: CLADDING[st.cladding].label,      value: CLADDING[st.cladding].price});
+  if (st.flooring !== 'none')       items.push({label: FLOORING[st.flooring].label,      value: FLOORING[st.flooring].price});
+  if (st.interiorWalls !== 'none')  items.push({label: INTERIOR_WALLS[st.interiorWalls].label, value: INTERIOR_WALLS[st.interiorWalls].price});
+  // Add-ons
+  for(const k in ADDONS){ if(st.addons[k]) items.push({label:ADDONS[k].label, value:ADDONS[k].price}); }
+  // Smart features
+  if (st.automation !== 'none')     items.push({label: AUTOMATION[st.automation].label,  value: AUTOMATION[st.automation].price});
+  if (st.electrical !== 'none')     items.push({label: ELECTRICAL[st.electrical].label,  value: ELECTRICAL[st.electrical].price});
+  // Service tier (replaces simple "install" addon when not "install")
+  if (st.service && SERVICE[st.service])
+    items.push({label: SERVICE[st.service].label, value: SERVICE[st.service].price});
+  // Oversize premium
+  if(st.length>5) items.push({label:'Oversize structural premium', value: Math.round((st.length-5)*320)});
+  const subtotal = items.reduce((s,i)=>s+i.value,0);
+  return {items, subtotal};
+}
+
+function applyPreset(productId){
+  const p = PRODUCTS[productId].preset;
+  state = structuredClone(DEFAULT_STATE);
+  state.product = productId;
+  Object.assign(state, structuredClone(p));
+}
+
+// =============================================================
+// RENDERER + POST-PROCESSING
+// =============================================================
+const canvas = $('#canvas3d');
+const stage = $('#stage');
+
+const renderer = new THREE.WebGLRenderer({canvas, antialias:false, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.9;
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0xdde4ea, 35, 120);
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 2000);
+camera.position.set(9, 5, 9);
+
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
+controls.dampingFactor = 0.07;
+controls.minDistance = 3.5;
+controls.maxDistance = 30;
+controls.maxPolarAngle = Math.PI/2 - 0.03;
+controls.target.set(0, 1.2, 0);
+
+// Post chain: render → bloom → output
+const rtSamples = renderer.capabilities.isWebGL2 ? 4 : 0;
+const composerRT = new THREE.WebGLRenderTarget(1,1,{samples:rtSamples, type:THREE.HalfFloatType});
+const composer = new EffectComposer(renderer, composerRT);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(1024,1024), 0.12, 0.4, 0.9);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+// =============================================================
+// SKY + LIGHTS + STARS
+// =============================================================
+const sky = new Sky();
+sky.scale.setScalar(1000);
+scene.add(sky);
+const skyU = sky.material.uniforms;
+skyU.turbidity.value = 6;
+skyU.rayleigh.value = 1.6;
+skyU.mieCoefficient.value = 0.004;
+skyU.mieDirectionalG.value = 0.85;
+
+const sunLight = new THREE.DirectionalLight(0xfff2dc, 1.6);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.set(2048, 2048);
+sunLight.shadow.camera.near = 1; sunLight.shadow.camera.far = 80;
+sunLight.shadow.camera.left=-13; sunLight.shadow.camera.right=13;
+sunLight.shadow.camera.top=13;  sunLight.shadow.camera.bottom=-13;
+sunLight.shadow.bias = -0.0002;
+sunLight.shadow.normalBias = 0.025;
+scene.add(sunLight);
+
+const moonLight = new THREE.DirectionalLight(0x8fa8d8, 0);
+moonLight.position.set(-8, 12, -6);
+scene.add(moonLight);
+
+const hemi = new THREE.HemisphereLight(0xcfe0f4, 0x8a7c66, 0.45);
+scene.add(hemi);
+const ambient = new THREE.AmbientLight(0xffffff, 0.18);
+scene.add(ambient);
+
+// Stars
+const starGeo = new THREE.BufferGeometry();
+{
+  const N = 900, pos = new Float32Array(N*3);
+  for (let i=0;i<N;i++){
+    const r = 400, th = Math.random()*Math.PI*2, ph = Math.random()*Math.PI*0.48;
+    pos[i*3]   = r*Math.sin(ph)*Math.cos(th);
+    pos[i*3+1] = r*Math.cos(ph) + 10;
+    pos[i*3+2] = r*Math.sin(ph)*Math.sin(th);
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+}
+const starMat = new THREE.PointsMaterial({color:0xffffff, size:1.1, sizeAttenuation:false, transparent:true, opacity:0, fog:false});
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+// =============================================================
+// PROCEDURAL TEXTURES
+// =============================================================
+function canvasTex(draw, w=512, h=512, repeat=[1,1], srgb=true){
+  const c = document.createElement('canvas'); c.width=w; c.height=h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(...repeat);
+  t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+const grassTex = canvasTex((g,w,h)=>{
+  g.fillStyle='#4d6b35'; g.fillRect(0,0,w,h);
+  for(let i=0;i<14000;i++){
+    const x=Math.random()*w, y=Math.random()*h;
+    const v=Math.random();
+    g.fillStyle = v<0.33 ? '#42602c' : v<0.66 ? '#587a3c' : '#637f45';
+    g.fillRect(x,y,1.6,2.6);
+  }
+  for(let i=0;i<60;i++){ // patches
+    const x=Math.random()*w, y=Math.random()*h, r=10+Math.random()*40;
+    g.fillStyle = `rgba(${60+Math.random()*30|0},${90+Math.random()*25|0},${40+Math.random()*20|0},0.12)`;
+    g.beginPath(); g.arc(x,y,r,0,7); g.fill();
+  }
+}, 512, 512, [16,16]);
+
+const paverTex = canvasTex((g,w,h)=>{
+  g.fillStyle='#6e6258'; g.fillRect(0,0,w,h);
+  const cols=4, rows=4, tw=w/cols, th=h/rows;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const l = 158+Math.random()*26|0;
+    g.fillStyle=`rgb(${l},${l-7},${l-16})`;
+    g.fillRect(c*tw+3, r*th+3, tw-6, th-6);
+    for(let i=0;i<160;i++){
+      g.fillStyle = `rgba(0,0,0,${Math.random()*0.07})`;
+      g.fillRect(c*tw+4+Math.random()*(tw-8), r*th+4+Math.random()*(th-8), 1.5, 1.5);
+    }
+  }
+}, 512, 512, [1,1]);
+
+const woodTex = canvasTex((g,w,h)=>{
+  g.fillStyle='#8a6a44'; g.fillRect(0,0,w,h);
+  const planks=6, ph=h/planks;
+  for(let p=0;p<planks;p++){
+    const l = 120+Math.random()*30|0;
+    g.fillStyle=`rgb(${l+20},${l-10},${l-50})`;
+    g.fillRect(0, p*ph+2, w, ph-4);
+    g.strokeStyle='rgba(60,38,20,0.45)';
+    for(let i=0;i<9;i++){
+      g.lineWidth = 0.6+Math.random();
+      g.beginPath();
+      const y = p*ph + 4 + Math.random()*(ph-8);
+      g.moveTo(0, y);
+      g.bezierCurveTo(w*0.3, y+(Math.random()*6-3), w*0.6, y+(Math.random()*6-3), w, y+(Math.random()*4-2));
+      g.stroke();
+    }
+  }
+}, 512, 512, [2,2]);
+
+const plasterTex = canvasTex((g,w,h)=>{
+  g.fillStyle='#ddd3c2'; g.fillRect(0,0,w,h);
+  for(let i=0;i<9000;i++){
+    g.fillStyle=`rgba(${Math.random()<0.5?255:90},${Math.random()<0.5?250:80},${Math.random()<0.5?240:70},${Math.random()*0.05})`;
+    g.fillRect(Math.random()*w, Math.random()*h, 2, 2);
+  }
+}, 512, 512, [3,2]);
+
+const contactTex = canvasTex((g,w,h)=>{
+  const r = g.createRadialGradient(w/2,h/2,10, w/2,h/2,w/2);
+  r.addColorStop(0,'rgba(0,0,0,0.85)');
+  r.addColorStop(0.6,'rgba(0,0,0,0.35)');
+  r.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=r; g.fillRect(0,0,w,h);
+}, 256, 256, [1,1], false);
+
+// =============================================================
+// STATIC ENVIRONMENT (lawn, hedges, trees, tufts)
+// =============================================================
+const envGroup = new THREE.Group();
+scene.add(envGroup);
+
+const lawn = new THREE.Mesh(new THREE.PlaneGeometry(160,160), new THREE.MeshStandardMaterial({map:grassTex, roughness:1, metalness:0, color:0xbcc9a8}));
+lawn.rotation.x = -Math.PI/2;
+lawn.receiveShadow = true;
+envGroup.add(lawn);
+
+function jitterGeo(geo, amt){
+  const p = geo.attributes.position;
+  for (let i=0;i<p.count;i++){
+    p.setXYZ(i, p.getX(i)+(Math.random()-0.5)*amt, p.getY(i)+(Math.random()-0.5)*amt, p.getZ(i)+(Math.random()-0.5)*amt);
+  }
+  geo.computeVertexNormals();
+  return geo;
+}
+const hedgeMat = new THREE.MeshStandardMaterial({color:0x3c5a30, roughness:0.95});
+function hedge(len, x, z, rotY=0){
+  const m = new THREE.Mesh(jitterGeo(new THREE.BoxGeometry(len,1.25,0.85, Math.round(len*2),4,3), 0.09), hedgeMat);
+  m.position.set(x, 0.62, z);
+  m.rotation.y = rotY;
+  m.castShadow = true; m.receiveShadow = true;
+  envGroup.add(m);
+}
+hedge(26, 0, -12);
+hedge(26, 0, 13.5);
+hedge(25, -13, 0.5, Math.PI/2);
+hedge(25, 13.5, 0.5, Math.PI/2);
+
+const trunkMat = new THREE.MeshStandardMaterial({color:0x5d4731, roughness:0.9});
+const leafMat = new THREE.MeshStandardMaterial({color:0x4a6b38, roughness:0.95});
+const leafMat2 = new THREE.MeshStandardMaterial({color:0x3d5e2e, roughness:0.95});
+function tree(x, z, s=1, conifer=false){
+  const g = new THREE.Group();
+  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.09*s, 0.16*s, 1.4*s, 8), trunkMat);
+  trunk.position.y = 0.7*s; trunk.castShadow = true;
+  g.add(trunk);
+  if (conifer){
+    for (let i=0;i<3;i++){
+      const cone = new THREE.Mesh(new THREE.ConeGeometry((1.1-i*0.28)*s, 1.3*s, 9), i%2?leafMat:leafMat2);
+      cone.position.y = (1.5 + i*0.75)*s;
+      cone.castShadow = true;
+      g.add(cone);
+    }
+  } else {
+    for (let i=0;i<4;i++){
+      const ball = new THREE.Mesh(jitterGeo(new THREE.SphereGeometry((0.85+Math.random()*0.35)*s, 10, 8), 0.12), i%2?leafMat:leafMat2);
+      ball.position.set((Math.random()-0.5)*0.9*s, (2+Math.random()*0.8)*s, (Math.random()-0.5)*0.9*s);
+      ball.castShadow = true;
+      g.add(ball);
+    }
+  }
+  g.position.set(x, 0, z);
+  envGroup.add(g);
+}
+tree(-10.5, -10, 1.35); tree(11, -10.5, 1.1, true); tree(-11, 8, 1.0, true); tree(10.5, 9.5, 1.25); tree(-7, -11, 0.85); tree(6.5, -11.2, 0.95, true);
+
+// Grass tufts (instanced)
+{
+  const tuftGeo = new THREE.ConeGeometry(0.035, 0.24, 4);
+  const tuftMat = new THREE.MeshStandardMaterial({color:0x55793f, roughness:1});
+  const N = 350;
+  const inst = new THREE.InstancedMesh(tuftGeo, tuftMat, N);
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler();
+  let placed = 0, guard = 0;
+  while (placed < N && guard++ < 4000){
+    const x = (Math.random()-0.5)*22, z = (Math.random()-0.5)*22;
+    if (Math.abs(x) < 4.6 && Math.abs(z) < 3.6) continue; // keep patio clear
+    e.set((Math.random()-0.5)*0.3, Math.random()*Math.PI, (Math.random()-0.5)*0.3);
+    q.setFromEuler(e);
+    const s = 0.7 + Math.random()*1.1;
+    m4.compose(new THREE.Vector3(x, 0.1*s, z), q, new THREE.Vector3(s, s, s));
+    inst.setMatrixAt(placed++, m4);
+  }
+  inst.count = placed;
+  envGroup.add(inst);
+}
+
+// Stepping stones path
+{
+  const stoneMat = new THREE.MeshStandardMaterial({color:0xb6aa97, roughness:0.9});
+  for (let i=0;i<6;i++){
+    const s = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.36, 0.05, 10), stoneMat);
+    s.position.set(0.3 + Math.sin(i*0.7)*0.5, 0.025, 3.2 + i*0.9);
+    s.receiveShadow = true; s.castShadow = true;
+    envGroup.add(s);
+  }
+}
+
+// =============================================================
+// DYNAMIC GROUPS
+// =============================================================
+const canopyGroup = new THREE.Group();
+scene.add(canopyGroup);
+
+// Patio pad (textured pavers)
+const padMat = new THREE.MeshStandardMaterial({map:paverTex, roughness:0.85, metalness:0});
+const pad = new THREE.Mesh(new THREE.PlaneGeometry(1,1), padMat);
+pad.rotation.x = -Math.PI/2;
+pad.position.y = 0.008;
+pad.receiveShadow = true;
+scene.add(pad);
+
+// Contact shadow
+const contact = new THREE.Mesh(new THREE.PlaneGeometry(1,1), new THREE.MeshBasicMaterial({map:contactTex, transparent:true, opacity:0.34, depthWrite:false}));
+contact.rotation.x = -Math.PI/2;
+contact.position.y = 0.012;
+scene.add(contact);
+
+// Registries (rebuilt each buildCanopy)
+let louvreSlats = [];
+let ledMeshes = [];
+let glowLights = [];
+let heaterEmitters = [];
+let bollardLights = [];
+
+const matCache = new Map();
+function frameMaterial(){
+  const c = FRAME_COLORS[state.frameColor];
+  const key = `frame-${state.frameColor}`;
+  if (matCache.has(key)) return matCache.get(key);
+  const m = new THREE.MeshStandardMaterial({color:new THREE.Color(c.hex), roughness:c.roughness, metalness:c.metalness});
+  matCache.set(key, m); return m;
+}
+function slatMaterial(){
+  const c = FRAME_COLORS[state.slatColor];
+  const key = `slat-${state.slatColor}`;
+  if (matCache.has(key)) return matCache.get(key);
+  const m = new THREE.MeshStandardMaterial({color:new THREE.Color(c.hex), roughness:c.roughness, metalness:c.metalness});
+  matCache.set(key, m); return m;
+}
+function glassMaterial(){
+  if (matCache.has('glass')) return matCache.get('glass');
+  const m = new THREE.MeshPhysicalMaterial({color:0xf2fafc, transmission:0.95, roughness:0.03, ior:1.5, thickness:0.06, transparent:true, opacity:0.45, reflectivity:0.6, clearcoat:0.6, clearcoatRoughness:0.08, side:THREE.DoubleSide});
+  matCache.set('glass', m); return m;
+}
+function tintedGlassMaterial(){
+  if (matCache.has('tintedGlass')) return matCache.get('tintedGlass');
+  const m = new THREE.MeshPhysicalMaterial({color:0x1c2a30, transmission:0.55, roughness:0.06, ior:1.5, thickness:0.06, transparent:true, opacity:0.78, reflectivity:0.7, clearcoat:0.6, clearcoatRoughness:0.1, side:THREE.DoubleSide});
+  matCache.set('tintedGlass', m); return m;
+}
+function metalLamellaMaterial(){
+  if (matCache.has('metalLam')) return matCache.get('metalLam');
+  const c = FRAME_COLORS[state.frameColor];
+  const m = new THREE.MeshStandardMaterial({color:new THREE.Color(c.hex).multiplyScalar(0.85), roughness:0.32, metalness:0.85, side:THREE.DoubleSide});
+  matCache.set('metalLam', m); return m;
+}
+function screenRoloMaterial(){
+  if (matCache.has('screenRolo')) return matCache.get('screenRolo');
+  const m = new THREE.MeshStandardMaterial({color:0x504a42, roughness:0.85, metalness:0.05, side:THREE.DoubleSide, transparent:true, opacity:0.86});
+  matCache.set('screenRolo', m); return m;
+}
+function claddingMaterial(){
+  const k = state.cladding;
+  if (k==='none') return null;
+  const key = `clad-${k}`;
+  if (matCache.has(key)) return matCache.get(key);
+  const base = CLADDING[k].hex;
+  const m = new THREE.MeshStandardMaterial({color:new THREE.Color(base), roughness:0.78, metalness:0.02, map: k==='timber'||k==='cedar' ? woodTex : (k==='composite' ? plasterTex : null)});
+  matCache.set(key, m); return m;
+}
+function flooringMaterial(){
+  const k = state.flooring;
+  if (k==='none') return null;
+  const key = `floor-${k}`;
+  if (matCache.has(key)) return matCache.get(key);
+  const conf = {
+    laminate:{color:0xc9a574, map:woodTex, rough:0.45},
+    tile:    {color:0xe0d9cb, map:plasterTex, rough:0.35},
+    wood:    {color:0x9b6a3e, map:woodTex, rough:0.55},
+    concrete:{color:0x9c9a96, map:plasterTex, rough:0.6},
+  }[k];
+  const m = new THREE.MeshStandardMaterial({color:conf.color, roughness:conf.rough, metalness:0, map:conf.map});
+  matCache.set(key, m); return m;
+}
+function polyMaterial(){
+  if (matCache.has('poly')) return matCache.get('poly');
+  const m = new THREE.MeshPhysicalMaterial({color:0xe7f1f3, transmission:0.5, roughness:0.32, ior:1.4, thickness:0.05, transparent:true, opacity:0.8, side:THREE.DoubleSide});
+  matCache.set('poly', m); return m;
+}
+function zipMaterial(){
+  if (matCache.has('zip')) return matCache.get('zip');
+  const m = new THREE.MeshStandardMaterial({color:0x9b948b, roughness:0.95, side:THREE.DoubleSide});
+  matCache.set('zip', m); return m;
+}
+function clearMaterialCache(){ matCache.forEach(m=>m.dispose()); matCache.clear(); }
+
+function disposeGroup(g){
+  while (g.children.length){
+    const c = g.children.pop();
+    if (c.geometry) c.geometry.dispose();
+    if (c.children?.length) disposeGroup(c);
+  }
+}
+
+// =============================================================
+// CANOPY BUILD
+// =============================================================
+function buildCanopy(){
+  disposeGroup(canopyGroup);
+  louvreSlats = []; ledMeshes = []; heaterEmitters = []; bollardLights = [];
+  glowLights.forEach(l=>l.parent?.remove(l)); glowLights = [];
+
+  const W = state.length, D = state.depth, H = state.height;
+  const fm = frameMaterial();
+
+  pad.scale.set(W+1.6, D+1.6, 1);
+  paverTex.repeat.set((W+1.6)/2.4, (D+1.6)/2.4);
+  contact.scale.set(W+1.0, D+1.0, 1);
+
+  // Custom-scene products (entirely different geometry from the canopy pattern)
+  const scene = PRODUCTS[state.product]?.scene;
+  if (scene === 'container'){ buildContainer(W, D, H); applyTime(); return; }
+  if (scene === 'fence'){ buildFenceLine(W, D, H); applyTime(); return; }
+  if (scene === 'garage'){ buildGarageWall(W, D, H); applyTime(); return; }
+
+  // Posts + feet
+  const post = 0.12;
+  const corners = state.structure==='wallmounted'
+    ? [[-W/2+post/2, D/2-post/2],[W/2-post/2, D/2-post/2]]
+    : [[-W/2+post/2, D/2-post/2],[W/2-post/2, D/2-post/2],[W/2-post/2,-D/2+post/2],[-W/2+post/2,-D/2+post/2]];
+  for (const [px,pz] of corners){
+    const m = new THREE.Mesh(new THREE.BoxGeometry(post, H, post), fm);
+    m.position.set(px, H/2, pz);
+    m.castShadow = true; m.receiveShadow = true;
+    canopyGroup.add(m);
+    const foot = new THREE.Mesh(new THREE.BoxGeometry(post*2, 0.03, post*2), fm);
+    foot.position.set(px, 0.015, pz);
+    foot.castShadow = true;
+    canopyGroup.add(foot);
+  }
+
+  // Perimeter beams
+  const beamH = 0.18, beamY = H - beamH/2 + 0.01;
+  const beams = [
+    [new THREE.BoxGeometry(W, beamH, post), [0, beamY,  D/2-post/2]],
+    [new THREE.BoxGeometry(W, beamH, post), [0, beamY, -D/2+post/2]],
+    [new THREE.BoxGeometry(post, beamH, D-2*post), [-W/2+post/2, beamY, 0]],
+    [new THREE.BoxGeometry(post, beamH, D-2*post), [ W/2-post/2, beamY, 0]],
+  ];
+  for (const [geo,pos] of beams){
+    const m = new THREE.Mesh(geo, fm);
+    m.position.set(...pos); m.castShadow = true; m.receiveShadow = true;
+    canopyGroup.add(m);
+  }
+
+  buildRoof(W, D, H);
+  for (const side of ['front','back','left','right']){
+    if (state.walls[side] !== 'none'){
+      if (state.structure==='wallmounted' && side==='back') continue;
+      buildWall(side, W, D, H);
+    }
+  }
+  if (state.structure==='wallmounted') buildHouse(W, D, H);
+  if (state.addons.lighting) buildLighting(W, D, H);
+  if (state.addons.bar) buildBarLights(W, D, H);
+  if (state.addons.heater) buildHeaters(W, D, H);
+  if (state.addons.speakers) buildSpeakers(W, D, H);
+
+  buildBollards(W, D);
+
+  // Interior flooring (inside the canopy footprint, above the pavers)
+  const floorMat = flooringMaterial();
+  if (floorMat){
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(W-0.08, D-0.08), floorMat);
+    floor.rotation.x = -Math.PI/2;
+    floor.position.y = 0.018;
+    floor.receiveShadow = true;
+    canopyGroup.add(floor);
+  }
+
+  if (PRODUCTS[state.product]?.scene === 'car') buildCar(W, D);
+  else buildFurniture(W, D);
+
+  applyTime(); // re-apply env intensity + emissives to new meshes
+}
+
+function buildRoof(W, D, H){
+  const fm = frameMaterial();
+  const sm = slatMaterial();
+  const overhang = state.overhang || 0;
+  // Effective roof footprint (with overhang extension)
+  const Wr = W + overhang*2;
+  const Dr = D + overhang*2;
+  // Slope: from preset roof type OR user angle (degrees)
+  const presetSloped = state.roof==='glass-sloped'||state.roof==='poly-sloped';
+  const userAngleRad = THREE.MathUtils.degToRad(state.angle || 0);
+  const presetSlope = presetSloped ? 0.5 : 0;
+  const slopeAngle = userAngleRad + (presetSloped ? Math.atan(presetSlope/D) : 0);
+  const lift = (presetSloped ? presetSlope/2 : 0) + Math.sin(userAngleRad)*Dr/2;
+
+  if (state.roof.startsWith('louvred')){
+    const slatThick=0.05, slatW=0.3, gap=0.045;
+    const isolThick = state.slatIsolation ? slatThick*1.5 : slatThick;
+    // Slat direction determines which axis slats span
+    if (state.slatDirection === 'length'){
+      // Slats run along length (Z axis), arrayed across width (X)
+      const num = Math.floor(Dr/(slatW+gap));
+      const cellD = Dr/num;
+      for (let i=0;i<num;i++){
+        const z = -Dr/2 + i*cellD + cellD/2;
+        const m = new THREE.Mesh(new THREE.BoxGeometry(Wr-0.22, isolThick, cellD-gap), sm);
+        m.position.set(0, H + isolThick/2 + 0.02, z);
+        m.castShadow = true; m.receiveShadow = true;
+        canopyGroup.add(m);
+        if (state.roof==='louvred-retract') louvreSlats.push(m);
+        else m.rotation.x = (state.slatRotation === 'right' ? 0.28 : -0.28);
+      }
+    } else {
+      // Slats run across width (X axis), arrayed along length
+      const num = Math.floor(Wr/(slatW+gap));
+      const cellW = Wr/num;
+      for (let i=0;i<num;i++){
+        const x = -Wr/2 + i*cellW + cellW/2;
+        const m = new THREE.Mesh(new THREE.BoxGeometry(cellW-gap, isolThick, Dr-0.22), sm);
+        m.position.set(x, H + isolThick/2 + 0.02, 0);
+        m.castShadow = true; m.receiveShadow = true;
+        canopyGroup.add(m);
+        if (state.roof==='louvred-retract') louvreSlats.push(m);
+        else m.rotation.z = (state.slatRotation === 'right' ? 0.28 : -0.28);
+      }
+    }
+  } else if (state.roof.startsWith('fabric')){
+    // Fabric awning — pitched canvas with scalloped front
+    const fabricMat = new THREE.MeshStandardMaterial({color:0xf2e5cf, roughness:0.95, metalness:0, side:THREE.DoubleSide});
+    const cloth = new THREE.Mesh(new THREE.PlaneGeometry(Wr-0.04, Dr-0.04, 12, 6), fabricMat);
+    cloth.rotation.x = -Math.PI/2 + (slopeAngle || THREE.MathUtils.degToRad(12));
+    cloth.position.set(0, H + 0.02, 0);
+    cloth.castShadow = true;
+    canopyGroup.add(cloth);
+    // Front bar (the retract/extend bar)
+    const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, Wr, 12), fm);
+    bar.rotation.z = Math.PI/2;
+    bar.position.set(0, H - 0.04, Dr/2 - 0.05);
+    bar.castShadow = true;
+    canopyGroup.add(bar);
+    // Wall-mount cassette
+    const cassette = new THREE.Mesh(new THREE.BoxGeometry(Wr+0.1, 0.18, 0.22), fm);
+    cassette.position.set(0, H + 0.05, -Dr/2 + 0.06);
+    cassette.castShadow = true;
+    canopyGroup.add(cassette);
+  } else if (state.roof.startsWith('glass')){
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr-0.04, 0.05, Dr-0.04), glassMaterial());
+    roof.position.set(0, H + 0.03 + lift, 0);
+    if (slopeAngle) roof.rotation.x = -slopeAngle;
+    roof.castShadow = true;
+    canopyGroup.add(roof);
+    const cols = Math.max(2, Math.round(Wr/1.3));
+    for (let i=1;i<cols;i++){
+      const x = -Wr/2 + Wr*i/cols;
+      const mul = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, Dr-0.04), fm);
+      mul.position.set(x, H + 0.06 + lift, 0);
+      if (slopeAngle) mul.rotation.x = -slopeAngle;
+      mul.castShadow = true;
+      canopyGroup.add(mul);
+    }
+  } else {
+    const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr-0.04, 0.04, Dr-0.04), polyMaterial());
+    roof.position.set(0, H + 0.02 + lift, 0);
+    if (slopeAngle) roof.rotation.x = -slopeAngle;
+    roof.castShadow = true;
+    canopyGroup.add(roof);
+    const ribMat = new THREE.MeshStandardMaterial({color:0x9ec5cf, roughness:0.4, metalness:0.1, transparent:true, opacity:0.55});
+    const cols = Math.max(6, Math.round(Wr*2));
+    for (let i=1;i<cols;i++){
+      const x = -Wr/2 + Wr*i/cols;
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.055, Dr-0.06), ribMat);
+      strip.position.set(x, H + 0.04 + lift, 0);
+      if (slopeAngle) strip.rotation.x = -slopeAngle;
+      canopyGroup.add(strip);
+    }
+  }
+}
+
+function buildWall(side, W, D, H){
+  const fm = frameMaterial();
+  const t = state.walls[side];
+  const wallH = H - 0.05;
+  let panelW, x=0, z=0, rotY=0;
+  if (side==='front'){ panelW = W-0.24; z = D/2-0.06; }
+  else if (side==='back'){ panelW = W-0.24; z = -D/2+0.06; rotY = Math.PI; }
+  else if (side==='left'){ panelW = D-0.24; x = -W/2+0.06; rotY = -Math.PI/2; }
+  else { panelW = D-0.24; x = W/2-0.06; rotY = Math.PI/2; }
+
+  const group = new THREE.Group();
+  group.position.set(x, 0, z);
+  group.rotation.y = rotY;
+
+  if (t==='glass' || t==='sliding' || t==='tinted'){
+    const glassMat = t==='tinted' ? tintedGlassMaterial() : glassMaterial();
+    const glass = new THREE.Mesh(new THREE.BoxGeometry(panelW, wallH, 0.025), glassMat);
+    glass.position.y = wallH/2 + 0.02;
+    group.add(glass);
+    const railG = new THREE.BoxGeometry(panelW, 0.07, 0.05);
+    const rail = new THREE.Mesh(railG, fm); rail.position.y = 0.04; group.add(rail);
+    const rail2 = new THREE.Mesh(railG, fm); rail2.position.y = wallH + 0.02; group.add(rail2);
+    const divs = t==='sliding' ? 4 : 2;
+    for (let i=0;i<=divs;i++){
+      const xOff = -panelW/2 + panelW*i/divs;
+      const m = new THREE.Mesh(new THREE.BoxGeometry(0.05, wallH, 0.07), fm);
+      m.position.set(xOff, wallH/2+0.02, 0);
+      group.add(m);
+    }
+    if (t==='sliding'){
+      const handle = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.18, 0.06), fm);
+      handle.position.set(-panelW/8, wallH*0.5, 0.05);
+      group.add(handle);
+    }
+  } else if (t==='alu'){
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(panelW, wallH, 0.05), fm);
+    panel.position.y = wallH/2+0.02;
+    group.add(panel);
+    const grooveMat = new THREE.MeshStandardMaterial({color:0x141414, roughness:0.55});
+    for (let i=1;i<6;i++){
+      const g = new THREE.Mesh(new THREE.BoxGeometry(panelW-0.02, 0.012, 0.012), grooveMat);
+      g.position.set(0, wallH*i/6 + 0.02, 0.027);
+      group.add(g);
+    }
+  } else if (t==='zip' || t==='screen'){
+    const fabricMat = t==='screen' ? screenRoloMaterial() : zipMaterial();
+    const fabric = new THREE.Mesh(new THREE.BoxGeometry(panelW, wallH, 0.012), fabricMat);
+    fabric.position.y = wallH/2+0.02;
+    group.add(fabric);
+    const cas = new THREE.Mesh(new THREE.BoxGeometry(panelW+0.08, 0.12, 0.12), fm);
+    cas.position.y = wallH + 0.02;
+    group.add(cas);
+    for (const sx of [-panelW/2, panelW/2]){
+      const r = new THREE.Mesh(new THREE.BoxGeometry(0.05, wallH, 0.08), fm);
+      r.position.set(sx, wallH/2+0.02, 0);
+      group.add(r);
+    }
+  } else if (t==='louvre' || t==='metal'){
+    const slatMat = t==='metal' ? metalLamellaMaterial() : fm;
+    const railG = new THREE.BoxGeometry(panelW, 0.07, 0.07);
+    const rail = new THREE.Mesh(railG, fm); rail.position.y = 0.04; group.add(rail);
+    const rail2 = new THREE.Mesh(railG, fm); rail2.position.y = wallH+0.02; group.add(rail2);
+    for (const sx of [-panelW/2, panelW/2]){
+      const r = new THREE.Mesh(new THREE.BoxGeometry(0.05, wallH, 0.07), fm);
+      r.position.set(sx, wallH/2+0.02, 0);
+      group.add(r);
+    }
+    const slatTh = t==='metal' ? 0.04 : 0.06;
+    const slatGap = t==='metal' ? 0.025 : 0.05;
+    const inner=wallH-0.2;
+    const slats = Math.floor(inner/(slatTh+slatGap));
+    for (let i=0;i<slats;i++){
+      const slat = new THREE.Mesh(new THREE.BoxGeometry(panelW-0.08, slatTh, 0.05), slatMat);
+      slat.position.set(0, 0.12 + i*(slatTh+slatGap)+slatTh/2, 0.01);
+      slat.rotation.x = t==='metal' ? 0 : -0.22;
+      group.add(slat);
+    }
+  }
+  group.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
+  canopyGroup.add(group);
+}
+
+function buildHouse(W, D, H){
+  const wallMat = claddingMaterial() || new THREE.MeshStandardMaterial({map:plasterTex, roughness:0.9});
+  const houseW = W+4, houseH = H+1.9, houseT = 0.35;
+  const house = new THREE.Mesh(new THREE.BoxGeometry(houseW, houseH, houseT), wallMat);
+  house.position.set(0, houseH/2, -D/2 - houseT/2 - 0.02);
+  house.receiveShadow = true; house.castShadow = true;
+  canopyGroup.add(house);
+
+  const eave = new THREE.Mesh(new THREE.BoxGeometry(houseW+0.6, 0.2, houseT+0.4), new THREE.MeshStandardMaterial({color:0x4e4136, roughness:0.7}));
+  eave.position.set(0, houseH+0.08, -D/2 - houseT/2 - 0.02);
+  eave.castShadow = true;
+  canopyGroup.add(eave);
+
+  const doorMat = new THREE.MeshStandardMaterial({color:0x2c3a4d, roughness:0.4});
+  const door = new THREE.Mesh(new THREE.BoxGeometry(0.95, 2.1, 0.05), doorMat);
+  door.position.set(0, 1.05, -D/2 + 0.02);
+  canopyGroup.add(door);
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 12), new THREE.MeshStandardMaterial({color:0xc9a55e, roughness:0.25, metalness:0.8}));
+  knob.position.set(0.35, 1.05, -D/2 + 0.06);
+  canopyGroup.add(knob);
+
+  const winGlass = new THREE.MeshPhysicalMaterial({color:0xaec7d2, transmission:0.7, roughness:0.05, ior:1.5, transparent:true, opacity:0.85, side:THREE.DoubleSide});
+  const winFrame = new THREE.MeshStandardMaterial({color:0xf5f5f0, roughness:0.5});
+  for (const wx of [-W*0.40, W*0.40]){
+    const f = new THREE.Mesh(new THREE.BoxGeometry(1.05, 1.15, 0.06), winFrame);
+    f.position.set(wx, 1.5, -D/2 + 0.015);
+    canopyGroup.add(f);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(0.92, 1.0, 0.03), winGlass);
+    win.position.set(wx, 1.5, -D/2 + 0.045);
+    canopyGroup.add(win);
+  }
+}
+
+function buildLighting(W, D, H){
+  const bulbMat = new THREE.MeshStandardMaterial({color:0xfff6d8, emissive:0xffdf94, emissiveIntensity:0.5, roughness:0.3});
+  const stripMat = new THREE.MeshStandardMaterial({color:0xfff2cf, emissive:0xffd98a, emissiveIntensity:0.4, roughness:0.4});
+  const pos = state.elementsPosition;
+
+  if (pos === 'perimeter'){
+    // LED strips along front + back beams
+    for (const z of [D/2-0.16, -D/2+0.16]){
+      const strip = new THREE.Mesh(new THREE.BoxGeometry(W-0.4, 0.022, 0.05), stripMat);
+      strip.position.set(0, H-0.105, z);
+      canopyGroup.add(strip);
+      ledMeshes.push(strip);
+    }
+    // Spots along centre line
+    const n = Math.max(3, Math.round(W));
+    for (let i=0;i<n;i++){
+      const x = -W/2 + (W*(i+0.5)/n);
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.05, 14, 10), bulbMat);
+      b.position.set(x, H-0.1, 0);
+      canopyGroup.add(b);
+      ledMeshes.push(b);
+    }
+  } else if (pos === 'corners'){
+    for (const [cx, cz] of [[-W/2+0.3, -D/2+0.3],[W/2-0.3, -D/2+0.3],[W/2-0.3, D/2-0.3],[-W/2+0.3, D/2-0.3]]){
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.06, 14, 10), bulbMat);
+      b.position.set(cx, H-0.1, cz);
+      canopyGroup.add(b);
+      ledMeshes.push(b);
+    }
+  } else { // centred
+    for (let i=-1;i<=1;i++){
+      for (let j=-1;j<=1;j++){
+        const b = new THREE.Mesh(new THREE.SphereGeometry(0.05, 14, 10), bulbMat);
+        b.position.set(i*0.5, H-0.1, j*0.5);
+        canopyGroup.add(b);
+        ledMeshes.push(b);
+      }
+    }
+  }
+  const pl = new THREE.PointLight(0xffd28a, 0, 9, 2);
+  pl.position.set(0, H-0.25, 0);
+  canopyGroup.add(pl);
+  glowLights.push(pl);
+}
+function buildBarLights(W, D, H){
+  const barMat = new THREE.MeshStandardMaterial({color:0xfff7da, emissive:0xfff0b8, emissiveIntensity:0.6, roughness:0.35});
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(W-0.8, 0.04, 0.08), barMat);
+  bar.position.set(0, H-0.09, 0);
+  canopyGroup.add(bar);
+  ledMeshes.push(bar);
+}
+
+function buildHeaters(W, D, H){
+  const shellMat = new THREE.MeshStandardMaterial({color:0xb9b9b9, roughness:0.3, metalness:0.7});
+  for (const x of [-W*0.22, W*0.22]){
+    const heater = new THREE.Group();
+    const shell = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.09, 0.17), shellMat);
+    heater.add(shell);
+    const emit = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.035, 0.12), new THREE.MeshStandardMaterial({color:0x300800, emissive:0xff5a1f, emissiveIntensity:0.7, roughness:0.4}));
+    emit.position.y = -0.045;
+    heater.add(emit);
+    heaterEmitters.push(emit);
+    heater.position.set(x, H-0.26, D/2-0.5);
+    canopyGroup.add(heater);
+  }
+}
+
+function buildSpeakers(W, D, H){
+  const spkMat = new THREE.MeshStandardMaterial({color:0x1c1917, roughness:0.4});
+  const innerMat = new THREE.MeshStandardMaterial({color:0x57534e, roughness:0.6});
+  for (const x of [-W*0.3, W*0.3]){
+    const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.04, 24), spkMat);
+    ring.position.set(x, state.height-0.05, 0);
+    canopyGroup.add(ring);
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.02, 24), innerMat);
+    cone.position.set(x, state.height-0.07, 0);
+    canopyGroup.add(cone);
+  }
+}
+
+function buildBollards(W, D){
+  const postMat = new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.5, metalness:0.4});
+  const capMat = new THREE.MeshStandardMaterial({color:0xfff3d0, emissive:0xffe1a0, emissiveIntensity:0.15, roughness:0.4});
+  const positions = [
+    [ W/2+1.4, 0,  D/2+1.2], [-W/2-1.4, 0,  D/2+1.2],
+    [ W/2+1.4, 0, -D/2-1.2], [-W/2-1.4, 0, -D/2-1.2],
+  ];
+  for (const [x,,z] of positions){
+    const g = new THREE.Group();
+    const post = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.04, 0.55, 10), postMat);
+    post.position.y = 0.275; post.castShadow = true;
+    g.add(post);
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.07, 10), capMat);
+    cap.position.y = 0.58;
+    g.add(cap);
+    ledMeshes.push(cap);
+    const pl = new THREE.PointLight(0xffd9a0, 0, 3.2, 2);
+    pl.position.y = 0.65;
+    g.add(pl);
+    bollardLights.push(pl);
+    g.position.set(x, 0, z);
+    canopyGroup.add(g);
+  }
+}
+
+function buildFurniture(W, D){
+  // Rug
+  const rug = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.1), new THREE.MeshStandardMaterial({color:0xcabfa8, roughness:1}));
+  rug.rotation.x = -Math.PI/2;
+  rug.position.set(0, 0.016, 0.25);
+  rug.receiveShadow = true;
+  canopyGroup.add(rug);
+
+  const fabricMat = new THREE.MeshStandardMaterial({color:0x504a44, roughness:0.95});
+  const cushMat = new THREE.MeshStandardMaterial({color:0xa79a85, roughness:0.95});
+
+  const sofa = new THREE.Group();
+  const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 0.95), fabricMat);
+  base.position.y = 0.175; sofa.add(base);
+  for (const ax of [-1.12, 1.12]){
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.55, 0.95), fabricMat);
+    arm.position.set(ax, 0.275, 0); sofa.add(arm);
+  }
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.55, 0.18), fabricMat);
+  back.position.set(0, 0.55, -0.38); sofa.add(back);
+  for (const cx of [-0.6, 0.6]){
+    const cush = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.16, 0.82), cushMat);
+    cush.position.set(cx, 0.43, 0.02); sofa.add(cush);
+    const bc = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.36, 0.18), cushMat);
+    bc.position.set(cx, 0.66, -0.30); sofa.add(bc);
+  }
+  sofa.position.set(0, 0, -0.45);
+  sofa.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
+  canopyGroup.add(sofa);
+
+  // Wood coffee table
+  const woodMat = new THREE.MeshStandardMaterial({map:woodTex, roughness:0.55});
+  const top = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.05, 0.6), woodMat);
+  top.position.set(0, 0.4, 0.85);
+  top.castShadow = true; top.receiveShadow = true;
+  canopyGroup.add(top);
+  const legMat = new THREE.MeshStandardMaterial({color:0x2a2a2a, roughness:0.5, metalness:0.4});
+  for (const [lx,lz] of [[-0.44,-0.24],[0.44,-0.24],[0.44,0.24],[-0.44,0.24]]){
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.04), legMat);
+    leg.position.set(lx, 0.2, 0.85+lz);
+    leg.castShadow = true;
+    canopyGroup.add(leg);
+  }
+  // Chairs
+  for (const [cx, rot] of [[-1.7, 0.5],[1.7, -0.5]]){
+    const ch = new THREE.Group();
+    const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.1, 0.55), cushMat);
+    seat.position.y = 0.4; ch.add(seat);
+    const backr = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.08), fabricMat);
+    backr.position.set(0, 0.7, -0.24); ch.add(backr);
+    for (const [lx,lz] of [[-0.23,-0.23],[0.23,-0.23],[0.23,0.23],[-0.23,0.23]]){
+      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.4, 0.035), legMat);
+      leg.position.set(lx, 0.2, lz); ch.add(leg);
+    }
+    ch.position.set(cx*W/5, 0, 0.5);
+    ch.rotation.y = rot;
+    ch.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
+    canopyGroup.add(ch);
+  }
+
+  // Plant
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.42, 18), new THREE.MeshStandardMaterial({color:0xb0a28c, roughness:0.8}));
+  pot.position.set(W/2-0.5, 0.21, D/2-0.45);
+  pot.castShadow = true;
+  canopyGroup.add(pot);
+  const bush = new THREE.Mesh(jitterGeo(new THREE.SphereGeometry(0.34, 12, 10), 0.07), leafMat);
+  bush.position.set(W/2-0.5, 0.68, D/2-0.45);
+  bush.castShadow = true;
+  canopyGroup.add(bush);
+}
+
+function buildCar(W, D){
+  const car = new THREE.Group();
+  const paint = new THREE.MeshPhysicalMaterial({color:0x7e1f2c, metalness:0.7, roughness:0.32, clearcoat:1, clearcoatRoughness:0.06});
+  const darkGlass = new THREE.MeshPhysicalMaterial({color:0x1a2530, metalness:0.2, roughness:0.08, transmission:0.25, transparent:true, opacity:0.92});
+  const trimMat = new THREE.MeshStandardMaterial({color:0x161616, roughness:0.6});
+  const tyreMat = new THREE.MeshStandardMaterial({color:0x171717, roughness:0.95});
+  const hubMat = new THREE.MeshStandardMaterial({color:0xb9b9b9, roughness:0.25, metalness:0.85});
+
+  const body = new THREE.Mesh(new THREE.BoxGeometry(3.9, 0.5, 1.75), paint);
+  body.position.y = 0.55; car.add(body);
+  const hood = new THREE.Mesh(new THREE.BoxGeometry(3.96, 0.12, 1.8), trimMat);
+  hood.position.y = 0.32; car.add(hood);
+  const cabin = new THREE.Mesh(new THREE.BoxGeometry(2.0, 0.5, 1.62), paint);
+  cabin.position.set(-0.25, 1.02, 0); car.add(cabin);
+  const glasshouse = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.36, 1.66), darkGlass);
+  glasshouse.position.set(-0.25, 1.0, 0); car.add(glasshouse);
+
+  for (const [wx, wz] of [[-1.3,-0.85],[1.3,-0.85],[1.3,0.85],[-1.3,0.85]]){
+    const tyre = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.24, 24), tyreMat);
+    tyre.rotation.x = Math.PI/2;
+    tyre.position.set(wx, 0.34, wz);
+    car.add(tyre);
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.26, 16), hubMat);
+    hub.rotation.x = Math.PI/2;
+    hub.position.set(wx, 0.34, wz);
+    car.add(hub);
+  }
+  // Lights
+  const head = new THREE.MeshStandardMaterial({color:0xfffbe8, emissive:0xfff6c9, emissiveIntensity:0.25});
+  const tail = new THREE.MeshStandardMaterial({color:0x550000, emissive:0xff2222, emissiveIntensity:0.3});
+  for (const z of [-0.6, 0.6]){
+    const h = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.3), head);
+    h.position.set(1.96, 0.6, z); car.add(h);
+    const t = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.1, 0.3), tail);
+    t.position.set(-1.96, 0.6, z); car.add(t);
+  }
+  car.traverse(o=>{ if(o.isMesh){ o.castShadow=true; o.receiveShadow=true; }});
+  car.rotation.y = 0.06;
+  canopyGroup.add(car);
+}
+
+// ============================================================
+// CONTAINER (shipping container converted to garden room)
+// ============================================================
+function buildContainer(W, D, H){
+  const fm = frameMaterial();
+  const c = FRAME_COLORS[state.frameColor];
+  // Corrugated steel side material (procedural striped texture)
+  const corrTex = canvasTex((g,w,h)=>{
+    const base = new THREE.Color(c.hex);
+    const baseR=Math.round(base.r*255), baseG=Math.round(base.g*255), baseB=Math.round(base.b*255);
+    for(let x=0;x<w;x++){
+      const wave = Math.sin(x*0.18)*0.16 + 0.84; // ridge highlight
+      const r=Math.min(255,Math.round(baseR*wave)), gg=Math.min(255,Math.round(baseG*wave)), b=Math.min(255,Math.round(baseB*wave));
+      g.fillStyle=`rgb(${r},${gg},${b})`;
+      g.fillRect(x,0,1,h);
+    }
+    // weathering
+    for(let i=0;i<700;i++){
+      g.fillStyle=`rgba(0,0,0,${Math.random()*0.06})`;
+      g.fillRect(Math.random()*w, Math.random()*h, 1, 2);
+    }
+  }, 512, 256, [Math.max(2,W/2), 1]);
+  const corrMat = new THREE.MeshStandardMaterial({map:corrTex, roughness:0.55, metalness:0.4});
+
+  pad.scale.set(W+1.2, D+1.2, 1);
+  paverTex.repeat.set((W+1.2)/2.4, (D+1.2)/2.4);
+  contact.scale.set(W+0.8, D+0.8, 1);
+
+  const wallT = 0.05;
+  const baseY = 0.12; // raised on rails
+  // Floor / base channel
+  const baseRails = new THREE.Mesh(new THREE.BoxGeometry(W, baseY, D), new THREE.MeshStandardMaterial({color:0x1c1917, roughness:0.7}));
+  baseRails.position.y = baseY/2; baseRails.castShadow = true; baseRails.receiveShadow = true;
+  canopyGroup.add(baseRails);
+
+  // Long side walls (left/right)
+  for (const sx of [-W/2+wallT/2, W/2-wallT/2]){
+    const m = new THREE.Mesh(new THREE.BoxGeometry(wallT, H, D-0.02), corrMat);
+    m.position.set(sx, baseY + H/2, 0);
+    m.castShadow = true; m.receiveShadow = true;
+    canopyGroup.add(m);
+  }
+  // Back wall (solid steel)
+  const back = new THREE.Mesh(new THREE.BoxGeometry(W-2*wallT, H, wallT), corrMat);
+  back.position.set(0, baseY + H/2, -D/2+wallT/2);
+  back.castShadow = true; back.receiveShadow = true;
+  canopyGroup.add(back);
+  // Front wall with glazed double-door cutout (left half steel, right half glass slider)
+  const frontPanelW = (W-2*wallT)/2;
+  const frontSteel = new THREE.Mesh(new THREE.BoxGeometry(frontPanelW, H, wallT), corrMat);
+  frontSteel.position.set(-frontPanelW/2, baseY + H/2, D/2-wallT/2);
+  frontSteel.castShadow = true; frontSteel.receiveShadow = true;
+  canopyGroup.add(frontSteel);
+  // Glass slider on right side
+  const slider = new THREE.Mesh(new THREE.BoxGeometry(frontPanelW-0.04, H-0.1, 0.025), glassMaterial());
+  slider.position.set(frontPanelW/2, baseY + H/2, D/2-0.02);
+  canopyGroup.add(slider);
+  const sliderFrame = new THREE.Mesh(new THREE.BoxGeometry(0.06, H, 0.06), fm);
+  sliderFrame.position.set(frontPanelW/2, baseY + H/2, D/2-wallT/2);
+  canopyGroup.add(sliderFrame);
+  // Window on long side
+  const win = new THREE.Mesh(new THREE.BoxGeometry(0.025, H*0.45, 1.4), glassMaterial());
+  win.position.set(-W/2+wallT/2-0.005, baseY + H*0.55, 0);
+  canopyGroup.add(win);
+  const winFrame = new THREE.Mesh(new THREE.BoxGeometry(0.04, H*0.5, 1.46), fm);
+  winFrame.position.set(-W/2+wallT/2, baseY + H*0.55, 0);
+  canopyGroup.add(winFrame);
+  // Roof
+  const roof = new THREE.Mesh(new THREE.BoxGeometry(W+0.05, 0.06, D+0.05), corrMat);
+  roof.position.set(0, baseY + H + 0.03, 0);
+  roof.castShadow = true; roof.receiveShadow = true;
+  canopyGroup.add(roof);
+
+  // Container ID stencil-style number
+  const stencilTex = canvasTex((g,w,h)=>{
+    g.fillStyle = c.hex;
+    g.fillRect(0,0,w,h);
+    g.fillStyle = 'rgba(255,255,255,0.55)';
+    g.font = 'bold 64px monospace';
+    g.fillText('CSDU 1024 7', 20, 80);
+  }, 512, 128, [1,1]);
+  const stencilMat = new THREE.MeshStandardMaterial({map:stencilTex, roughness:0.65, metalness:0.35, transparent:true, opacity:0.9});
+  const stencil = new THREE.Mesh(new THREE.PlaneGeometry(W*0.5, 0.4), stencilMat);
+  stencil.position.set(0, baseY + H*0.78, D/2+0.001);
+  canopyGroup.add(stencil);
+
+  // Floor inside
+  const floorMat = flooringMaterial();
+  if (floorMat){
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(W-0.12, D-0.12), floorMat);
+    floor.rotation.x = -Math.PI/2;
+    floor.position.y = baseY + 0.005;
+    floor.receiveShadow = true;
+    canopyGroup.add(floor);
+  }
+  // Step
+  const step = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.06, 0.4), new THREE.MeshStandardMaterial({color:0x44403c, roughness:0.7}));
+  step.position.set(frontPanelW/2, baseY/2, D/2+0.22);
+  step.castShadow = true; step.receiveShadow = true;
+  canopyGroup.add(step);
+
+  if (state.addons.lighting){
+    const bulbMat = new THREE.MeshStandardMaterial({color:0xfff6d8, emissive:0xffdf94, emissiveIntensity:0.5});
+    for (const x of [-W*0.3, 0, W*0.3]){
+      const b = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 10), bulbMat);
+      b.position.set(x, baseY + H - 0.08, 0);
+      canopyGroup.add(b); ledMeshes.push(b);
+    }
+    const pl = new THREE.PointLight(0xffd28a, 0, 7, 2);
+    pl.position.set(0, baseY + H - 0.2, 0);
+    canopyGroup.add(pl); glowLights.push(pl);
+  }
+}
+
+// ============================================================
+// FENCE (boundary panels with posts)
+// ============================================================
+function buildFenceLine(W, D, H){
+  const fm = frameMaterial();
+  const clad = claddingMaterial();
+  const slatMat = clad || fm;
+  const panelMat = state.cladding!=='none' ? clad :
+    new THREE.MeshStandardMaterial({map:woodTex, roughness:0.7});
+
+  pad.scale.set(W+1.4, 1.2, 1);
+  paverTex.repeat.set((W+1.4)/2.4, 0.5);
+  contact.scale.set(W+0.6, 0.6, 1);
+
+  const postSize = 0.1, panelSpan = 1.8;
+  const numPanels = Math.max(2, Math.round(W/panelSpan));
+  const cellW = W/numPanels;
+  const fenceH = H;
+
+  // Posts
+  for (let i=0;i<=numPanels;i++){
+    const x = -W/2 + i*cellW;
+    const post = new THREE.Mesh(new THREE.BoxGeometry(postSize, fenceH+0.1, postSize), fm);
+    post.position.set(x, (fenceH+0.1)/2, 0);
+    post.castShadow = true; post.receiveShadow = true;
+    canopyGroup.add(post);
+    // Post cap
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(postSize*1.4, 0.05, postSize*1.4), fm);
+    cap.position.set(x, fenceH + 0.1, 0);
+    canopyGroup.add(cap);
+  }
+
+  // Panels (filled by cladding type)
+  for (let i=0;i<numPanels;i++){
+    const cx = -W/2 + cellW*(i+0.5);
+    const innerW = cellW - postSize - 0.04;
+    if (state.walls.front === 'louvre' || state.walls.back === 'louvre'){
+      // Horizontal slat fence
+      const slatTh = 0.06, gap = 0.04;
+      const n = Math.floor((fenceH-0.1)/(slatTh+gap));
+      for (let j=0;j<n;j++){
+        const y = 0.05 + j*(slatTh+gap) + slatTh/2;
+        const s = new THREE.Mesh(new THREE.BoxGeometry(innerW, slatTh, 0.04), slatMat);
+        s.position.set(cx, y, 0);
+        s.castShadow = true; s.receiveShadow = true;
+        canopyGroup.add(s);
+      }
+    } else {
+      // Solid panel
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(innerW, fenceH-0.05, 0.04), panelMat);
+      panel.position.set(cx, fenceH/2, 0);
+      panel.castShadow = true; panel.receiveShadow = true;
+      canopyGroup.add(panel);
+    }
+  }
+
+  // Bottom rail
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(W, 0.08, 0.05), fm);
+  rail.position.set(0, 0.04, 0);
+  canopyGroup.add(rail);
+  // Top rail
+  const railTop = new THREE.Mesh(new THREE.BoxGeometry(W, 0.08, 0.05), fm);
+  railTop.position.set(0, fenceH - 0.04, 0);
+  canopyGroup.add(railTop);
+
+  // Optional lighting (post-cap bollard look)
+  if (state.addons.lighting){
+    const capMat = new THREE.MeshStandardMaterial({color:0xfff3d0, emissive:0xffe1a0, emissiveIntensity:0.6, roughness:0.4});
+    for (let i=0;i<=numPanels;i++){
+      const x = -W/2 + i*cellW;
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(postSize*1.2, 0.04, postSize*1.2), capMat);
+      cap.position.set(x, fenceH + 0.14, 0);
+      canopyGroup.add(cap); ledMeshes.push(cap);
+      const pl = new THREE.PointLight(0xffd9a0, 0, 2.2, 2);
+      pl.position.set(x, fenceH + 0.2, 0);
+      canopyGroup.add(pl); glowLights.push(pl);
+    }
+  }
+}
+
+// ============================================================
+// GARAGE DOOR (wall section with sectional door)
+// ============================================================
+function buildGarageWall(W, D, H){
+  const fm = frameMaterial();
+  const wallMat = claddingMaterial() || new THREE.MeshStandardMaterial({map:plasterTex, roughness:0.9, color:0xddd3c2});
+  // Wider house wall behind the garage door
+  const houseW = W*2.2, houseH = H+1.4, wallT = 0.3;
+
+  pad.scale.set(houseW+0.5, 3, 1);
+  paverTex.repeat.set(houseW/2.4, 1.2);
+  contact.scale.set(houseW*0.95, 2, 1);
+
+  const house = new THREE.Mesh(new THREE.BoxGeometry(houseW, houseH, wallT), wallMat);
+  house.position.set(0, houseH/2, -wallT/2);
+  house.castShadow = true; house.receiveShadow = true;
+  canopyGroup.add(house);
+
+  // Eaves
+  const eave = new THREE.Mesh(new THREE.BoxGeometry(houseW+0.5, 0.18, wallT+0.4), new THREE.MeshStandardMaterial({color:0x4e4136, roughness:0.7}));
+  eave.position.set(0, houseH+0.06, -wallT/2);
+  eave.castShadow = true;
+  canopyGroup.add(eave);
+
+  // Driveway slab in front
+  const slab = new THREE.Mesh(new THREE.PlaneGeometry(W+0.6, 4.5), new THREE.MeshStandardMaterial({color:0x9c9a96, roughness:0.85}));
+  slab.rotation.x = -Math.PI/2;
+  slab.position.set(0, 0.005, 4.5/2 + 0.05);
+  slab.receiveShadow = true;
+  canopyGroup.add(slab);
+
+  // Garage door frame (around the door opening)
+  const doorW = W, doorH = H;
+  const doorFrameT = 0.06;
+  const trimMat = fm;
+  const trimTop  = new THREE.Mesh(new THREE.BoxGeometry(doorW+0.2, doorFrameT, 0.05), trimMat);
+  trimTop.position.set(0, doorH + doorFrameT/2, 0.04);
+  canopyGroup.add(trimTop);
+  for (const sx of [-doorW/2 - 0.05, doorW/2 + 0.05]){
+    const tr = new THREE.Mesh(new THREE.BoxGeometry(doorFrameT, doorH, 0.05), trimMat);
+    tr.position.set(sx, doorH/2, 0.04);
+    canopyGroup.add(tr);
+  }
+
+  // Sectional door panels (4 horizontal panels)
+  const insulated = state.slatIsolation;
+  const doorMat = state.walls.front === 'metal' ? metalLamellaMaterial() :
+                  state.walls.front === 'glass' ? glassMaterial() :
+                  new THREE.MeshStandardMaterial({color:0xe8e4dc, roughness:0.45, metalness:0.15});
+  const panels = 4;
+  const panelH = doorH / panels;
+  for (let i=0;i<panels;i++){
+    const y = i*panelH + panelH/2;
+    const pnl = new THREE.Mesh(new THREE.BoxGeometry(doorW, panelH - 0.02, insulated ? 0.06 : 0.04), doorMat);
+    pnl.position.set(0, y, 0.02);
+    pnl.castShadow = true; pnl.receiveShadow = true;
+    canopyGroup.add(pnl);
+    // Horizontal grooves between panels
+    if (i > 0){
+      const grv = new THREE.Mesh(new THREE.BoxGeometry(doorW, 0.012, 0.07), new THREE.MeshStandardMaterial({color:0x44403c, roughness:0.6}));
+      grv.position.set(0, i*panelH, 0.045);
+      canopyGroup.add(grv);
+    }
+    // Window inserts in top panel
+    if (i === panels-1 && state.walls.front !== 'metal'){
+      for (let w=-1; w<=1; w+=2){
+        for (let v=-1; v<=1; v+=2){
+          // Skip — use 3 windows centred
+        }
+      }
+      for (let k=0;k<3;k++){
+        const wx = (k-1) * doorW/3.3;
+        const win = new THREE.Mesh(new THREE.BoxGeometry(doorW/4.5, panelH*0.5, 0.005), glassMaterial());
+        win.position.set(wx, y, 0.046);
+        canopyGroup.add(win);
+        const wframe = new THREE.Mesh(new THREE.BoxGeometry(doorW/4.5 + 0.04, panelH*0.5 + 0.04, 0.012), trimMat);
+        wframe.position.set(wx, y, 0.04);
+        canopyGroup.add(wframe);
+      }
+    }
+  }
+
+  // Handle / lift bar
+  const handle = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.04, 0.03), trimMat);
+  handle.position.set(0, panelH*0.4, 0.05);
+  canopyGroup.add(handle);
+
+  // Side door (optional pedestrian entry)
+  const side = new THREE.Mesh(new THREE.BoxGeometry(0.9, 2.1, 0.04), new THREE.MeshStandardMaterial({color:0x2c3a4d, roughness:0.4}));
+  side.position.set(W/2 + 0.8, 1.05, 0.025);
+  canopyGroup.add(side);
+  const knob = new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 12), new THREE.MeshStandardMaterial({color:0xc9a55e, roughness:0.25, metalness:0.8}));
+  knob.position.set(W/2 + 0.55, 1.05, 0.06);
+  canopyGroup.add(knob);
+
+  if (state.addons.lighting){
+    const bulbMat = new THREE.MeshStandardMaterial({color:0xfff6d8, emissive:0xffdf94, emissiveIntensity:0.55});
+    for (const sx of [-doorW/2 - 0.35, doorW/2 + 0.35]){
+      const lamp = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.22, 0.18), bulbMat);
+      lamp.position.set(sx, doorH + 0.5, 0.12);
+      canopyGroup.add(lamp); ledMeshes.push(lamp);
+      const pl = new THREE.PointLight(0xffd28a, 0, 4, 2);
+      pl.position.set(sx, doorH + 0.5, 0.5);
+      canopyGroup.add(pl); glowLights.push(pl);
+    }
+  }
+}
+
+// =============================================================
+// TIME OF DAY
+// =============================================================
+const sunVec = new THREE.Vector3();
+function applyTime(){
+  const t = state.time;
+  const dayFrac = clamp((t - 6) / 14, 0, 1);            // 6:00 → 20:00
+  const elev = Math.sin(dayFrac * Math.PI) * 62 - (t < 6 || t > 20 ? 9 : 0);
+  const azim = 95 + dayFrac * 155;
+  const phi = THREE.MathUtils.degToRad(90 - elev);
+  const theta = THREE.MathUtils.degToRad(azim);
+  sunVec.setFromSphericalCoords(1, phi, theta);
+  skyU.sunPosition.value.copy(sunVec);
+
+  const day = clamp(Math.sin(THREE.MathUtils.degToRad(Math.max(elev, 0))) * 1.8, 0, 1);
+  const night = elev < 2 ? clamp((2 - elev) / 10, 0, 1) : 0;
+  const lowSun = elev > 0 && elev < 22 ? 1 - elev/22 : 0;
+
+  sunLight.position.copy(sunVec).multiplyScalar(35);
+  sunLight.intensity = day * 1.9;
+  sunLight.color.setRGB(1, lerp(0.95, 0.62, lowSun), lerp(0.86, 0.38, lowSun));
+  sunLight.castShadow = day > 0.02;
+
+  moonLight.intensity = night * 0.22;
+  hemi.intensity = 0.06 + day * 0.42;
+  ambient.intensity = 0.04 + day * 0.16;
+
+  skyU.turbidity.value = lerp(5, 11, lowSun);
+  skyU.rayleigh.value = lerp(1.4, 2.6, lowSun);
+  skyU.mieCoefficient.value = lerp(0.004, 0.012, lowSun);
+
+  starMat.opacity = night * 0.9;
+
+  const fogDay = new THREE.Color(0xdde4ea), fogSet = new THREE.Color(0xd9b393), fogNight = new THREE.Color(0x141b27);
+  const fogC = fogDay.clone().lerp(fogSet, lowSun).lerp(fogNight, night);
+  scene.fog.color.copy(fogC);
+
+  bloom.strength = 0.10 + night * 0.55 + lowSun * 0.08;
+  bloom.threshold = lerp(0.92, 0.55, night);
+
+  renderer.toneMappingExposure = lerp(0.92, 0.55, night);
+
+  // Emissives
+  const ledOn = 0.2 + night * 4.2;
+  ledMeshes.forEach(m => m.material.emissiveIntensity = ledOn * (state.addons.lighting || bollardLights.length ? 1 : 0));
+  glowLights.forEach(l => l.intensity = night * 1.6);
+  bollardLights.forEach(l => l.intensity = night * 0.8);
+  heaterEmitters.forEach(m => m.material.emissiveIntensity = 0.4 + night * 2.6);
+
+  // Env reflections fade at night
+  const envI = 0.25 + day * 0.85;
+  scene.traverse(o=>{
+    if (o.isMesh){
+      const ms = Array.isArray(o.material) ? o.material : [o.material];
+      ms.forEach(m=>{ if ('envMapIntensity' in m) m.envMapIntensity = envI; });
+    }
+  });
+}
+
+// =============================================================
+// CAMERA
+// =============================================================
+let camAnim = null;
+function tweenCamera(pos, target, dur=900){
+  camAnim = {t0:performance.now(), dur, p0:camera.position.clone(), p1:pos, tg0:controls.target.clone(), tg1:target};
+}
+function applyView(animate=true){
+  const W = state.length, D = state.depth, H = state.height;
+  const r = Math.max(W, D) * 1.55;
+  let pos, tgt;
+  if (state.view==='iso'){ pos = new THREE.Vector3(r, r*0.62, r); tgt = new THREE.Vector3(0, H*0.42, 0); controls.enableRotate = true; }
+  else if (state.view==='front'){ pos = new THREE.Vector3(0, H/2+0.2, r*1.45); tgt = new THREE.Vector3(0, H/2, 0); controls.enableRotate = false; }
+  else if (state.view==='side'){ pos = new THREE.Vector3(r*1.45, H/2+0.2, 0); tgt = new THREE.Vector3(0, H/2, 0); controls.enableRotate = false; }
+  else { pos = new THREE.Vector3(0, r*1.8, 0.01); tgt = new THREE.Vector3(0, 0, 0); controls.enableRotate = false; }
+  if (animate) tweenCamera(pos, tgt);
+  else { camera.position.copy(pos); controls.target.copy(tgt); controls.update(); }
+}
+
+// =============================================================
+// RESIZE + LOOP
+// =============================================================
+function resize(){
+  const r = stage.getBoundingClientRect();
+  if (!r.width || !r.height) return;
+  renderer.setSize(r.width, r.height, false);
+  composer.setSize(r.width, r.height);
+  camera.aspect = r.width / r.height;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+new ResizeObserver(resize).observe(stage);
+
+let lastT = performance.now(), frames = 0, fpsT = lastT;
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt = Math.min((now - lastT)/1000, 0.1); lastT = now;
+
+  // Camera tween
+  if (camAnim){
+    const k = clamp((now - camAnim.t0)/camAnim.dur, 0, 1);
+    const e = 1 - Math.pow(1-k, 3);
+    camera.position.lerpVectors(camAnim.p0, camAnim.p1, e);
+    controls.target.lerpVectors(camAnim.tg0, camAnim.tg1, e);
+    if (k >= 1) camAnim = null;
+  }
+
+  // Auto-orbit
+  if (state.spin && state.view==='iso' && !camAnim){
+    const theta = Math.atan2(camera.position.z, camera.position.x) + dt*0.22;
+    const rad = Math.hypot(camera.position.x, camera.position.z);
+    camera.position.x = Math.cos(theta)*rad;
+    camera.position.z = Math.sin(theta)*rad;
+  }
+
+  // Louvre roof animation
+  const targetTilt = state.roofOpen ? -1.15 : 0;
+  for (const s of louvreSlats){
+    s.rotation.z += (targetTilt - s.rotation.z) * Math.min(dt*5, 1);
+  }
+
+  controls.update();
+  composer.render();
+
+  frames++;
+  if (now - fpsT > 1000){ $('#fps').textContent = frames; frames = 0; fpsT = now; }
+}
+
+// =============================================================
+// UI SYNC
+// =============================================================
+function render(){
+  document.querySelectorAll('[data-group="structure"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.structure));
+  document.querySelectorAll('[data-group="frameColor"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.frameColor));
+  document.querySelectorAll('[data-group="roof"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.roof));
+  document.querySelectorAll('[data-group="slatDirection"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.slatDirection));
+  document.querySelectorAll('[data-group="slatRotation"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.slatRotation));
+  document.querySelectorAll('[data-group="slatColor"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.slatColor));
+  document.querySelectorAll('[data-group="elementsPosition"] [data-value]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.value===state.elementsPosition));
+
+  const setBg = (el,min,max)=>el.style.setProperty('--v', `${((+el.value-min)/(max-min))*100}%`);
+  $('#length').value=state.length; $('#length-val').textContent=state.length.toFixed(1); setBg($('#length'),1,10);
+  $('#depth').value=state.depth;   $('#depth-val').textContent=state.depth.toFixed(2);   setBg($('#depth'),0.05,5);
+  $('#height').value=state.height; $('#height-val').textContent=state.height.toFixed(2); setBg($('#height'),2.0,3.5);
+  $('#overhang').value=state.overhang; $('#overhang-val').textContent=state.overhang.toFixed(2); setBg($('#overhang'),0,0.6);
+  $('#angle').value=state.angle;   $('#angle-val').textContent=Math.round(state.angle); setBg($('#angle'),0,15);
+  $('#time').value=state.time; setBg($('#time'),5.5,22);
+  $('#time-val').textContent = `${Math.floor(state.time)}:${String(Math.round((state.time%1)*60)).padStart(2,'0')}`;
+  document.querySelectorAll('#time-presets button').forEach(b=>b.setAttribute('aria-pressed', Math.abs(parseFloat(b.dataset.time)-state.time)<0.3));
+
+  $('#area-note').textContent = `${(state.length*state.depth).toFixed(1)} m²`;
+  $('#plan-dims').textContent = `${state.length.toFixed(1)} × ${state.depth.toFixed(1)} m`;
+  $('#frame-color-label').textContent = FRAME_COLORS[state.frameColor].label;
+  $('#slat-color-label').textContent = state.slatColor===state.frameColor
+    ? `${FRAME_COLORS[state.slatColor].label.split(' — ')[0]} — matches structure`
+    : `${FRAME_COLORS[state.slatColor].label.split(' — ')[0]} — two-tone`;
+  $('#roof-badge').textContent = ROOF[state.roof].short;
+  $('#slat-iso').checked = !!state.slatIsolation;
+
+  // Hide slats-advanced accordion if not louvred
+  const slatsAcc = document.getElementById('acc-slats');
+  if (slatsAcc) slatsAcc.style.display = state.roof.startsWith('louvred') ? '' : 'none';
+
+  document.querySelectorAll('[data-wall]').forEach(sel=>sel.value=state.walls[sel.dataset.wall]);
+  document.querySelectorAll('.side-btn').forEach(b=>b.querySelector('.side-state').textContent = WALL[state.walls[b.dataset.side]].label);
+  document.querySelectorAll('[data-addon]').forEach(cb=>cb.checked=!!state.addons[cb.dataset.addon]);
+  document.querySelectorAll('[data-mat]').forEach(sel=>sel.value=state[sel.dataset.mat]);
+  document.querySelectorAll('[data-smart]').forEach(sel=>sel.value=state[sel.dataset.smart]);
+  document.querySelectorAll('#view-toggle button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.view===state.view));
+
+  $('#btn-roof').style.display = state.roof==='louvred-retract' ? '' : 'none';
+  $('#btn-roof').textContent = state.roofOpen ? 'Close roof' : 'Open roof';
+
+  const prod = PRODUCTS[state.product];
+  $('#panel-title').innerHTML = `${prod.name.replace(prod.em,'')} <em>${prod.em}.</em>`;
+  $('#crumb-product').textContent = prod.name;
+
+  drawSummary();
+  syncHash();
+}
+
+function drawSummary(){
+  const {items, subtotal} = priceBreakdown();
+  $('#summary-list').innerHTML = items.map(it=>`
+    <div class="row-pop flex items-start justify-between gap-3">
+      <span class="text-ink-600">${it.label}</span>
+      <span class="tabular-nums font-medium text-ink-900">£${fmt(it.value)}</span>
+    </div>`).join('');
+  animatePrice($('#price-total'), prevSubtotal, subtotal);
+  animatePrice($('#price-total-mobile'), prevSubtotal, subtotal);
+  $('#modal-price').textContent = '£' + fmt(subtotal);
+  prevSubtotal = subtotal;
+
+  const prod = PRODUCTS[state.product];
+  $('#config-title').textContent = prod.name;
+  const wallSummary = ['front','back','left','right'].filter(s=>state.walls[s]!=='none').map(s=>`${s}: ${WALL[state.walls[s]].label}`).join(' · ') || 'open on all sides';
+  $('#config-summary').textContent = `${state.length.toFixed(1)} × ${state.depth.toFixed(1)} m · ${ROOF[state.roof].short} · ${wallSummary}`;
+  const matBits = [
+    state.cladding!=='none' && `cladding: ${CLADDING[state.cladding].label}`,
+    state.flooring!=='none' && `flooring: ${FLOORING[state.flooring].label}`,
+    state.interiorWalls!=='none' && `interior: ${INTERIOR_WALLS[state.interiorWalls].label}`,
+  ].filter(Boolean).join(' · ');
+  const smartBits = [
+    state.automation!=='none' && AUTOMATION[state.automation].label,
+    state.electrical!=='none' && ELECTRICAL[state.electrical].label,
+    SERVICE[state.service]?.label,
+  ].filter(Boolean).join(' · ');
+  $('#modal-config').textContent = `${prod.name} · ${cap(state.structure==='wallmounted'?'Wall-mounted':'Free-standing')} · ${state.length.toFixed(1)} × ${state.depth.toFixed(1)} m · ${state.height.toFixed(2)} m high · ${ROOF[state.roof].label} · ${FRAME_COLORS[state.frameColor].label.split(' — ')[0]} frame · ${wallSummary}${matBits?' · '+matBits:''}${smartBits?' · '+smartBits:''}`;
+}
+
+function animatePrice(el, from, to){
+  if (!el) return;
+  const dur = 350, start = performance.now();
+  const step = now=>{
+    const t = clamp((now-start)/dur, 0, 1);
+    el.textContent = '£' + fmt(Math.round(from + (to-from)*(1-Math.pow(1-t,3))));
+    if (t<1) requestAnimationFrame(step);
+  };
+  if (from !== to){ el.classList.remove('price-pulse'); void el.offsetWidth; el.classList.add('price-pulse'); }
+  requestAnimationFrame(step);
+}
+
+// =============================================================
+// ROUTING (showroom <-> configurator) + URL hash
+// =============================================================
+function showView(name){
+  $('#view-showroom').classList.toggle('active', name==='showroom');
+  $('#view-configurator').classList.toggle('active', name==='configurator');
+  document.querySelectorAll('[data-configurator-only]').forEach(el=>el.classList.toggle('hidden', name!=='configurator'));
+  $('#btn-back-showroom').classList.toggle('hidden', name!=='configurator');
+  $('#crumb-sep').classList.toggle('hidden', name!=='configurator');
+  $('#crumb-product').textContent = name==='configurator' ? PRODUCTS[state.product].name : '';
+  if (name==='configurator'){
+    resize();
+    // intro fly-in
+    const r = Math.max(state.length, state.depth)*1.55;
+    camera.position.set(r*2.6, r*1.6, r*2.6);
+    controls.target.set(0, state.height*0.42, 0);
+    applyView(true);
+  } else {
+    history.replaceState(null,'',location.pathname);
+  }
+}
+
+function syncHash(){
+  const m = {
+    p:state.product, s:state.structure, c:state.frameColor, sc:state.slatColor,
+    l:state.length, d:state.depth, h:state.height, oh:state.overhang, ag:state.angle,
+    r:state.roof, sd:state.slatDirection, sr:state.slatRotation, si:state.slatIsolation?1:0,
+    w:state.walls, a:state.addons,
+    cl:state.cladding, fl:state.flooring, iw:state.interiorWalls,
+    au:state.automation, el:state.electrical, sv:state.service, ep:state.elementsPosition,
+    tm:state.time,
+  };
+  history.replaceState(null,'', '#'+btoa(JSON.stringify(m)).replace(/=+$/,''));
+}
+function loadFromHash(){
+  if (!location.hash || location.hash.length<4) return false;
+  try {
+    const m = JSON.parse(atob(location.hash.slice(1)));
+    if (!PRODUCTS[m.p]) return false;
+    state = structuredClone(DEFAULT_STATE);
+    Object.assign(state, {
+      product:m.p, structure:m.s, frameColor:m.c, slatColor:m.sc ?? m.c,
+      length:m.l, depth:m.d, height:m.h, overhang:m.oh ?? 0.2, angle:m.ag ?? 0,
+      roof:m.r, slatDirection:m.sd ?? 'width', slatRotation:m.sr ?? 'left', slatIsolation:!!m.si,
+      walls:m.w, addons:m.a,
+      cladding:m.cl ?? 'none', flooring:m.fl ?? 'none', interiorWalls:m.iw ?? 'none',
+      automation:m.au ?? 'none', electrical:m.el ?? 'none', service:m.sv ?? 'install',
+      elementsPosition:m.ep ?? 'perimeter',
+      time:m.tm ?? 13,
+    });
+    return true;
+  } catch { return false; }
+}
+
+// =============================================================
+// SHOWROOM CARDS + THUMBNAILS
+// =============================================================
+function buildCards(thumbs){
+  const grid = $('#product-grid');
+  grid.innerHTML = Object.entries(PRODUCTS).map(([id, p])=>{
+    const tempState = Object.assign(structuredClone(DEFAULT_STATE), structuredClone(p.preset), {product:id});
+    const price = priceBreakdown(tempState).subtotal;
+    return `
+    <article class="prod-card bg-white rounded-2xl border border-ink-200 overflow-hidden cursor-pointer" data-product="${id}">
+      <div class="prod-thumb">${thumbs[id] ? `<img src="${thumbs[id]}" alt="${p.name}"/>` : ''}</div>
+      <div class="p-5">
+        <h3 class="serif text-2xl">${p.name.replace(p.em, `<em>${p.em}</em>`)}</h3>
+        <p class="text-[11px] text-ink-500 mt-1 leading-relaxed">${p.tagline}</p>
+        <div class="flex items-center justify-between mt-4">
+          <div><div class="text-[9px] uppercase tracking-wider text-ink-400">as shown</div><div class="font-semibold tabular-nums">£${fmt(price)}</div></div>
+          <span class="prod-cta pill text-[11px] px-3 py-1.5 rounded-md border border-ink-300 transition">Configure →</span>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+  grid.querySelectorAll('[data-product]').forEach(card=>card.addEventListener('click', ()=>{
+    applyPreset(card.dataset.product);
+    refresh();
+    showView('configurator');
+  }));
+}
+
+function makeThumbnails(){
+  const thumbs = {};
+  const saved = structuredClone(state);
+  const savedTime = state.time;
+  renderer.setSize(560, 380, false);
+  camera.aspect = 560/380;
+  camera.updateProjectionMatrix();
+  for (const [id, p] of Object.entries(PRODUCTS)){
+    try {
+      state = Object.assign(structuredClone(DEFAULT_STATE), structuredClone(p.preset), {product:id, time: id==='pergola' ? 19.4 : 13});
+      buildCanopy();
+      const r = Math.max(state.length, state.depth)*1.5;
+      camera.position.set(r, r*0.55, r*1.05);
+      camera.lookAt(0, state.height*0.45, 0);
+      renderer.render(scene, camera);
+      thumbs[id] = canvas.toDataURL('image/jpeg', 0.85);
+    } catch(e){ console.warn('thumb failed', id, e); }
+  }
+  state = saved; state.time = savedTime;
+  return thumbs;
+}
+
+// =============================================================
+// EVENTS
+// =============================================================
+function refresh(){ buildCanopy(); render(); }
+
+document.querySelectorAll('[data-group]').forEach(g=>g.addEventListener('click', e=>{
+  const btn = e.target.closest('[data-value]'); if(!btn) return;
+  state[g.dataset.group] = btn.dataset.value;
+  if (g.dataset.group==='frameColor' || g.dataset.group==='slatColor') clearMaterialCache();
+  refresh();
+}));
+$('#length').addEventListener('input', e=>{ state.length=parseFloat(e.target.value); refresh(); });
+$('#depth').addEventListener('input',  e=>{ state.depth =parseFloat(e.target.value); refresh(); });
+$('#height').addEventListener('input', e=>{ state.height=parseFloat(e.target.value); refresh(); });
+$('#overhang').addEventListener('input', e=>{ state.overhang=parseFloat(e.target.value); refresh(); });
+$('#angle').addEventListener('input',   e=>{ state.angle  =parseFloat(e.target.value); refresh(); });
+$('#slat-iso').addEventListener('change', e=>{ state.slatIsolation=e.target.checked; refresh(); });
+document.querySelectorAll('[data-mat]').forEach(sel=>sel.addEventListener('change', e=>{ state[sel.dataset.mat]=e.target.value; clearMaterialCache(); refresh(); }));
+document.querySelectorAll('[data-smart]').forEach(sel=>sel.addEventListener('change', e=>{ state[sel.dataset.smart]=e.target.value; refresh(); }));
+$('#time').addEventListener('input',   e=>{ state.time  =parseFloat(e.target.value); applyTime(); render(); });
+document.querySelectorAll('#time-presets button').forEach(b=>b.addEventListener('click', ()=>{
+  state.time = parseFloat(b.dataset.time); applyTime(); render();
+}));
+
+document.querySelectorAll('[data-wall]').forEach(sel=>sel.addEventListener('change', e=>{ state.walls[sel.dataset.wall]=e.target.value; refresh(); }));
+document.querySelectorAll('.side-btn').forEach(b=>b.addEventListener('click', ()=>{
+  const order=['none','sliding','glass','tinted','alu','metal','zip','screen','louvre'];
+  state.walls[b.dataset.side] = order[(order.indexOf(state.walls[b.dataset.side])+1)%order.length];
+  refresh();
+}));
+document.querySelectorAll('[data-addon]').forEach(cb=>cb.addEventListener('change', e=>{ state.addons[cb.dataset.addon]=e.target.checked; refresh(); }));
+document.querySelectorAll('#view-toggle button').forEach(b=>b.addEventListener('click', ()=>{
+  state.view = b.dataset.view;
+  if (state.view!=='iso') state.spin = false;
+  applyView(); render();
+}));
+$('#btn-spin').addEventListener('click', ()=>{
+  state.spin = !state.spin;
+  $('#btn-spin').textContent = state.spin ? 'Stop orbit' : 'Auto-orbit';
+  if (state.spin && state.view!=='iso'){ state.view='iso'; applyView(); }
+  render();
+});
+$('#btn-roof').addEventListener('click', ()=>{
+  state.roofOpen = !state.roofOpen;
+  $('#btn-roof').textContent = state.roofOpen ? 'Close roof' : 'Open roof';
+});
+$('#btn-snap').addEventListener('click', ()=>{
+  composer.render();
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = `canopy-${Date.now()}.png`;
+  a.click();
+  toast('Screenshot downloaded');
+});
+
+canvas.addEventListener('pointerdown', ()=>{ stage.classList.add('grabbing'); camAnim = null; });
+window.addEventListener('pointerup', ()=>stage.classList.remove('grabbing'));
+
+$('#btn-home').addEventListener('click', ()=>showView('showroom'));
+$('#btn-back-showroom').addEventListener('click', ()=>showView('showroom'));
+
+function openModal(){ $('#quote-form').classList.remove('hidden'); $('#quote-success').classList.add('hidden'); $('#quote-modal').classList.remove('hidden'); $('#quote-modal').classList.add('flex'); }
+function closeModal(){ $('#quote-modal').classList.add('hidden'); $('#quote-modal').classList.remove('flex'); }
+$('#btn-quote').addEventListener('click', openModal);
+$('#btn-quote-top').addEventListener('click', openModal);
+$('#btn-quote-mobile').addEventListener('click', openModal);
+$('#modal-close').addEventListener('click', closeModal);
+$('#quote-modal').addEventListener('click', e=>{ if(e.target.id==='quote-modal') closeModal(); });
+$('#quote-form').addEventListener('submit', e=>{
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.target));
+  // Integration point: POST {customer, config, price} to your backend / Airtable / webhook.
+  console.log('Quote request', {customer:data, config:state, price:priceBreakdown().subtotal});
+  $('#quote-form').classList.add('hidden');
+  $('#quote-success').classList.remove('hidden');
+});
+$('#btn-reset').addEventListener('click', ()=>{
+  applyPreset(state.product);
+  clearMaterialCache(); refresh(); applyView();
+  toast('Reset to product defaults');
+});
+$('#btn-share').addEventListener('click', shareLink);
+$('#btn-copy').addEventListener('click', shareLink);
+function shareLink(){ navigator.clipboard.writeText(location.href).then(()=>toast('Config link copied')); }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.opacity=1; clearTimeout(toast._t); toast._t=setTimeout(()=>t.style.opacity=0,2400); }
+
+// =============================================================
+// BOOT
+// =============================================================
+$('#loader-msg').textContent = 'Rendering catalogue';
+applyTime();
+const thumbs = makeThumbnails();
+buildCards(thumbs);
+
+const fromHash = loadFromHash();
+refresh();
+resize();
+applyView(false);
+animate(performance.now());
+
+if (fromHash) showView('configurator');
+else showView('showroom');
+
+setTimeout(()=> $('#loader').classList.add('hidden'), 400);
+</script>
+</body>
+</html>

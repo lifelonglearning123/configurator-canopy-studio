@@ -1,0 +1,154 @@
+[
+  {
+    "title": "Pristine Patio",
+    "url": "https://pristinepergola.salesqueze.com/en/showroom/browse",
+    "h1": [],
+    "h2": [],
+    "h3": [],
+    "buttonsCount": 4,
+    "buttons": [
+      "Next",
+      "Accept all",
+      "Required only",
+      "Manage preferences"
+    ],
+    "imgs": [
+      {
+        "alt": "",
+        "src": "/global/storage/assets/logo.png?x-format=type%3Awebp%2Csize%3A256%2Cquality%3A80"
+      }
+    ],
+    "links": [
+      {
+        "text": "Login",
+        "href": "https://pristinepergola.salesqueze.com/en/auth"
+      }
+    ],
+    "productTiles": {
+      "byDataAttr": 1,
+      "anchorWithImg": 0,
+      "anchorSamples": []
+    },
+    "sectionCounts": [
+      {
+        "cls": "module-layout",
+        "kids": 3,
+        "txt": "Login Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Wi"
+      },
+      {
+        "cls": "flex items-center justify-end space-x-2",
+        "kids": 3,
+        "txt": "Login"
+      },
+      {
+        "cls": "module-inner-container overflow-x-hidden h-full scroll-container",
+        "kids": 3,
+        "txt": "Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: R"
+      },
+      {
+        "cls": "flex flex-col h-full",
+        "kids": 3,
+        "txt": "Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: R"
+      },
+      {
+        "cls": "overflow-y-auto overflow-x-hidden absolute inset-0",
+        "kids": 3,
+        "txt": "Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: R"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 6,
+        "txt": "Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth:"
+      },
+      {
+        "cls": "grid grid-cols-12 gap-0",
+        "kids": 3,
+        "txt": "10 ft 13 ft 4 in 7 ft 6 in"
+      },
+      {
+        "cls": "grid grid-cols-12 gap-0",
+        "kids": 3,
+        "txt": "Width Depth Height"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 6,
+        "txt": "Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth: Range from 84 inch to 480 inch Length (inch) * 160 Heigh"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 3,
+        "txt": "Roof Choose between a roof with adjustable slats or a solid, non-adjustable option. Slats Slats rotation Slats rotation "
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 10,
+        "txt": "Slats Slats rotation Slats rotation * Left Right Slats retraction Slats retraction * Retractable Unretractable Slats dir"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 3,
+        "txt": "Slats color : 7016 Slats color type * Gray Brown Black White Custom"
+      },
+      {
+        "cls": "grid-container flex flex-wrap justify-center -m-[calc(0.75rem/2)] ng-star-insert",
+        "kids": 5,
+        "txt": "Gray Brown Black White Custom"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 5,
+        "txt": "Colors Structure color : 7016 Structure color type * Gray Brown Black White Custom"
+      },
+      {
+        "cls": "grid-container flex flex-wrap justify-center -m-[calc(0.75rem/2)] ng-star-insert",
+        "kids": 5,
+        "txt": "Gray Brown Black White Custom"
+      },
+      {
+        "cls": "form-group flex flex-col items-start justify-start",
+        "kids": 6,
+        "txt": "Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your encl"
+      },
+      {
+        "cls": "grid-container flex flex-wrap justify-center -m-[calc(0.5rem/2)] ng-star-inserte",
+        "kids": 4,
+        "txt": "Front Back Left Right"
+      },
+      {
+        "cls": "grid-container flex flex-wrap justify-start -m-[calc(0.75rem/2)] ng-star-inserte",
+        "kids": 4,
+        "txt": "Screen rolo Metal sheet lamellas Glass Tinted glass"
+      },
+      {
+        "cls": "cdk-overlay-pane",
+        "kids": 3,
+        "txt": "Cookies We use cookies to improve user experience and analyze traffic. By clicking “Accept all“ you consent to our use o"
+      },
+      {
+        "cls": "ant-modal-content ng-tns-c3531571346-0",
+        "kids": 3,
+        "txt": "Cookies We use cookies to improve user experience and analyze traffic. By clicking “Accept all“ you consent to our use o"
+      }
+    ],
+    "bodyText": "Login Pergola Louvered Type Type * Freestanding Wall-mounted Dimensions 10 ft 13 ft 4 in 7 ft 6 in Width Depth Height Width: Range from 84 inch to 480 inch Width (inch) * 120 Depth: Range from 84 inch to 480 inch Length (inch) * 160 Height: Range from 90 inch to 144 inch Height (inch) * 90 Roof Choose between a roof with adjustable slats or a solid, non-adjustable option. Slats Slats rotation Slats rotation * Left Right Slats retraction Slats retraction * Retractable Unretractable Slats direction Slats direction * Width Length Slats color : 7016 Slats color type * Gray Brown Black White Custom Colors Structure color : 7016 Structure color type * Gray Brown Black White Custom Enclosures Front: None Back: None Left: None Right: None Sides closing position * Front Back Left Right Choose your enclosure Sides closing - front Screen rolo Metal sheet lamellas Glass Tinted glass Lights Lights * No lights Lights Addons Add ons * No addons Addons Automation Automation * No automation Automation Services Services * No services Services Next Cookies We use cookies to improve user experience and analyze traffic. By clicking “Accept all“ you consent to our use of cookies. You can manage or learn more about your cookie preferences by clicking on “Manage preferences.” Accept all Required only Manage preferences"
+  },
+  {
+    "title": "STATTUS TECHNOLOGY, Inc.",
+    "url": "https://stattus.salesqueze.com/en/showroom/browse",
+    "h1": [],
+    "h2": [],
+    "h3": [],
+    "buttonsCount": 0,
+    "buttons": [],
+    "imgs": [],
+    "links": [],
+    "productTiles": {
+      "byDataAttr": 0,
+      "anchorWithImg": 0,
+      "anchorSamples": []
+    },
+    "sectionCounts": [],
+    "bodyText": ""
+  }
+]

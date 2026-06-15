@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Show products in 3D and generate quotes in seconds. — Artificial Ignorance</title>
+<meta name="description" content="A photoreal 3D configurator for verandas, carports, garden rooms and pergolas. Let your customers design and price the product themselves. Go live in 7 days. £49 a month.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#fbfbfd;
+  --bg-3:#f5f5f7;
+  --ink:#1d1d1f;
+  --ink-2:#2d2d2f;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --faint:#86868b;
+  --hairline:#d2d2d7;
+  --hairline-light:#e8e8ed;
+  --accent:#00ff00;
+  --accent-deep:#06a325;
+  --accent-soft:#e5ffe5;
+  --dark:#000;
+  --dark-2:#1d1d1f;
+  --dark-text:#f5f5f7;
+  --radius-lg:24px;
+  --radius:16px;
+  --radius-sm:12px;
+  --maxw:1240px;
+  --pad:clamp(22px,5vw,40px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.47059;
+  font-size:17px;
+  font-weight:400;
+  letter-spacing:-.022em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img,video{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+section{position:relative}
+
+/* ---------- type ---------- */
+h1,h2,h3,h4{font-family:inherit;color:var(--text);font-weight:600;line-height:1.07;letter-spacing:-.025em}
+h1{font-size:clamp(2.5rem,7.2vw,5.6rem);font-weight:600;letter-spacing:-.035em;line-height:1.05}
+h2{font-size:clamp(2.1rem,5.2vw,4.2rem);font-weight:600;letter-spacing:-.03em;line-height:1.07}
+h3{font-size:clamp(1.5rem,2.6vw,2.2rem);font-weight:600;letter-spacing:-.022em;line-height:1.1}
+h4{font-size:clamp(1.1rem,1.6vw,1.35rem);font-weight:600;letter-spacing:-.02em;line-height:1.18}
+p{color:var(--text)}
+.lead{
+  font-size:clamp(1.15rem,1.6vw,1.5rem);
+  font-weight:400;
+  line-height:1.4;
+  letter-spacing:-.015em;
+  color:var(--muted);
+  max-width:42ch;
+}
+.lead.center{margin-left:auto;margin-right:auto}
+.eyebrow{
+  font-size:.96rem;font-weight:500;color:var(--accent-deep);
+  letter-spacing:-.005em;text-transform:none;display:inline-block;
+}
+.tabular{font-variant-numeric:tabular-nums}
+
+/* highlight — gradient accent on a word */
+.hl{
+  background:linear-gradient(95deg,var(--accent-deep) 0%,#0bd34a 50%,var(--accent-deep) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-text-fill-color:transparent;
+}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.wrap-narrow{max-width:980px;margin:0 auto;padding-left:var(--pad);padding-right:var(--pad)}
+.section{padding:clamp(88px,12vw,160px) 0;position:relative}
+.section.tight{padding:clamp(56px,7vw,96px) 0}
+.bg-2{background:var(--bg-2)}
+.bg-3{background:var(--bg-3)}
+.bg-dark{background:var(--dark);color:var(--dark-text)}
+.bg-dark h1,.bg-dark h2,.bg-dark h3,.bg-dark h4{color:#fff}
+.bg-dark p{color:#a1a1a6}
+.bg-dark .lead{color:#a1a1a6}
+.bg-dark .eyebrow{color:#0bd34a}
+.center{text-align:center}
+
+/* ---------- buttons (Apple style) ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.4em;
+  font-family:inherit;font-weight:500;font-size:17px;line-height:1;
+  padding:14px 24px;border-radius:980px;cursor:pointer;border:1px solid transparent;
+  transition:background .25s ease,color .25s ease,border-color .25s ease,opacity .25s ease;
+  white-space:nowrap;text-decoration:none;letter-spacing:-.01em;
+}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:#3a3a3c}
+.btn-accent{background:var(--ink);color:#fff;position:relative}
+.btn-accent::before{content:"";position:absolute;inset:-1px;border-radius:980px;background:var(--accent);z-index:-1;opacity:0;transition:opacity .25s}
+.btn-accent:hover{background:#3a3a3c}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--hairline)}
+.btn-ghost:hover{background:rgba(0,0,0,.04);border-color:#a8a8ad}
+.bg-dark .btn-primary{background:#fff;color:var(--ink)}
+.bg-dark .btn-primary:hover{background:#e8e8ed}
+.bg-dark .btn-ghost{color:#fff;border-color:#48484a}
+.bg-dark .btn-ghost:hover{background:rgba(255,255,255,.06);border-color:#86868b}
+.btn .arr{transition:transform .25s ease;display:inline-block}
+.btn:hover .arr{transform:translateX(3px)}
+
+.link-more{color:var(--accent-deep);font-weight:500;font-size:1.05rem;display:inline-flex;align-items:center;gap:4px;letter-spacing:-.01em}
+.link-more::after{content:"›";font-size:1.3em;line-height:0;margin-top:-2px;transition:transform .25s ease}
+.link-more:hover::after{transform:translateX(3px)}
+.bg-dark .link-more{color:#0bd34a}
+
+/* ---------- top utility ---------- */
+.utility{background:var(--bg-3);color:var(--muted);border-bottom:1px solid var(--hairline-light)}
+.utility-in{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px var(--pad);max-width:var(--maxw);margin:0 auto;font-size:12px;letter-spacing:-.005em}
+.utility .dot{width:6px;height:6px;border-radius:50%;background:var(--accent-deep);display:inline-block;margin-right:6px;vertical-align:middle}
+.utility .hide-sm{display:inline}
+
+/* ---------- nav (Apple style) ---------- */
+.nav{
+  position:sticky;top:0;z-index:60;background:rgba(255,255,255,.72);
+  backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--hairline-light);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:56px;gap:24px;max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);position:relative}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;letter-spacing:-.022em;font-size:1.02rem}
+.brand-mark{
+  width:28px;height:28px;border-radius:7px;background:var(--ink);
+  display:grid;place-items:center;flex:none;
+}
+.brand-mark span{font-family:inherit;font-weight:700;font-size:11px;color:var(--accent);letter-spacing:-.02em}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:.92rem;font-weight:400;color:var(--ink);transition:color .15s;letter-spacing:-.01em}
+.nav-links a:hover{color:var(--accent-deep)}
+.nav-cta{display:flex;align-items:center;gap:8px}
+.nav-cta .btn{padding:8px 16px;font-size:14px}
+.menu-btn{display:none;width:32px;height:32px;cursor:pointer;align-items:center;justify-content:center}
+.menu-btn span{display:block;width:18px;height:1.5px;background:var(--ink);position:relative}
+.menu-btn span::before,.menu-btn span::after{content:"";position:absolute;left:0;right:0;height:1.5px;background:var(--ink)}
+.menu-btn span::before{top:-6px}
+.menu-btn span::after{top:6px}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(64px,9vw,140px) 0 clamp(40px,5vw,80px);text-align:center;position:relative;overflow:hidden}
+.hero .eyebrow{margin-bottom:18px}
+.hero h1{max-width:18ch;margin:0 auto}
+.hero .lead{margin:24px auto 0;max-width:48ch}
+.hero-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:36px}
+.hero-meta-row{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 22px;margin-top:30px;font-size:.92rem;color:var(--muted)}
+.hero-meta-row b{color:var(--ink);font-weight:500}
+.hero-meta-row .sep{color:var(--hairline)}
+
+/* ---------- product showcase (the configurator) ---------- */
+.showcase{margin-top:clamp(40px,6vw,80px);position:relative}
+.showcase-frame{
+  position:relative;border-radius:24px;overflow:hidden;
+  background:#fff;
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.18),0 8px 24px -12px rgba(0,0,0,.1);
+  border:1px solid var(--hairline-light);
+}
+.showcase-frame iframe{width:100%;display:block;border:0;background:var(--bg-3);height:min(78vh,820px)}
+.showcase-caption{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px;padding:0 6px;font-size:.92rem;color:var(--muted)}
+.showcase-caption .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-deep);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ---------- feature section (split layout) ---------- */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,7vw,110px);align-items:center}
+.feature-grid.flip > div:first-child{order:2}
+.feature-text h2{margin-top:14px}
+.feature-text .lead{margin-top:22px}
+.feature-text .link-more{margin-top:28px}
+.feature-visual{position:relative}
+
+/* ---------- stats / quality row ---------- */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(30px,4vw,60px);margin-top:clamp(48px,6vw,80px)}
+.stat{text-align:left}
+.stat .n{
+  font-size:clamp(2.6rem,5vw,3.6rem);font-weight:600;letter-spacing:-.04em;
+  line-height:1;color:#fff;
+}
+.stat .n .unit{font-size:.5em;font-weight:500;vertical-align:top;margin-left:2px;color:#a1a1a6}
+.stat h4{margin-top:16px;font-size:1.1rem;color:#fff;font-weight:600}
+.stat p{margin-top:8px;font-size:.96rem;color:#a1a1a6;line-height:1.45;max-width:32ch}
+
+/* ---------- inbox notification (lead arrival) ---------- */
+.notif-stack{position:relative;display:flex;flex-direction:column;gap:14px}
+.notif{
+  background:rgba(245,245,247,.92);
+  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+  border-radius:18px;padding:14px 16px;
+  display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:start;
+  box-shadow:0 10px 30px -8px rgba(0,0,0,.08),0 2px 6px -2px rgba(0,0,0,.05);
+  border:1px solid rgba(0,0,0,.04);
+}
+.notif-ico{
+  width:36px;height:36px;border-radius:9px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(135deg,#0a0a0a,#2a2a2a);
+}
+.notif-ico span{font-weight:700;font-size:13px;color:var(--accent);letter-spacing:-.04em}
+.notif-meta{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:3px;letter-spacing:-.005em}
+.notif-meta b{color:var(--ink);font-weight:600}
+.notif-title{font-size:14.5px;font-weight:600;letter-spacing:-.018em;color:var(--ink);line-height:1.25}
+.notif-body{font-size:13.5px;color:var(--muted);margin-top:2px;line-height:1.35;letter-spacing:-.005em}
+.notif-time{font-size:11.5px;color:var(--faint);align-self:start}
+
+/* the full lead card (Apple-style spec sheet) */
+.lead-card{
+  background:var(--bg);border-radius:24px;padding:28px;
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.14),0 4px 12px -4px rgba(0,0,0,.06);
+  border:1px solid var(--hairline-light);overflow:hidden;
+}
+.lead-card-top{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid var(--hairline-light);margin-bottom:18px;
+}
+.lead-card-top .left{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;color:var(--ink)}
+.lead-card-top .dot{width:8px;height:8px;border-radius:50%;background:var(--accent-deep);animation:pulse 2s infinite}
+.lead-card-top .right{font-size:12px;color:var(--muted);font-weight:500;letter-spacing:-.005em}
+.lc-block{padding:14px 0;border-bottom:1px solid var(--hairline-light)}
+.lc-block:last-child{border-bottom:0}
+.lc-label{font-size:11.5px;color:var(--faint);font-weight:500;margin-bottom:6px;letter-spacing:-.005em}
+.lc-name{font-size:1.4rem;font-weight:600;letter-spacing:-.025em;line-height:1.1}
+.lc-contact{display:grid;gap:2px;margin-top:6px;font-size:14.5px;color:var(--ink)}
+.lc-contact span{font-feature-settings:"tnum"}
+.lc-contact span:last-child{color:var(--muted)}
+.lc-spec{display:grid;gap:4px;font-size:14.5px;color:var(--ink);line-height:1.5}
+.lc-spec b{font-weight:600}
+.lc-price{display:flex;align-items:baseline;justify-content:space-between;gap:14px}
+.lc-price .v{font-size:2rem;font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.lc-price small{font-size:11.5px;color:var(--muted);text-align:right;line-height:1.45}
+
+/* ---------- compact specs (Apple feature row) ---------- */
+.specs{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(28px,3vw,48px);margin-top:clamp(48px,6vw,90px)}
+.spec{padding-top:24px;border-top:1px solid var(--hairline)}
+.spec h4{font-size:1.18rem;margin-bottom:8px}
+.spec p{font-size:.96rem;color:var(--muted);line-height:1.5}
+
+/* ---------- steps (7 days) ---------- */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(28px,4vw,56px);margin-top:clamp(48px,6vw,80px)}
+.step{position:relative}
+.step-n{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--accent-soft);color:var(--accent-deep);
+  font-weight:600;font-size:1.1rem;letter-spacing:-.02em;margin-bottom:18px;
+}
+.step h3{font-size:1.4rem;letter-spacing:-.022em}
+.step p{margin-top:10px;color:var(--muted);font-size:1rem;line-height:1.5;max-width:34ch}
+
+/* ---------- pricing ---------- */
+.pricing-card{
+  max-width:780px;margin:48px auto 0;text-align:center;
+  background:var(--bg);border-radius:24px;padding:clamp(40px,5vw,64px);
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.14),0 4px 12px -4px rgba(0,0,0,.06);
+  border:1px solid var(--hairline-light);position:relative;
+}
+.pricing-card .tag{
+  display:inline-block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--accent-deep);background:var(--accent-soft);
+  padding:6px 12px;border-radius:980px;margin-bottom:20px;
+}
+.pricing-card .price{
+  font-size:clamp(4rem,9vw,6.5rem);font-weight:600;letter-spacing:-.045em;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.pricing-card .per{display:block;font-size:1.05rem;color:var(--muted);font-weight:400;margin-top:8px;letter-spacing:-.01em}
+.pricing-card .summary{margin:24px auto 0;color:var(--muted);font-size:1.1rem;max-width:42ch;line-height:1.5}
+.pricing-card ul{
+  list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;
+  text-align:left;margin:36px 0 36px;padding-top:28px;border-top:1px solid var(--hairline-light);
+}
+.pricing-card li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:.98rem;color:var(--ink);line-height:1.4}
+.pricing-card li::before{
+  content:"";width:18px;height:18px;border-radius:50%;flex:none;
+  background:var(--accent-deep);margin-top:1px;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/13px no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/13px no-repeat;
+}
+.pricing-card .cta-row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.pricing-card .note{margin-top:18px;font-size:.86rem;color:var(--faint)}
+
+.partners{max-width:780px;margin:24px auto 0;text-align:center;font-size:.96rem;color:var(--muted)}
+.partners a{color:var(--accent-deep);font-weight:500}
+
+/* ---------- faq ---------- */
+.faq{max-width:820px;margin:48px auto 0;border-top:1px solid var(--hairline)}
+.faq details{border-bottom:1px solid var(--hairline)}
+.faq summary{
+  list-style:none;cursor:pointer;padding:22px 0;
+  display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;
+  font-size:1.15rem;font-weight:500;letter-spacing:-.018em;color:var(--ink);line-height:1.3;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary .pm{width:26px;height:26px;flex:none;position:relative;transition:.25s;display:grid;place-items:center}
+.faq summary .pm::before,.faq summary .pm::after{content:"";position:absolute;background:var(--ink);border-radius:1px;transition:.25s}
+.faq summary .pm::before{width:14px;height:1.5px}
+.faq summary .pm::after{width:1.5px;height:14px}
+.faq details[open] summary .pm::after{transform:rotate(90deg);opacity:0}
+.faq .ans{padding:0 0 28px;color:var(--muted);font-size:1.04rem;line-height:1.55;max-width:64ch}
+
+/* ---------- final cta (dark) ---------- */
+.final{padding:clamp(64px,9vw,140px) 0;text-align:center}
+.final h2{max-width:18ch;margin:0 auto;font-size:clamp(2.5rem,6vw,5rem)}
+.final .lead{margin:22px auto 0;max-width:50ch}
+.final-cta{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-top:36px}
+
+/* ---------- booking ---------- */
+.book{margin:64px auto 0;max-width:980px;background:#fff;color:var(--ink);border-radius:24px;padding:clamp(20px,3vw,32px);box-shadow:0 24px 60px -24px rgba(0,0,0,.4)}
+.book-head{text-align:center;padding-bottom:22px;border-bottom:1px solid var(--hairline-light);margin-bottom:22px}
+.book-head h3{font-size:clamp(1.3rem,2.4vw,1.8rem);font-weight:600}
+.book-head p{margin-top:8px;color:var(--muted);font-size:.96rem}
+.book-frame{border-radius:14px;overflow:hidden;background:var(--bg-3);min-height:720px}
+.book-frame iframe{width:100%;border:0;display:block;min-height:720px;background:#fff}
+.book-fallback{text-align:center;margin-top:14px;font-size:.9rem;color:var(--muted)}
+.book-fallback a{color:var(--accent-deep);font-weight:500}
+
+/* ---------- contact form (Apple-style) ---------- */
+.contact-form{
+  background:#fff;border-radius:24px;padding:clamp(28px,4vw,44px);
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.1),0 4px 12px -4px rgba(0,0,0,.05);
+  border:1px solid var(--hairline-light);
+  display:grid;gap:18px;position:relative;
+}
+.cf-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cf-field{display:flex;flex-direction:column;gap:7px;position:relative}
+.cf-field label{font-size:.86rem;font-weight:500;color:var(--ink);letter-spacing:-.005em}
+.cf-field label .req{color:var(--accent-deep);margin-left:2px}
+.cf-field input,.cf-field textarea,.cf-field select{
+  font-family:inherit;font-size:1rem;color:var(--ink);
+  background:var(--bg-3);border:1px solid transparent;border-radius:12px;
+  padding:14px 16px;letter-spacing:-.01em;line-height:1.4;
+  transition:background .2s,border-color .2s,box-shadow .2s;
+  width:100%;outline:none;-webkit-appearance:none;appearance:none;
+}
+.cf-field textarea{resize:vertical;min-height:104px}
+.cf-field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23424245' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:18px;padding-right:42px;cursor:pointer;
+}
+.cf-field input::placeholder,.cf-field textarea::placeholder{color:var(--faint)}
+.cf-field input:focus,.cf-field textarea:focus,.cf-field select:focus{
+  background:#fff;border-color:var(--ink);box-shadow:0 0 0 3px rgba(0,0,0,.06);
+}
+.cf-honey{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.cf-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;margin-top:6px}
+.cf-note{font-size:.82rem;color:var(--muted);max-width:42ch;line-height:1.4}
+.cf-result{margin-top:4px;padding:14px 16px;border-radius:12px;font-size:.94rem;line-height:1.45}
+.cf-result.ok{background:var(--accent-soft);color:var(--accent-deep);border:1px solid #b8e8b8}
+.cf-result.err{background:#fff0f1;color:#a02334;border:1px solid #f4c0c8}
+.contact-form.loading{opacity:.65;pointer-events:none}
+@media(max-width:680px){
+  .cf-row{grid-template-columns:1fr;gap:18px}
+  .cf-foot{flex-direction:column-reverse;align-items:stretch}
+  .cf-foot .btn{width:100%}
+}
+
+/* ---------- footer ---------- */
+.foot{padding:60px 0 36px;border-top:1px solid var(--hairline-light);background:var(--bg-3);color:var(--muted);font-size:.86rem;letter-spacing:-.005em}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+.foot-brand p{margin-top:12px;max-width:34ch;line-height:1.55}
+.foot-col{display:flex;flex-direction:column;gap:8px}
+.foot-col h5{font-size:.84rem;font-weight:600;color:var(--ink);margin-bottom:6px}
+.foot-col a{color:var(--muted);transition:color .15s}
+.foot-col a:hover{color:var(--ink)}
+.foot-bottom{display:flex;flex-wrap:wrap;justify-content:space-between;gap:14px;margin-top:48px;padding-top:20px;border-top:1px solid var(--hairline-light);font-size:.78rem}
+.foot-bottom a{color:var(--muted)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1)}
+.reveal.in{opacity:1;transform:none}
+.reveal[data-delay="1"]{transition-delay:.1s}
+.reveal[data-delay="2"]{transition-delay:.2s}
+.reveal[data-delay="3"]{transition-delay:.3s}
+.reveal[data-delay="4"]{transition-delay:.4s}
+
+/* ---------- responsive ---------- */
+@media(max-width:980px){
+  .feature-grid,.feature-grid.flip{grid-template-columns:1fr;gap:40px}
+  .feature-grid.flip > div:first-child{order:0}
+  .stats{grid-template-columns:1fr 1fr;gap:36px 32px}
+  .specs{grid-template-columns:1fr 1fr;gap:36px 32px}
+  .steps{grid-template-columns:1fr;gap:32px}
+  .pricing-card ul{grid-template-columns:1fr;gap:12px}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+  .menu-btn{display:flex}
+  .nav.open .nav-links{display:flex;position:absolute;top:56px;left:0;right:0;flex-direction:column;background:rgba(255,255,255,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--hairline-light);padding:18px var(--pad);gap:18px;align-items:flex-start}
+  .utility .hide-sm{display:none}
+}
+@media(max-width:560px){
+  .stats,.specs{grid-template-columns:1fr;gap:24px}
+  .stat,.spec{border-top:1px solid var(--hairline-light);padding-top:20px}
+  .stat{border-top:1px solid #3a3a3c}
+  .foot-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .hero-cta .btn,.final-cta .btn{flex:1 1 auto;min-width:160px}
+  .nav-cta .btn-ghost{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;scroll-behavior:auto!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===================== UTILITY BAR ===================== -->
+<div class="utility">
+  <div class="utility-in">
+    <span><span class="dot"></span> Verandas · Carports · Garden rooms · Pergolas</span>
+    <span class="hide-sm">Go live in 7 days · £49 / mo</span>
+  </div>
+</div>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Artificial Ignorance home">
+      <span class="brand-mark"><span>AI</span></span>
+      <span>Artificial Ignorance</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#configurator">Configurator</a>
+      <a href="#quality">Quality</a>
+      <a href="#email">The email</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="/sign-in" style="font-size:.92rem;font-weight:500;color:var(--ink);padding:0 6px;letter-spacing:-.01em">Sign in</a>
+      <a href="#configurator" class="btn btn-ghost">Try it live</a>
+      <a href="https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver" target="_blank" rel="noopener" class="btn btn-ghost">Book a demo <span class="arr">›</span></a>
+      <a href="/sign-up" class="btn btn-primary">Start free trial <span class="arr">›</span></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero wrap">
+  <div class="reveal">
+    <span class="eyebrow">3D Configurator · for outdoor-living sellers</span>
+  </div>
+  <h1 class="reveal" data-delay="1">Show products in 3D and generate quotes in <span class="hl">seconds.</span></h1>
+  <p class="lead reveal" data-delay="2">Stop spending time on sketches and quote preparation. Let your customers do this themselves while you focus on closing deals. Choose our premade 3D configurator and go live in 7 days.</p>
+  <div class="hero-cta reveal" data-delay="3">
+    <a href="https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver" target="_blank" rel="noopener" class="btn btn-primary">Book a demo <span class="arr">›</span></a>
+    <a href="#configurator" class="btn btn-ghost">See it live <span class="arr">›</span></a>
+  </div>
+  <div class="hero-meta-row reveal" data-delay="4">
+    <span><b>Photoreal 3D</b> · not toy graphics</span>
+    <span class="sep">·</span>
+    <span><b>Live pricing</b> as buyers build</span>
+    <span class="sep">·</span>
+    <span><b>Real-time email</b> when they request the quote</span>
+  </div>
+</section>
+
+<!-- ===================== CONFIGURATOR SHOWCASE ===================== -->
+<section id="configurator" class="wrap" style="padding-bottom:clamp(64px,9vw,140px)">
+  <div class="showcase reveal">
+    <div class="showcase-frame">
+      <iframe src="/configurator.html" title="Live 3D veranda configurator" loading="lazy" allow="fullscreen; xr-spatial-tracking"></iframe>
+    </div>
+    <div class="showcase-caption">
+      <span><span class="dot"></span> Live. Try the buyer experience for yourself.</span>
+      <a href="/configurator.html" target="_blank" rel="noopener" class="link-more">Open full screen</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUALITY (dark Apple-style spec section) ===================== -->
+<section id="quality" class="section bg-dark">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">Photoreal — not toy 3D</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">A different class of 3D from anything else in outdoor living.</h2>
+    <p class="lead center reveal" data-delay="2" style="margin-top:22px;max-width:54ch">Studio-grade lighting. Real materials. Every angle a marketing shot. The buyer doesn't see a 3D widget — they see their veranda.</p>
+  </div>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat reveal">
+        <div class="n">60<span class="unit">fps</span></div>
+        <h4>Smooth on every device</h4>
+        <p>Engineered to render at full quality on a four-year-old phone. No app install required.</p>
+      </div>
+      <div class="stat reveal" data-delay="1">
+        <div class="n">4K</div>
+        <h4>Studio-grade renders</h4>
+        <p>Real shadows, real reflections, real depth. Looks like a photograph, not a cartoon model.</p>
+      </div>
+      <div class="stat reveal" data-delay="2">
+        <div class="n">360<span class="unit">°</span></div>
+        <h4>Every angle, walk inside</h4>
+        <p>Buyers orbit, zoom and look up at the louvres — including the view from inside looking out.</p>
+      </div>
+      <div class="stat reveal" data-delay="3">
+        <div class="n">4</div>
+        <h4>Product families</h4>
+        <p>Verandas, carports, garden rooms and pergolas — one configurator, your full range.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LIVE PRICING (split, image-led) ===================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="feature-grid">
+      <div class="feature-text reveal">
+        <span class="eyebrow">Live pricing</span>
+        <h2>They build it. They see the price as they go.</h2>
+        <p class="lead">Every roof, every wall, every finish, every add-on updates the price in real time. By the time your buyer requests the formal quote, they've already designed the product and agreed the budget — in their own head, in their own time.</p>
+        <a href="#configurator" class="link-more" style="margin-top:24px;display:inline-flex">Try the buyer flow</a>
+      </div>
+      <div class="feature-visual reveal" data-delay="1">
+        <div class="lead-card" id="quoteCard">
+          <div class="lead-card-top">
+            <div class="left"><span class="dot"></span> Configuring · live</div>
+            <div class="right">Sample buyer build</div>
+          </div>
+          <div class="lc-block">
+            <div class="lc-label">Product</div>
+            <div class="lc-name">Pergola Lux. · Free-standing</div>
+            <div class="lc-spec" style="margin-top:8px">
+              <span><b class="tabular">5.00 × 3.50 m</b> · Anthracite aluminium</span>
+              <span>Louvred retractable roof</span>
+              <span>2× sliding glass walls · LED · heating · install</span>
+            </div>
+          </div>
+          <div class="lc-block">
+            <div class="lc-label">Live price · ex. VAT</div>
+            <div class="lc-price">
+              <div class="v tabular" id="priceCounter">£0</div>
+              <small>Built by the buyer<br><b id="buildTimer" style="color:var(--ink);font-weight:500">in 41 seconds</b></small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EMAIL (split, image-led, flipped) ===================== -->
+<section id="email" class="section bg-2">
+  <div class="wrap">
+    <div class="feature-grid flip">
+      <div class="feature-text reveal">
+        <span class="eyebrow">Real-time email</span>
+        <h2>The lead lands in your <span class="hl">inbox</span>. The moment they ask.</h2>
+        <p class="lead">When the buyer requests the formal quote, the configurator emails you the full lead in seconds — name, phone, the exact spec, the price they've designed against, and the PDF attached. No dashboard. No CRM. Just your inbox.</p>
+        <a href="#pricing" class="link-more" style="margin-top:24px;display:inline-flex">See pricing</a>
+      </div>
+      <div class="feature-visual reveal" data-delay="1">
+        <div class="notif-stack">
+          <div class="notif">
+            <div class="notif-ico"><span>AI</span></div>
+            <div>
+              <div class="notif-meta"><b>Mail</b><span id="lcTime">now</span></div>
+              <div class="notif-title">New quote · Sarah Kowalski · £14,820</div>
+              <div class="notif-body">Pergola Lux. 5×3.5m anthracite alu, louvred retractable roof, 2× sliding glass walls. Call: +44 7700 900 042</div>
+            </div>
+          </div>
+          <div class="lead-card">
+            <div class="lead-card-top">
+              <div class="left"><span class="dot"></span> Lead detail</div>
+              <div class="right">From your configurator</div>
+            </div>
+            <div class="lc-block">
+              <div class="lc-label">Buyer</div>
+              <div class="lc-name">Sarah Kowalski</div>
+              <div class="lc-contact">
+                <span>sarah.k@example.co.uk</span>
+                <span class="tabular">+44 7700 900 042</span>
+                <span>London W4 · UK</span>
+              </div>
+            </div>
+            <div class="lc-block">
+              <div class="lc-label">Configured</div>
+              <div class="lc-spec">
+                <span><b>Pergola Lux.</b> · Free-standing</span>
+                <span><b class="tabular">5.00 × 3.50m</b> · Anthracite aluminium</span>
+                <span>Louvred retractable roof · 2× sliding glass</span>
+                <span>LED · heating · full install</span>
+              </div>
+            </div>
+            <div class="lc-block">
+              <div class="lc-label">Their price · ex. VAT</div>
+              <div class="lc-price">
+                <div class="v tabular" id="lcQuote">£14,820</div>
+                <small>Built by the buyer<br><b style="color:var(--ink);font-weight:500">PDF attached</b></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHY OURS (spec row) ===================== -->
+<section class="section">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">Why ours</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">Designed to look like the real thing.</h2>
+    <p class="lead center reveal" data-delay="2" style="margin-top:22px;max-width:56ch">Most veranda configurators on the market look like cardboard cutouts. Ours behaves like the camera in a product photoshoot — and renders smoothly on every device.</p>
+  </div>
+  <div class="wrap">
+    <div class="specs">
+      <div class="spec reveal">
+        <h4>Photoreal</h4>
+        <p>Studio-grade renders, not toy graphics. Real shadows, real reflections, real depth.</p>
+      </div>
+      <div class="spec reveal" data-delay="1">
+        <h4>True materials</h4>
+        <p>Aluminium reflects. Glass refracts. Every finish behaves the way it would in reality.</p>
+      </div>
+      <div class="spec reveal" data-delay="2">
+        <h4>Every angle</h4>
+        <p>Orbit, walk inside, look up at the louvres. No fixed cameras, no flat product shots.</p>
+      </div>
+      <div class="spec reveal" data-delay="3">
+        <h4>Runs anywhere</h4>
+        <p>60fps on a four-year-old phone, no app install. Design from the sofa or the back garden.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 7 DAYS ===================== -->
+<section class="section bg-3" id="how">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">Onboarding</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">Live on your website in <span class="hl">7 days.</span></h2>
+    <p class="lead center reveal" data-delay="2" style="margin-top:22px;max-width:54ch">Three stages, no developers required. Send us your range and we hand you back a configurator embedded under your branding.</p>
+  </div>
+  <div class="wrap">
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-n">1</div>
+        <h3>Send us your range</h3>
+        <p>Share your verandas, carports, garden rooms and pergolas — products, options, finishes, dimensions and pricing.</p>
+      </div>
+      <div class="step reveal" data-delay="1">
+        <div class="step-n">2</div>
+        <h3>We set up under your brand</h3>
+        <p>Configurator, branding, domain, lead email destination — wired up and tested while you carry on selling.</p>
+      </div>
+      <div class="step reveal" data-delay="2">
+        <div class="step-n">3</div>
+        <h3>Embed and go live</h3>
+        <p>One snippet of code on your site. Buyers start designing. Leads start arriving in your inbox. Done in seven days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRICING ===================== -->
+<section id="pricing" class="section">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">Pricing</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">One configurator. One price.</h2>
+    <p class="lead center reveal" data-delay="2" style="margin-top:22px">Unlimited buyer designs. Unlimited lead emails. Cancel any time.</p>
+  </div>
+  <div class="wrap">
+    <div class="pricing-card reveal" data-delay="3">
+      <span class="tag">Most popular</span>
+      <div class="price tabular">£49<span class="per">per month, per reseller</span></div>
+      <p class="summary">A photoreal 3D configurator on your website — designing verandas, carports, garden rooms and pergolas — emailing every lead in real time.</p>
+      <ul>
+        <li><span>Photoreal 3D — studio-grade renders</span></li>
+        <li><span>Verandas · carports · garden rooms · pergolas</span></li>
+        <li><span>Your branding, your domain, your range</span></li>
+        <li><span>Live pricing as buyers build</span></li>
+        <li><span>Unlimited buyer designs &amp; quotes</span></li>
+        <li><span>Real-time lead emails — name, phone, spec, price</span></li>
+        <li><span>PDF quote attached to every email</span></li>
+        <li><span>Desktop, tablet &amp; mobile — 60fps</span></li>
+      </ul>
+      <div class="cta-row">
+        <a href="https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver" target="_blank" rel="noopener" class="btn btn-primary">Book your demo <span class="arr">›</span></a>
+        <a href="#configurator" class="btn btn-ghost">Try it live</a>
+      </div>
+      <p class="note">Billed monthly · cancel any time · go live in 7 days</p>
+    </div>
+    <p class="partners reveal">Running a network of dealers or installers? <a href="https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver" target="_blank" rel="noopener">Talk to us about white-label partnerships</a>.</p>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="section bg-3">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">FAQ</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">Questions, answered.</h2>
+  </div>
+  <div class="wrap">
+    <div class="faq reveal" data-delay="2">
+      <details open><summary>What do I actually get for £49 a month?<span class="pm"></span></summary><div class="ans">A photoreal 3D configurator, embedded on your website under your branding, that lets your buyers design and price a veranda, carport, garden room or pergola. Every time a buyer asks for the formal quote, the lead arrives as an email in your inbox in real time — with their name, phone, the exact spec, and the price. Unlimited designs, unlimited emails. That's the whole product.</div></details>
+      <details><summary>How is your 3D different from competitor configurators?<span class="pm"></span></summary><div class="ans">Most veranda configurators look like cardboard cutouts — flat colours, fake shadows, the same generic SketchUp model with your logo on it. Ours is genuinely photoreal: studio-grade lighting, real material physics, smooth on every device. The buyer doesn't see a 3D widget. They see their veranda. That's what closes the sale.</div></details>
+      <details><summary>Which products does the configurator cover?<span class="pm"></span></summary><div class="ans">Verandas, carports, garden rooms and pergolas — all four product categories run on the same engine. You send us your range and we model each variation under your branding, with your finishes, dimensions and pricing built in.</div></details>
+      <details><summary>How does the lead actually arrive?<span class="pm"></span></summary><div class="ans">As a normal email, in your inbox, in real time. The buyer fills in their name, email and phone to receive the PDF quote. The same moment they hit "send", you get a structured copy of the lead — contact details, the full spec they designed, the price they accepted, and the PDF attached. No dashboard, no CRM, no waiting.</div></details>
+      <details><summary>Can I put it on my own website with my own branding?<span class="pm"></span></summary><div class="ans">Absolutely. The configurator runs under your name, logo, colours and domain. Buyers think they're using your software — because it is yours to use. We never appear in front of your customer.</div></details>
+      <details><summary>Does it really work on mobile without dropping quality?<span class="pm"></span></summary><div class="ans">Yes. The renderer is engineered to hit 60fps on a four-year-old phone without an app install. Buyers get the same photoreal experience on the train, on the sofa or stood in the back garden imagining where the veranda will go.</div></details>
+      <details><summary>How fast can I be live and getting lead emails?<span class="pm"></span></summary><div class="ans">Seven days. Once you send your products, options and pricing, we set everything up under your brand and hand it back ready to drop on your website. Most veranda sellers are getting their first lead emails within a week.</div></details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT FORM ===================== -->
+<section class="section bg-2" id="contact">
+  <div class="wrap-narrow center">
+    <span class="eyebrow reveal">Get in touch</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">Send us a message.</h2>
+    <p class="lead center reveal" data-delay="2" style="margin-top:22px">Tell us about your range and we'll be back in touch within one working day. Prefer a call? <a href="#demo" class="link-more" style="display:inline-flex">Book a 15-min slot</a>.</p>
+  </div>
+  <div class="wrap" style="max-width:720px;margin:0 auto">
+    <form class="contact-form reveal" data-delay="3" id="contactForm" novalidate>
+      <div class="cf-row">
+        <div class="cf-field">
+          <label for="cf-name">Name<span class="req">*</span></label>
+          <input type="text" id="cf-name" name="name" required autocomplete="name" placeholder="Your full name">
+        </div>
+        <div class="cf-field">
+          <label for="cf-email">Email<span class="req">*</span></label>
+          <input type="email" id="cf-email" name="email" required autocomplete="email" placeholder="you@yourbrand.com">
+        </div>
+      </div>
+      <div class="cf-row">
+        <div class="cf-field">
+          <label for="cf-phone">Phone</label>
+          <input type="tel" id="cf-phone" name="phone" autocomplete="tel" placeholder="+44 7700 900 000">
+        </div>
+        <div class="cf-field">
+          <label for="cf-company">Business name</label>
+          <input type="text" id="cf-company" name="company" autocomplete="organization" placeholder="Your company">
+        </div>
+      </div>
+      <div class="cf-field">
+        <label for="cf-product">Which product line?</label>
+        <select id="cf-product" name="product">
+          <option value="">Choose one (optional)</option>
+          <option value="Verandas">Verandas</option>
+          <option value="Carports">Carports</option>
+          <option value="Garden rooms">Garden rooms</option>
+          <option value="Pergolas">Pergolas</option>
+          <option value="Multiple">All / multiple categories</option>
+        </select>
+      </div>
+      <div class="cf-field">
+        <label for="cf-message">Message</label>
+        <textarea id="cf-message" name="message" rows="4" placeholder="Tell us about your range, your website, or your question."></textarea>
+      </div>
+      <!-- honeypot — humans don't fill this -->
+      <div class="cf-honey" aria-hidden="true"><label for="cf-website">Don't fill this</label><input type="text" id="cf-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="cf-foot">
+        <p class="cf-note">We'll only use these details to follow up about Artificial Ignorance. No newsletters, no sharing.</p>
+        <button type="submit" class="btn btn-primary" id="cfSubmit">Send message <span class="arr">›</span></button>
+      </div>
+      <div class="cf-result" id="cfResult" hidden></div>
+    </form>
+  </div>
+</section>
+
+<!-- ===================== FINAL CTA (dark) ===================== -->
+<section class="section bg-dark" id="demo">
+  <div class="wrap final">
+    <span class="eyebrow reveal">Take action</span>
+    <h2 class="reveal" data-delay="1" style="margin-top:14px">Stop losing buyers who can't picture it.</h2>
+    <p class="lead center reveal" data-delay="2">Book a free 15-minute call with Oliver. We'll plug your veranda, carport, garden room or pergola range into a test configurator and show you exactly what the email looks like when a buyer hits send.</p>
+    <div class="final-cta reveal" data-delay="3">
+      <a href="https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver" target="_blank" rel="noopener" class="btn btn-primary">Book a 15-min call <span class="arr">›</span></a>
+      <a href="#configurator" class="btn btn-ghost">See the buyer flow <span class="arr">›</span></a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="brand" href="#top" style="color:var(--ink)">
+          <span class="brand-mark"><span>AI</span></span>
+          <span>Artificial Ignorance</span>
+        </a>
+        <p>3D configurator studio for outdoor-living sellers. We build photoreal configurators that let your buyers design and price their veranda, carport, garden room or pergola — and email the lead straight to your inbox.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <a href="#configurator">3D Configurator</a>
+        <a href="#quality">Photoreal quality</a>
+        <a href="#email">Real-time email</a>
+        <a href="#how">How it works</a>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <a href="#pricing">Pricing</a>
+        <a href="#pricing">Partners</a>
+        <a href="mailto:oliver@artificialignorance.io">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h5>Get started</h5>
+        <a href="#demo">Book a demo</a>
+        <a href="#configurator">Try it live</a>
+        <a href="mailto:oliver@artificialignorance.io">oliver@artificialignorance.io</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Artificial Ignorance Ltd — Company No. 16414035</span>
+      <span>artificialignorance.io</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// mobile menu
+const nav=document.getElementById('nav'),menuBtn=document.getElementById('menuBtn');
+menuBtn&&menuBtn.addEventListener('click',()=>nav.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
+
+// scroll reveal
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// price counter (hero + lead card)
+const target=14820,counter=document.getElementById('priceCounter'),card=document.getElementById('quoteCard'),lcQuote=document.getElementById('lcQuote');
+let counted=false;
+const fmt=n=>'£'+Math.round(n).toLocaleString('en-GB');
+const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+function runCount(){
+  if(counted)return;counted=true;
+  if(reduce){if(counter)counter.textContent=fmt(target);if(lcQuote)lcQuote.textContent=fmt(target);return;}
+  const dur=1800,t0=performance.now();
+  (function tick(t){
+    const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3),v=target*e;
+    if(counter)counter.textContent=fmt(v);
+    if(lcQuote)lcQuote.textContent=fmt(v);
+    if(p<1)requestAnimationFrame(tick);
+  })(t0);
+}
+const io2=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting)runCount();})},{threshold:.5});
+card&&io2.observe(card);
+
+// contact form submission
+const cf=document.getElementById('contactForm');
+if(cf){
+  cf.addEventListener('submit',async(ev)=>{
+    ev.preventDefault();
+    const result=document.getElementById('cfResult');
+    const submit=document.getElementById('cfSubmit');
+    const fd=new FormData(cf);
+    if(fd.get('website')){return;} // honeypot
+    const payload={
+      name:(fd.get('name')||'').toString().trim(),
+      email:(fd.get('email')||'').toString().trim(),
+      phone:(fd.get('phone')||'').toString().trim(),
+      company:(fd.get('company')||'').toString().trim(),
+      product:(fd.get('product')||'').toString(),
+      message:(fd.get('message')||'').toString().trim(),
+    };
+    const showResult=(cls,msg)=>{result.hidden=false;result.className='cf-result '+cls;result.textContent=msg;};
+    if(!payload.name||!payload.email){
+      showResult('err','Please add your name and email.');return;
+    }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)){
+      showResult('err','Please enter a valid email address.');return;
+    }
+    cf.classList.add('loading');submit.disabled=true;
+    const original=submit.innerHTML;submit.innerHTML='Sending…';
+    try{
+      const res=await fetch('/api/contact',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload),
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok){throw new Error(data.error||'Something went wrong. Please try again or email oliver@artificialignorance.io.');}
+      showResult('ok','Thanks — we’ve got your message. Oliver will be in touch within one working day.');
+      cf.reset();
+    }catch(err){
+      showResult('err',err.message||'Something went wrong. Try again or email oliver@artificialignorance.io.');
+    }finally{
+      cf.classList.remove('loading');submit.disabled=false;submit.innerHTML=original;
+    }
+  });
+}
+
+// "now" ticker for the email notification
+const lcTime=document.getElementById('lcTime');
+let lcSec=0;
+function pad(n){return String(n).padStart(2,'0')}
+setInterval(()=>{
+  lcSec++;
+  if(!lcTime)return;
+  if(lcSec<60)lcTime.textContent=lcSec+'s ago';
+  else if(lcSec<3600)lcTime.textContent=Math.floor(lcSec/60)+'m ago';
+  else lcTime.textContent='now';
+},1000);
+</script>
+<script src="https://link.msgsndr.com/js/form_embed.js" type="text/javascript" async></script>
+</body>
+</html>
