@@ -36,7 +36,7 @@ export default function SignInPage() {
           </button>
         </form>
         <p className="text-xs text-stone-500 mt-4">
-          No account? <a className="underline" href="/sign-up">Start a trial</a>
+          No account? <a className="underline" href="/sign-up">Sign up</a>
         </p>
       </div>
     </main>

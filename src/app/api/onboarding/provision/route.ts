@@ -76,7 +76,6 @@ export async function POST(req: NextRequest) {
     customer: customer.id,
     line_items: [{ price: env.stripePrice(), quantity: 1 }],
     subscription_data: {
-      trial_period_days: 14,
       metadata: { tenant_id: tenantId },
     },
     success_url: `${env.appUrl()}/onboarding/complete?session_id={CHECKOUT_SESSION_ID}`,

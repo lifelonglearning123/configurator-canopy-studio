@@ -420,10 +420,10 @@ export function MarketingPage() {
               <li><span>Desktop, tablet &amp; mobile — 60fps</span></li>
             </ul>
             <div className="cta-row">
-              <a href="/sign-up" className="btn btn-primary">Start free trial <span className="arr">›</span></a>
+              <a href="/sign-up" className="btn btn-primary">Sign in / Sign up <span className="arr">›</span></a>
               <a href={BOOK_URL} target="_blank" rel="noopener" className="btn btn-ghost">Book your demo</a>
             </div>
-            <p className="note">14-day free trial · cancel any time · go live in 7 days</p>
+            <p className="note">Cancel any time · go live immediately</p>
           </div>
           <p className="partners reveal">Running a network of dealers or installers? <a href={BOOK_URL} target="_blank" rel="noopener">Talk to us about white-label partnerships</a>.</p>
         </div>

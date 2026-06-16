@@ -45,8 +45,8 @@ export default function SignUpPage() {
   return (
     <main className="min-h-screen grid place-items-center bg-stone-50 px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl border border-stone-200 shadow-sm p-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Start your 14-day free trial</h1>
-        <p className="text-sm text-stone-600 mt-1">£49/month after trial. Cancel anytime.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
+        <p className="text-sm text-stone-600 mt-1">£49/month. Cancel anytime.</p>
 
         <form onSubmit={onSubmit} className="space-y-3 mt-5">
           <label className="block">

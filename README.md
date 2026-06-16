@@ -3,7 +3,7 @@
 White-label 3D configurator SaaS for construction companies. Multi-tenant central deployment: one Next.js app, every customer is a tenant with their own custom domain, branding, pricing, and GHL.
 
 - **Stack:** Next.js (App Router) + Supabase (auth + Postgres + RLS) + Stripe + Vercel
-- **Pricing model:** £49/month per tenant, 14-day free trial, self-serve sign-up
+- **Pricing model:** £49/month per tenant, billed immediately, self-serve sign-up
 - **Tenant resolution:** subdomain `{slug}.canopystudio.io` OR CNAMEd custom domain
 - **Prototype:** the standalone HTML/Three.js configurator lives at `../configurator/index.html`
 
