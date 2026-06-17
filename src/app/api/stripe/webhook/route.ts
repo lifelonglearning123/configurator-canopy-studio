@@ -2,8 +2,40 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { env } from '@/lib/env';
 import { adminClient } from '@/lib/supabase-server';
+import { notifyPlatformStatusChange } from '@/lib/platform-ghl';
 
 export const runtime = 'nodejs';
+
+type SubStatus = 'incomplete' | 'trialing' | 'active' | 'past_due' | 'canceled';
+
+async function pushStatusToPlatformGhl(customerId: string, status: SubStatus) {
+  if (!env.platformGhlLocation() || !env.platformGhlToken()) return;
+  const db = adminClient();
+  const { data } = await db
+    .from('tenants')
+    .select('id, slug, name')
+    .eq('stripe_customer_id', customerId)
+    .maybeSingle();
+  const tenant = data as { id: string; slug: string; name: string } | null;
+  if (!tenant) return;
+
+  // Pull the customer's email from Stripe (we set it at signup).
+  let email: string | null = null;
+  try {
+    const customer = await stripe().customers.retrieve(customerId);
+    if (customer && !customer.deleted) email = customer.email ?? null;
+  } catch (e) {
+    console.error('[platform-ghl] customer retrieve failed', e instanceof Error ? e.message : String(e));
+  }
+
+  notifyPlatformStatusChange({
+    email,
+    company: tenant.name,
+    tenant_slug: tenant.slug,
+    tenant_id: tenant.id,
+    subscription_status: status,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const sig = req.headers.get('stripe-signature');
@@ -31,6 +63,7 @@ export async function POST(req: NextRequest) {
           subscription_status: sub.status,
         })
         .eq('stripe_customer_id', customerId);
+      await pushStatusToPlatformGhl(customerId, sub.status as SubStatus);
       break;
     }
     case 'customer.subscription.deleted': {
@@ -40,6 +73,7 @@ export async function POST(req: NextRequest) {
         .from('tenants')
         .update({ subscription_status: 'canceled', status: 'suspended' })
         .eq('stripe_customer_id', customerId);
+      await pushStatusToPlatformGhl(customerId, 'canceled');
       break;
     }
     default:

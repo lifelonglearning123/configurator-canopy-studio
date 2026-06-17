@@ -14,4 +14,6 @@ export const env = {
   appUrl: () => process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
   rootDomain: () => process.env.APP_ROOT_DOMAIN ?? 'canopystudio.io',
   cnameTarget: () => process.env.CNAME_TARGET ?? 'cname.canopystudio.io',
+  platformGhlLocation: () => process.env.PLATFORM_GHL_LOCATION_ID || null,
+  platformGhlToken: () => process.env.PLATFORM_GHL_API_TOKEN || null,
 };

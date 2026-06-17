@@ -4,6 +4,7 @@ import { adminClient, serverClient } from '@/lib/supabase-server';
 import { stripe } from '@/lib/stripe';
 import { env } from '@/lib/env';
 import { defaultPricingLineItems } from '@/lib/catalog';
+import { notifyPlatformSignup } from '@/lib/platform-ghl';
 
 const Body = z.object({
   company: z.string().min(1).max(120),
@@ -70,7 +71,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // 6. Stripe Checkout session.
+  // 6. Push the signup to the platform owner's GHL (incomplete status — Stripe
+  //    webhook will follow up with an 'active' update when payment lands).
+  //    Fire-and-forget: never block checkout creation on a CRM call.
+  notifyPlatformSignup({
+    email: parsed.email,
+    company: parsed.company,
+    tenant_slug: parsed.slug,
+    tenant_id: tenantId,
+    subscription_status: 'incomplete',
+  });
+
+  // 7. Stripe Checkout session.
   const session = await stripe().checkout.sessions.create({
     mode: 'subscription',
     customer: customer.id,
