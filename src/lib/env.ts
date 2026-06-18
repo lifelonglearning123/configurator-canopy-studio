@@ -16,4 +16,9 @@ export const env = {
   cnameTarget: () => process.env.CNAME_TARGET ?? 'cname.canopystudio.io',
   platformGhlLocation: () => process.env.PLATFORM_GHL_LOCATION_ID || null,
   platformGhlToken: () => process.env.PLATFORM_GHL_API_TOKEN || null,
+  superAdminEmails: (): string[] =>
+    (process.env.SUPER_ADMIN_EMAILS ?? '')
+      .split(',')
+      .map(s => s.trim().toLowerCase())
+      .filter(Boolean),
 };
