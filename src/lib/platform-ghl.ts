@@ -104,6 +104,69 @@ async function syncContact(input: {
   }
 }
 
+// Look up (or create) a contact by email alone, without overwriting any
+// existing firstName/companyName. Used by transactional email senders that
+// don't carry signup context — e.g. password resets, magic links.
+async function findOrCreateContactByEmail(email: string): Promise<string | null> {
+  const locationId = env.platformGhlLocation();
+  const token = env.platformGhlToken();
+  if (!locationId || !token) return null;
+  try {
+    const r = await fetch(`${GHL_BASE}/contacts/upsert`, {
+      method: 'POST',
+      headers: headers(token),
+      body: JSON.stringify({ locationId, email, tags: ['canopy-studio'] }),
+    });
+    if (!r.ok) {
+      console.error('[platform-ghl] findOrCreateContact non-2xx', r.status, await r.text().catch(() => ''));
+      return null;
+    }
+    const json = (await r.json()) as UpsertResponse;
+    return json.contact?.id ?? null;
+  } catch (e) {
+    console.error('[platform-ghl] findOrCreateContact failed', e instanceof Error ? e.message : String(e));
+    return null;
+  }
+}
+
+// Send a transactional email through the platform-owner's GHL location.
+// Requires the PIT to carry the `conversations/message.write` scope.
+// Returns true on success — callers should not fail the user flow on false,
+// but should log so silent breakage is detectable.
+export async function sendPlatformEmail(input: {
+  email: string;
+  subject: string;
+  html: string;
+}): Promise<boolean> {
+  const token = env.platformGhlToken();
+  if (!token) {
+    console.error('[platform-ghl] sendPlatformEmail: PLATFORM_GHL_API_TOKEN not configured');
+    return false;
+  }
+  const contactId = await findOrCreateContactByEmail(input.email);
+  if (!contactId) return false;
+  try {
+    const r = await fetch(`${GHL_BASE}/conversations/messages`, {
+      method: 'POST',
+      headers: headers(token),
+      body: JSON.stringify({
+        type: 'Email',
+        contactId,
+        subject: input.subject,
+        html: input.html,
+      }),
+    });
+    if (!r.ok) {
+      console.error('[platform-ghl] sendPlatformEmail non-2xx', r.status, await r.text().catch(() => ''));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error('[platform-ghl] sendPlatformEmail failed', e instanceof Error ? e.message : String(e));
+    return false;
+  }
+}
+
 // Fire on initial signup — contact is brand new so no stale tags to clean.
 export function notifyPlatformSignup(input: {
   email: string;
