@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { serverClient } from '@/lib/supabase-server';
+import { landingPathForCurrentUser } from '@/lib/super-admin';
 
 // Email links (magic link, password reset) land here with a `code` query param.
 // We exchange the code for a session cookie, then send the user onward.
 export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const code = url.searchParams.get('code');
-  const next = url.searchParams.get('next') || '/admin';
+  const explicitNext = url.searchParams.get('next');
   const error = url.searchParams.get('error_description') || url.searchParams.get('error');
 
   if (error) {
@@ -27,5 +28,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(back);
   }
 
+  const next = explicitNext || await landingPathForCurrentUser();
   return NextResponse.redirect(new URL(next, url.origin));
 }

@@ -44,7 +44,7 @@ async function generateLink(type: 'magiclink' | 'recovery', email: string, next:
   return u.toString();
 }
 
-export async function sendMagicLinkEmail(email: string, next = '/admin'): Promise<void> {
+export async function sendMagicLinkEmail(email: string, next = '/post-sign-in'): Promise<void> {
   if (!(await userExists(email))) return;
   const link = await generateLink('magiclink', email, next);
   if (!link) return;

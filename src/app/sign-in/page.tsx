@@ -24,7 +24,7 @@ function SignInForm() {
       password: String(fd.get('password')),
     });
     if (err) { setError(err.message); setBusy(false); return; }
-    router.push('/admin');
+    router.push('/post-sign-in');
   }
 
   async function onMagicSubmit(e: React.FormEvent<HTMLFormElement>) {

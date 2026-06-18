@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { serverClient } from '@/lib/supabase-server';
+import { landingPathForCurrentUser } from '@/lib/super-admin';
 
 // Magic-link and password-recovery emails land here. Unlike the PKCE `code`
 // flow at /auth/callback, this uses verifyOtp({ token_hash, type }) — which
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const token_hash = url.searchParams.get('token_hash');
   const type = url.searchParams.get('type') as EmailOtpType | null;
-  const next = url.searchParams.get('next') || '/admin';
+  const explicitNext = url.searchParams.get('next');
 
   if (!token_hash || !type) {
     const back = new URL('/sign-in', url.origin);
@@ -26,5 +27,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(back);
   }
 
+  const next = explicitNext || await landingPathForCurrentUser();
   return NextResponse.redirect(new URL(next, url.origin));
 }

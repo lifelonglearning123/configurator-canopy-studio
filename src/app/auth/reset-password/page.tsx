@@ -32,7 +32,7 @@ export default function ResetPasswordPage() {
     if (password !== confirm) { setError('Passwords do not match.'); setBusy(false); return; }
     const { error: err } = await browserClient().auth.updateUser({ password });
     if (err) { setError(err.message); setBusy(false); return; }
-    router.push('/admin');
+    router.push('/post-sign-in');
   }
 
   return (

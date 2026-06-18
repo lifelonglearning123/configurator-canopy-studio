@@ -23,3 +23,12 @@ export function isSuperAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   return env.superAdminEmails().includes(email.toLowerCase());
 }
+
+// Resolves the post-sign-in landing path for the current session.
+// Super-admins → /super-admin, everyone else → /admin.
+export async function landingPathForCurrentUser(): Promise<string> {
+  const supa = await serverClient();
+  const { data: { user } } = await supa.auth.getUser();
+  if (!user) return '/sign-in';
+  return isSuperAdminEmail(user.email) ? '/super-admin' : '/admin';
+}
