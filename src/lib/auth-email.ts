@@ -28,13 +28,20 @@ async function userExists(email: string): Promise<boolean> {
 
 async function generateLink(type: 'magiclink' | 'recovery', email: string, next: string): Promise<string | null> {
   const supa = adminClient();
-  const redirectTo = `${env.appUrl()}/auth/callback?next=${encodeURIComponent(next)}`;
-  const { data, error } = await supa.auth.admin.generateLink({ type, email, options: { redirectTo } });
-  if (error || !data?.properties?.action_link) {
+  // We don't use `redirectTo` for navigation: Supabase's action_link routes through
+  // `/auth/v1/verify` and bounces back with a PKCE `code` we can't exchange (the
+  // verifier was never stored in the user's browser). Instead we take the
+  // `hashed_token` and build our own confirm URL that uses `verifyOtp` directly.
+  const { data, error } = await supa.auth.admin.generateLink({ type, email });
+  if (error || !data?.properties?.hashed_token) {
     console.error(`[auth-email] generateLink(${type}) failed`, error?.message);
     return null;
   }
-  return data.properties.action_link;
+  const u = new URL('/auth/confirm', env.appUrl());
+  u.searchParams.set('token_hash', data.properties.hashed_token);
+  u.searchParams.set('type', type);
+  u.searchParams.set('next', next);
+  return u.toString();
 }
 
 export async function sendMagicLinkEmail(email: string, next = '/admin'): Promise<void> {
