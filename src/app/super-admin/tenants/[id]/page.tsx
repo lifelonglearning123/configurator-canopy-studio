@@ -4,6 +4,7 @@ import { notFound, redirect } from 'next/navigation';
 import { adminClient } from '@/lib/supabase-server';
 import { requireSuperAdmin } from '@/lib/super-admin';
 import { sendMagicLinkEmail, sendResetPasswordEmail } from '@/lib/auth-email';
+import { stripe } from '@/lib/stripe';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +59,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const ctx = await loadTenant(id);
   if (!ctx) notFound();
-  const { tenant, ownerEmail, leadCount } = ctx;
+  const { tenant, ownerEmail, ownerUserId, leadCount } = ctx;
 
   async function updateSubscription(formData: FormData) {
     'use server';
@@ -94,6 +95,51 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
     if (!ownerEmail) return;
     await sendResetPasswordEmail(ownerEmail);
     redirect(`/super-admin/tenants/${id}?sent=reset`);
+  }
+
+  async function deleteTenant(formData: FormData) {
+    'use server';
+    await requireSuperAdmin();
+
+    // Safety: require the slug typed exactly to confirm.
+    const typed = String(formData.get('confirm_slug') ?? '').trim();
+    if (typed !== tenant.slug) {
+      redirect(`/super-admin/tenants/${id}?error=${encodeURIComponent('Confirm slug did not match')}`);
+    }
+    const alsoDeleteUser = formData.get('delete_owner') === 'on';
+
+    const db = adminClient();
+
+    // 1. Cancel Stripe subscription so they stop being billed.
+    if (tenant.stripe_subscription_id) {
+      try {
+        await stripe().subscriptions.cancel(tenant.stripe_subscription_id);
+      } catch (e) {
+        console.error('[super-admin] stripe cancel failed', e instanceof Error ? e.message : String(e));
+      }
+    }
+
+    // 2. Delete the tenant row — cascades to tenant_users, tenant_domains,
+    //    tenant_products, pricing_rules, leads.
+    await db.from('tenants').delete().eq('id', id);
+
+    // 3. Optionally delete the owner's auth user. Only safe if they don't own
+    //    other tenants — re-check after the cascade above ran.
+    if (alsoDeleteUser && ownerUserId) {
+      const { data: stillLinked } = await db
+        .from('tenant_users')
+        .select('tenant_id')
+        .eq('user_id', ownerUserId)
+        .limit(1);
+      if (!stillLinked?.length) {
+        try { await db.auth.admin.deleteUser(ownerUserId); } catch (e) {
+          console.error('[super-admin] auth user delete failed', e instanceof Error ? e.message : String(e));
+        }
+      }
+    }
+
+    revalidatePath('/super-admin');
+    redirect('/super-admin?deleted=1');
   }
 
   const stripeBase = 'https://dashboard.stripe.com';
@@ -174,6 +220,31 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
         ) : (
           <p className="text-xs text-stone-500">No owner email on file. Make sure an auth user is linked via tenant_users.</p>
         )}
+      </section>
+
+      <section className="bg-rose-50 border border-rose-200 rounded-xl p-6 space-y-4 max-w-2xl">
+        <div>
+          <h2 className="text-sm font-semibold tracking-tight text-rose-900">Danger zone — permanent delete</h2>
+          <p className="text-xs text-rose-800 mt-1">
+            Removes the tenant row and cascades to <span className="font-mono">tenant_users</span>, <span className="font-mono">tenant_domains</span>,{' '}
+            <span className="font-mono">tenant_products</span>, <span className="font-mono">pricing_rules</span> and <span className="font-mono">leads</span>.
+            Cancels their Stripe subscription too. <strong>This cannot be undone.</strong> Prefer setting lifecycle status to <span className="font-mono">deleted</span> if you may need the data back.
+          </p>
+        </div>
+        <form action={deleteTenant} className="space-y-3">
+          <label className="block">
+            <span className="text-xs uppercase tracking-wider text-rose-900">Type the slug to confirm</span>
+            <input required name="confirm_slug" placeholder={tenant.slug} autoComplete="off"
+              className="mt-1 w-full px-3 py-2 rounded-lg border border-rose-300 bg-white text-sm focus:outline-none focus:border-rose-700" />
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" name="delete_owner" className="rounded" />
+            <span className="text-xs text-rose-900">Also delete owner auth user (only if they don't own any other tenant)</span>
+          </label>
+          <button className="px-4 py-2 rounded-lg bg-rose-700 text-white text-sm font-medium hover:bg-rose-800">
+            Permanently delete tenant
+          </button>
+        </form>
       </section>
     </div>
   );
