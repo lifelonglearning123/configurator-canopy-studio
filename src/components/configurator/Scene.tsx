@@ -636,7 +636,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     } else if (state!.roof.startsWith('glass')) {
       const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.04, 0.05, Dr - 0.04), glassMaterial());
       roof.position.set(0, H + 0.03 + lift, 0);
-      if (slopeAngle) roof.rotation.x = -slopeAngle;
+      if (slopeAngle) roof.rotation.x = slopeAngle;
       roof.castShadow = true;
       canopyGroup.add(roof);
       const cols = Math.max(2, Math.round(Wr / 1.3));
@@ -644,14 +644,14 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         const x = -Wr / 2 + Wr * i / cols;
         const mul = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, Dr - 0.04), fm);
         mul.position.set(x, H + 0.06 + lift, 0);
-        if (slopeAngle) mul.rotation.x = -slopeAngle;
+        if (slopeAngle) mul.rotation.x = slopeAngle;
         mul.castShadow = true;
         canopyGroup.add(mul);
       }
     } else {
       const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.04, 0.04, Dr - 0.04), polyMaterial());
       roof.position.set(0, H + 0.02 + lift, 0);
-      if (slopeAngle) roof.rotation.x = -slopeAngle;
+      if (slopeAngle) roof.rotation.x = slopeAngle;
       roof.castShadow = true;
       canopyGroup.add(roof);
       const ribMat = new THREE.MeshStandardMaterial({ color: 0x9ec5cf, roughness: 0.4, metalness: 0.1, transparent: true, opacity: 0.55 });
@@ -660,7 +660,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         const x = -Wr / 2 + Wr * i / cols;
         const strip = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.055, Dr - 0.06), ribMat);
         strip.position.set(x, H + 0.04 + lift, 0);
-        if (slopeAngle) strip.rotation.x = -slopeAngle;
+        if (slopeAngle) strip.rotation.x = slopeAngle;
         canopyGroup.add(strip);
       }
     }
