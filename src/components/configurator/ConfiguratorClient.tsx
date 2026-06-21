@@ -8,6 +8,8 @@ import {
 } from '@/lib/catalog';
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
 import type { SceneHandle, SceneView } from './Scene';
+import { PanelRenderer } from './panel/PanelRenderer';
+import { usesNewPanel, productDefaults } from './panel/sections';
 
 // Three.js scene is browser-only — bypass SSR
 const Scene = dynamic(() => import('./Scene').then(m => m.Scene), { ssr: false });
@@ -51,6 +53,7 @@ const DEFAULT_STATE: ConfigState = {
 export function ConfiguratorClient(props: Props) {
   const [state, setState] = useState<ConfigState>(() => ({
     ...DEFAULT_STATE,
+    ...productDefaults(props.productKey),
     product: props.productKey,
     structure: (props.defaultSchema.structure as ConfigState['structure']) ?? DEFAULT_STATE.structure,
     roof: (props.defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
@@ -82,59 +85,17 @@ export function ConfiguratorClient(props: Props) {
     <main className="grid grid-cols-12 max-w-[1700px] mx-auto">
       {/* LEFT: options */}
       <aside className="col-span-12 lg:col-span-4 border-r border-stone-200 bg-white p-6 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">Configure</div>
-        <h2 className="text-3xl tracking-tight" style={{ fontFamily: 'serif' }}>{props.productName}</h2>
-        <p className="text-xs text-stone-500 mt-2">{props.productTagline}</p>
-
-        <Section title="Structure">
-          <Chips value={state.structure} options={[['freestanding', 'Free-standing'], ['wallmounted', 'Wall-mounted']]} onChange={v => set('structure', v as ConfigState['structure'])} />
-        </Section>
-
-        <Section title="Frame finish">
-          <Swatches value={state.frameColor} options={Object.entries(FRAME_COLORS).map(([k, v]) => ({ value: k, hex: v.hex, title: v.label }))} onChange={v => set('frameColor', v)} />
-          <p className="text-[11px] text-stone-500 mt-2">{FRAME_COLORS[state.frameColor as keyof typeof FRAME_COLORS]?.label}</p>
-        </Section>
-
-        <Section title="Dimensions">
-          <Slider label="Width"      value={state.length}  min={1} max={10} step={0.1}  unit="m" onChange={v => set('length', v)} />
-          <Slider label="Projection" value={state.depth}   min={0.05} max={5} step={0.05} unit="m" onChange={v => set('depth', v)} />
-          <Slider label="Height"     value={state.height}  min={2.0} max={3.5} step={0.05} unit="m" onChange={v => set('height', v)} />
-          <div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500 flex justify-between">
-            <span>Footprint</span>
-            <span className="tabular-nums">{(state.length * state.depth).toFixed(1)} m²</span>
-          </div>
-        </Section>
-
-        <Section title="Roof system">
-          <RadioList value={state.roof} options={Object.entries(ROOF).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('roof', v)} />
-        </Section>
-
-        <Section title="Walls & enclosures">
-          {(['front', 'back', 'left', 'right'] as const).map(side => (
-            <Select key={side} label={cap(side)} value={state.walls[side]} options={Object.entries(WALL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => setWall(side, v)} />
-          ))}
-        </Section>
-
-        <Section title="Add-ons">
-          {(Object.entries(ADDONS) as [keyof typeof ADDONS, typeof ADDONS[keyof typeof ADDONS]][]).map(([k, v]) => (
-            <Checkbox key={k} label={v.label} checked={!!state.addons[k]} onChange={c => setAddon(k, c)} />
-          ))}
-        </Section>
-
-        <Section title="Materials">
-          <Select label="Cladding"        value={state.cladding}       options={Object.entries(CLADDING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('cladding', v)} />
-          <Select label="Flooring"        value={state.flooring}       options={Object.entries(FLOORING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('flooring', v)} />
-          <Select label="Interior walls"  value={state.interiorWalls}  options={Object.entries(INTERIOR_WALLS).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('interiorWalls', v)} />
-        </Section>
-
-        <Section title="Smart features">
-          <Select label="Automation"  value={state.automation} options={Object.entries(AUTOMATION).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('automation', v)} />
-          <Select label="Electrical"  value={state.electrical} options={Object.entries(ELECTRICAL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('electrical', v)} />
-        </Section>
-
-        <Section title="Service & delivery">
-          <Select label="Service tier" value={state.service} options={Object.entries(SERVICE).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('service', v)} />
-        </Section>
+        {usesNewPanel(props.productKey) ? (
+          <PanelRenderer
+            productKey={props.productKey}
+            productName={props.productName}
+            productTagline={props.productTagline}
+            state={state}
+            setState={setState}
+          />
+        ) : (
+          <LegacyPanel state={state} set={set} setWall={setWall} setAddon={setAddon} productName={props.productName} productTagline={props.productTagline} />
+        )}
       </aside>
 
       {/* CENTER: 3D preview */}
@@ -149,7 +110,6 @@ export function ConfiguratorClient(props: Props) {
           roofOpen={roofOpen}
           onFps={setFps}
         />
-
         {/* Top-left: view toggle + scene buttons */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
           <div className="bg-white/70 backdrop-blur rounded-xl p-1 border border-white/30 shadow-sm inline-flex gap-0.5">
@@ -211,7 +171,7 @@ export function ConfiguratorClient(props: Props) {
           <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1">Your build</div>
           <div className="font-medium text-sm">{props.productName}</div>
           <div className="text-[11px] text-stone-600 mt-1">
-            {state.length.toFixed(1)} × {state.depth.toFixed(2)} m · {ROOF[state.roof as keyof typeof ROOF]?.short}
+            {state.length.toFixed(1)} × {state.depth.toFixed(2)} m · {ROOF[state.roof as keyof typeof ROOF]?.short ?? state.roof}
           </div>
         </div>
       </section>
@@ -259,6 +219,74 @@ export function ConfiguratorClient(props: Props) {
         />
       )}
     </main>
+  );
+}
+
+/* LegacyPanel preserves the original 10-product configurator UI verbatim. */
+function LegacyPanel({ state, set, setWall, setAddon, productName, productTagline }: {
+  state: ConfigState;
+  set: <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => void;
+  setWall: (side: keyof ConfigState['walls'], v: string) => void;
+  setAddon: (k: keyof ConfigState['addons'], v: boolean) => void;
+  productName: string;
+  productTagline: string;
+}) {
+  return (
+    <>
+      <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">Configure</div>
+      <h2 className="text-3xl tracking-tight" style={{ fontFamily: 'serif' }}>{productName}</h2>
+      <p className="text-xs text-stone-500 mt-2">{productTagline}</p>
+
+      <Section title="Structure">
+        <Chips value={state.structure} options={[['freestanding', 'Free-standing'], ['wallmounted', 'Wall-mounted']]} onChange={v => set('structure', v as ConfigState['structure'])} />
+      </Section>
+
+      <Section title="Frame finish">
+        <Swatches value={state.frameColor} options={Object.entries(FRAME_COLORS).map(([k, v]) => ({ value: k, hex: v.hex, title: v.label }))} onChange={v => set('frameColor', v)} />
+        <p className="text-[11px] text-stone-500 mt-2">{FRAME_COLORS[state.frameColor as keyof typeof FRAME_COLORS]?.label}</p>
+      </Section>
+
+      <Section title="Dimensions">
+        <Slider label="Width"      value={state.length}  min={1} max={10} step={0.1}  unit="m" onChange={v => set('length', v)} />
+        <Slider label="Projection" value={state.depth}   min={0.05} max={5} step={0.05} unit="m" onChange={v => set('depth', v)} />
+        <Slider label="Height"     value={state.height}  min={2.0} max={3.5} step={0.05} unit="m" onChange={v => set('height', v)} />
+        <div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500 flex justify-between">
+          <span>Footprint</span>
+          <span className="tabular-nums">{(state.length * state.depth).toFixed(1)} m²</span>
+        </div>
+      </Section>
+
+      <Section title="Roof system">
+        <RadioList value={state.roof} options={Object.entries(ROOF).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('roof', v)} />
+      </Section>
+
+      <Section title="Walls & enclosures">
+        {(['front', 'back', 'left', 'right'] as const).map(side => (
+          <Select key={side} label={cap(side)} value={state.walls[side]} options={Object.entries(WALL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => setWall(side, v)} />
+        ))}
+      </Section>
+
+      <Section title="Add-ons">
+        {(Object.entries(ADDONS) as [keyof typeof ADDONS, typeof ADDONS[keyof typeof ADDONS]][]).map(([k, v]) => (
+          <Checkbox key={k} label={v.label} checked={!!state.addons[k]} onChange={c => setAddon(k, c)} />
+        ))}
+      </Section>
+
+      <Section title="Materials">
+        <Select label="Cladding"        value={state.cladding}       options={Object.entries(CLADDING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('cladding', v)} />
+        <Select label="Flooring"        value={state.flooring}       options={Object.entries(FLOORING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('flooring', v)} />
+        <Select label="Interior walls"  value={state.interiorWalls}  options={Object.entries(INTERIOR_WALLS).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('interiorWalls', v)} />
+      </Section>
+
+      <Section title="Smart features">
+        <Select label="Automation"  value={state.automation} options={Object.entries(AUTOMATION).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('automation', v)} />
+        <Select label="Electrical"  value={state.electrical} options={Object.entries(ELECTRICAL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('electrical', v)} />
+      </Section>
+
+      <Section title="Service & delivery">
+        <Select label="Service tier" value={state.service} options={Object.entries(SERVICE).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('service', v)} />
+      </Section>
+    </>
   );
 }
 

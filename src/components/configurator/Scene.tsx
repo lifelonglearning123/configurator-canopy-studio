@@ -13,7 +13,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { FRAME_COLORS, CLADDING } from '@/lib/catalog';
+import { FRAME_COLORS, CLADDING, BRICK, RENDER, ROOF_TILE } from '@/lib/catalog';
 import type { ConfigState } from '@/lib/pricing';
 
 export type SceneView = 'iso' | 'front' | 'side' | 'top';
@@ -258,6 +258,64 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     }
   }, 512, 512, [3, 2]);
 
+  // Generic brick pattern — tinted per brick type via material .color.
+  // Stretcher bond: every other row offset by half a brick.
+  const brickTex = canvasTex((g, w, h) => {
+    g.fillStyle = '#3a3530'; g.fillRect(0, 0, w, h); // mortar background
+    const rows = 12;
+    const bw = w / 4;   // brick width
+    const bh = h / rows;
+    for (let r = 0; r < rows; r++) {
+      const offset = (r % 2) * (bw / 2);
+      const y = r * bh;
+      for (let c = -1; c < 5; c++) {
+        const x = c * bw + offset;
+        // base brick face
+        const l = (200 + Math.random() * 35) | 0;
+        g.fillStyle = `rgb(${l},${l - 8},${l - 18})`;
+        g.fillRect(x + 2, y + 2, bw - 4, bh - 4);
+        // grain / specks
+        for (let i = 0; i < 12; i++) {
+          g.fillStyle = `rgba(0,0,0,${Math.random() * 0.18})`;
+          g.fillRect(x + 3 + Math.random() * (bw - 6), y + 3 + Math.random() * (bh - 6), 1.4, 1.4);
+        }
+      }
+    }
+  }, 512, 512, [1, 1]);
+
+  // Subtle render bump-style texture — mostly flat with light speckle.
+  const renderTex = canvasTex((g, w, h) => {
+    g.fillStyle = '#f0ede4'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 6000; i++) {
+      g.fillStyle = `rgba(${Math.random() < 0.5 ? 255 : 120},${Math.random() < 0.5 ? 250 : 115},${Math.random() < 0.5 ? 240 : 110},${Math.random() * 0.06})`;
+      g.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5);
+    }
+  }, 256, 256, [2, 2]);
+
+  // Roof tile / slate stripes — rows of overlapping tiles, tinted per variant.
+  const tileTex = canvasTex((g, w, h) => {
+    g.fillStyle = '#2a2a2c'; g.fillRect(0, 0, w, h); // shadow gap
+    const rows = 10;
+    const rh = h / rows;
+    for (let r = 0; r < rows; r++) {
+      const y = r * rh;
+      const l = (180 + Math.random() * 30) | 0;
+      g.fillStyle = `rgb(${l},${l},${l + 6})`;
+      g.fillRect(0, y + 2, w, rh - 4);
+      // tile dividers
+      const cols = 8;
+      const cw = w / cols;
+      g.strokeStyle = 'rgba(0,0,0,0.35)';
+      g.lineWidth = 1;
+      for (let c = 1; c < cols; c++) {
+        g.beginPath();
+        g.moveTo(c * cw + (r % 2 ? cw / 2 : 0), y);
+        g.lineTo(c * cw + (r % 2 ? cw / 2 : 0), y + rh);
+        g.stroke();
+      }
+    }
+  }, 512, 512, [1, 1]);
+
   const contactTex = canvasTex((g, w, h) => {
     const r = g.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, w / 2);
     r.addColorStop(0, 'rgba(0,0,0,0.85)');
@@ -479,6 +537,48 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     matCache.set('poly', m);
     return m;
   }
+  function brickMaterial(brickKey: string): THREE.MeshStandardMaterial {
+    const key = `brick-${brickKey}`;
+    const cached = matCache.get(key) as THREE.MeshStandardMaterial | undefined;
+    if (cached) return cached;
+    const conf = BRICK[brickKey as keyof typeof BRICK];
+    const m = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(conf?.hex ?? '#9c6b50'),
+      map: brickTex.clone(),
+      roughness: 0.92, metalness: 0.02,
+    });
+    // each brick instance gets its own repeat so different walls don't share UV scale
+    if (m.map) { m.map.wrapS = m.map.wrapT = THREE.RepeatWrapping; m.map.colorSpace = THREE.SRGBColorSpace; m.map.needsUpdate = true; }
+    matCache.set(key, m);
+    return m;
+  }
+  function renderMaterial(renderKey: string): THREE.MeshStandardMaterial {
+    const key = `render-${renderKey}`;
+    const cached = matCache.get(key) as THREE.MeshStandardMaterial | undefined;
+    if (cached) return cached;
+    const conf = RENDER[renderKey as keyof typeof RENDER];
+    const m = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(conf?.hex ?? '#f0ede4'),
+      map: renderTex,
+      roughness: 0.88, metalness: 0.0,
+    });
+    matCache.set(key, m);
+    return m;
+  }
+  function tileMaterial(tileKey: string): THREE.MeshStandardMaterial {
+    const key = `tile-${tileKey}`;
+    const cached = matCache.get(key) as THREE.MeshStandardMaterial | undefined;
+    if (cached) return cached;
+    const conf = ROOF_TILE[tileKey as keyof typeof ROOF_TILE];
+    const m = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(conf?.hex ?? '#54595e'),
+      map: tileTex.clone(),
+      roughness: 0.78, metalness: 0.08,
+    });
+    if (m.map) { m.map.wrapS = m.map.wrapT = THREE.RepeatWrapping; m.map.colorSpace = THREE.SRGBColorSpace; m.map.needsUpdate = true; }
+    matCache.set(key, m);
+    return m;
+  }
   function zipMaterial(): THREE.MeshStandardMaterial {
     const cached = matCache.get('zip') as THREE.MeshStandardMaterial | undefined;
     if (cached) return cached;
@@ -548,10 +648,19 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     }
 
     buildRoof(W, D, H);
+
+    // Conservatory: brick dwarf wall along front + sides (back is the house).
+    // Glazed walls above are raised by dwarfHeight to sit on top of the brick.
+    const isConservatory = (productScene ?? '').startsWith('conservatory-');
+    const dwarfHeight = isConservatory && state.dwarfWall ? state.dwarfWall.height : 0;
+    if (isConservatory && state.dwarfWall && dwarfHeight > 0.02) {
+      buildDwarfWall(W, D, dwarfHeight, state.dwarfWall.brick);
+    }
+
     for (const side of ['front', 'back', 'left', 'right'] as const) {
       if (state.walls[side] !== 'none') {
         if (state.structure === 'wallmounted' && side === 'back') continue;
-        buildWall(side, W, D, H);
+        buildWall(side, W, D, H, dwarfHeight);
       }
     }
     if (state.structure === 'wallmounted') buildHouse(W, D, H);
@@ -666,10 +775,10 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     }
   }
 
-  function buildWall(side: 'front' | 'back' | 'left' | 'right', W: number, D: number, H: number) {
+  function buildWall(side: 'front' | 'back' | 'left' | 'right', W: number, D: number, H: number, bottomOffset = 0) {
     const fm = frameMaterial();
     const t = state!.walls[side];
-    const wallH = H - 0.05;
+    const wallH = H - 0.05 - bottomOffset;
     let panelW = 0, x = 0, z = 0, rotY = 0;
     if (side === 'front') { panelW = W - 0.24; z = D / 2 - 0.06; }
     else if (side === 'back') { panelW = W - 0.24; z = -D / 2 + 0.06; rotY = Math.PI; }
@@ -677,7 +786,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     else { panelW = D - 0.24; x = W / 2 - 0.06; rotY = Math.PI / 2; }
 
     const group = new THREE.Group();
-    group.position.set(x, 0, z);
+    group.position.set(x, bottomOffset, z);
     group.rotation.y = rotY;
 
     if (t === 'glass' || t === 'sliding' || t === 'tinted') {
@@ -746,6 +855,46 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     }
     group.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
     canopyGroup.add(group);
+  }
+
+  // Conservatory dwarf wall — brick course along front + left + right.
+  // Back is the house; not rendered. Width is full perimeter run including
+  // corners, with each side a slab of (dwarfHeight × wallThickness) cross-section.
+  function buildDwarfWall(W: number, D: number, dwarfHeight: number, brickKey: string) {
+    const brickMat = brickMaterial(brickKey);
+    const t = 0.12; // wall thickness
+    const slabs: Array<{ w: number; pos: [number, number, number]; rotY: number; uRepeat: number; vRepeat: number }> = [
+      // front: spans full width, sits at front edge
+      { w: W,         pos: [0, dwarfHeight / 2, D / 2 - t / 2],     rotY: 0,           uRepeat: W / 1.6,         vRepeat: dwarfHeight / 0.6 },
+      // left: spans full depth, sits at left edge
+      { w: D,         pos: [-W / 2 + t / 2, dwarfHeight / 2, 0],    rotY: Math.PI / 2, uRepeat: D / 1.6,         vRepeat: dwarfHeight / 0.6 },
+      // right: spans full depth, sits at right edge
+      { w: D,         pos: [W / 2 - t / 2, dwarfHeight / 2, 0],     rotY: -Math.PI / 2, uRepeat: D / 1.6,        vRepeat: dwarfHeight / 0.6 },
+    ];
+    for (const s of slabs) {
+      const geo = new THREE.BoxGeometry(s.w, dwarfHeight, t);
+      const m = new THREE.Mesh(geo, brickMat);
+      m.position.set(s.pos[0], s.pos[1], s.pos[2]);
+      m.rotation.y = s.rotY;
+      m.castShadow = true; m.receiveShadow = true;
+      canopyGroup.add(m);
+    }
+    // Capping stone along the top of each dwarf wall — clean architectural detail.
+    const capMat = new THREE.MeshStandardMaterial({ color: 0xd6cfc2, roughness: 0.6, metalness: 0.02 });
+    const capH = 0.04, capOver = 0.02;
+    const caps: Array<{ w: number; pos: [number, number, number]; rotY: number }> = [
+      { w: W + capOver * 2, pos: [0, dwarfHeight + capH / 2, D / 2 - t / 2],      rotY: 0 },
+      { w: D + capOver * 2, pos: [-W / 2 + t / 2, dwarfHeight + capH / 2, 0],     rotY: Math.PI / 2 },
+      { w: D + capOver * 2, pos: [W / 2 - t / 2, dwarfHeight + capH / 2, 0],      rotY: -Math.PI / 2 },
+    ];
+    for (const c of caps) {
+      const geo = new THREE.BoxGeometry(c.w, capH, t + capOver * 2);
+      const m = new THREE.Mesh(geo, capMat);
+      m.position.set(c.pos[0], c.pos[1], c.pos[2]);
+      m.rotation.y = c.rotY;
+      m.castShadow = true; m.receiveShadow = true;
+      canopyGroup.add(m);
+    }
   }
 
   function buildHouse(W: number, D: number, H: number) {
