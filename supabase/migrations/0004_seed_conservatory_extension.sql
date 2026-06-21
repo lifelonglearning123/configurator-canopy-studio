@@ -5,6 +5,8 @@
 -- 2. Backfill `pricing_rules` for every existing tenant with the
 --    new line items (materials, opening presets, per-product bases).
 --    New tenants get them via defaultPricingLineItems() in catalog.ts.
+-- 3. Auto-enable the 5 new products in tenant_products for every
+--    existing tenant (new tenants auto-enable via the provisioner).
 --
 -- See docs/scoping/conservatory-extension.md
 -- =============================================================
@@ -105,3 +107,20 @@ select t.id, nr.product_key, nr.line_item_key, nr.label, nr.amount_minor
 from tenants t
 cross join new_rules nr
 on conflict (tenant_id, product_key, line_item_key) do nothing;
+
+
+-- ----- 3. Auto-enable the new products for every existing tenant ----
+--
+-- ON CONFLICT DO NOTHING preserves any admin's existing tenant_products
+-- row (so an admin who has already disabled a product won't have it
+-- re-enabled by re-running the migration).
+--
+-- sort_order is set to 100 + position so the new products land at the
+-- end of the existing catalog rather than reordering anything.
+
+insert into tenant_products (tenant_id, product_id, enabled, sort_order)
+select t.id, p.id, true, 100 + row_number() over (order by p.key)
+from tenants t
+cross join products p
+where p.key in ('conservatory-leanto', 'conservatory-edwardian', 'conservatory-victorian', 'conservatory-orangery', 'extension')
+on conflict (tenant_id, product_id) do nothing;
