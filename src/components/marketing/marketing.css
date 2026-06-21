@@ -322,6 +322,43 @@
 .ai-marketing .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--ai-hairline-light); font-size: .78rem; }
 .ai-marketing .foot-bottom a { color: var(--ai-muted); }
 
+/* product range */
+.ai-marketing .range-head { max-width: 56ch; }
+.ai-marketing .range-head h2 { margin-top: 14px; }
+.ai-marketing .range-head .lead { margin-top: 22px; max-width: 50ch; }
+.ai-marketing .product-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.4vw, 32px);
+  margin-top: clamp(40px, 5vw, 64px);
+}
+.ai-marketing .product-card {
+  background: #fff; border: 1px solid var(--ai-hairline-light); border-radius: 18px;
+  overflow: hidden; display: flex; flex-direction: column;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+}
+.ai-marketing .product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px -16px rgba(0, 0, 0, .14), 0 4px 14px -8px rgba(0, 0, 0, .08);
+  border-color: #d8d8d2;
+}
+.ai-marketing .product-card-art {
+  aspect-ratio: 3 / 2; position: relative; display: flex; align-items: flex-start; padding: 14px;
+}
+.ai-marketing .product-card-tag {
+  font-size: 11px; letter-spacing: -.005em; font-weight: 500;
+  background: rgba(255, 255, 255, .82); backdrop-filter: blur(8px);
+  color: var(--ai-ink); padding: 5px 10px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .6);
+}
+.ai-marketing .product-card-body { padding: 18px 20px 22px; }
+.ai-marketing .product-card-body h3 {
+  font-size: 1.18rem; font-weight: 500; letter-spacing: -.022em; margin: 0;
+}
+.ai-marketing .product-card-body p {
+  font-size: .88rem; color: var(--ai-muted); margin-top: 6px; line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
 /* reveal */
 .ai-marketing .reveal { opacity: 0; transform: translateY(20px); transition: opacity .8s cubic-bezier(.22, .61, .36, 1), transform .8s cubic-bezier(.22, .61, .36, 1); }
 .ai-marketing .reveal.in { opacity: 1; transform: none; }
@@ -336,6 +373,7 @@
   .ai-marketing .feature-grid.flip > div:first-child { order: 0; }
   .ai-marketing .stats { grid-template-columns: 1fr 1fr; gap: 36px 32px; }
   .ai-marketing .specs { grid-template-columns: 1fr 1fr; gap: 36px 32px; }
+  .ai-marketing .product-grid { grid-template-columns: 1fr 1fr; }
   .ai-marketing .steps { grid-template-columns: 1fr; gap: 32px; }
   .ai-marketing .pricing-card ul { grid-template-columns: 1fr; gap: 12px; }
   .ai-marketing .foot-grid { grid-template-columns: 1fr 1fr; }
@@ -346,6 +384,7 @@
 }
 @media (max-width: 560px) {
   .ai-marketing .stats, .ai-marketing .specs { grid-template-columns: 1fr; gap: 24px; }
+  .ai-marketing .product-grid { grid-template-columns: 1fr; }
   .ai-marketing .stat, .ai-marketing .spec { border-top: 1px solid var(--ai-hairline-light); padding-top: 20px; }
   .ai-marketing .stat { border-top: 1px solid #3a3a3c; }
   .ai-marketing .foot-grid { grid-template-columns: 1fr 1fr; gap: 24px; }

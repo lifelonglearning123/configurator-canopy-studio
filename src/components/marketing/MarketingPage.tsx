@@ -8,7 +8,25 @@ const BOOK_URL = 'https://connect.artificialignorance.io/widget/bookings/15-min-
 const CONFIGURATOR_URL = '/index.html';
 const CONTACT_EMAIL = 'oliver@artificialignorance.io';
 
-export function MarketingPage() {
+type Product = { key: string; name: string; tagline: string };
+
+// Coarse family grouping for the showcase. Drives the small tag chip + gradient.
+const PRODUCT_FAMILIES: Array<{ label: string; match: (key: string) => boolean; from: string; to: string }> = [
+  { label: 'Conservatory',  match: k => k.startsWith('conservatory-'),                       from: '#cfe6d0', to: '#7fb088' },
+  { label: 'Extension',     match: k => k === 'extension',                                   from: '#e6d6c1', to: '#b89876' },
+  { label: 'Veranda',       match: k => ['veranda', 'awning'].includes(k),                   from: '#dde6ee', to: '#8aa0b8' },
+  { label: 'Pergola',       match: k => k === 'pergola',                                     from: '#e0dbcf', to: '#a09782' },
+  { label: 'Garden room',   match: k => ['studio', 'container', 'glassroom'].includes(k),    from: '#dee5d6', to: '#8a9b7a' },
+  { label: 'Pool & enclosure', match: k => k === 'enclosure',                                from: '#d2e0e6', to: '#7d99a8' },
+  { label: 'Carport',       match: k => k === 'carport',                                     from: '#dcdcd8', to: '#8d8c87' },
+  { label: 'Garage',        match: k => k === 'garage',                                      from: '#d8d4cf', to: '#8b857d' },
+  { label: 'Fencing',       match: k => k === 'fence',                                       from: '#d9d4c4', to: '#8e8770' },
+];
+function familyOf(key: string) {
+  return PRODUCT_FAMILIES.find(f => f.match(key)) ?? { label: 'Outdoor', from: '#e2e2e0', to: '#8a8a87' };
+}
+
+export function MarketingPage({ products }: { products: Product[] }) {
   const navRef = useRef<HTMLElement>(null);
   const quoteCardRef = useRef<HTMLDivElement>(null);
   const priceCounterRef = useRef<HTMLDivElement>(null);
@@ -163,6 +181,7 @@ export function MarketingPage() {
           </a>
           <nav className="nav-links" aria-label="Primary">
             <a href="#configurator">Configurator</a>
+            <a href="#range">Range</a>
             <a href="#quality">Quality</a>
             <a href="#email">The email</a>
             <a href="#pricing">Pricing</a>
@@ -211,6 +230,35 @@ export function MarketingPage() {
           </div>
         </div>
       </section>
+
+      {/* PRODUCT RANGE */}
+      {products.length > 0 && (
+        <section id="range" className="section bg-2">
+          <div className="wrap">
+            <div className="range-head reveal">
+              <span className="eyebrow">The full range</span>
+              <h2>{products.length} ready-made products. One configurator.</h2>
+              <p className="lead">From a £4k veranda to a two-storey extension — every structure your customers want to buy, already built into the platform. Enable the ones you sell, ignore the rest.</p>
+            </div>
+            <div className="product-grid">
+              {products.map((p, i) => {
+                const f = familyOf(p.key);
+                return (
+                  <article key={p.key} className="product-card reveal" data-delay={String(i % 4)}>
+                    <div className="product-card-art" style={{ background: `linear-gradient(135deg, ${f.from} 0%, ${f.to} 100%)` }}>
+                      <span className="product-card-tag">{f.label}</span>
+                    </div>
+                    <div className="product-card-body">
+                      <h3>{p.name}</h3>
+                      <p>{p.tagline}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* QUALITY */}
       <section id="quality" className="section bg-dark">
