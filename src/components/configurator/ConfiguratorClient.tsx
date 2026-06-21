@@ -23,6 +23,9 @@ type Props = {
   productTagline: string;
   defaultSchema: Record<string, unknown>;
   pricing: { key: string; label: string; amountMinor: number }[];
+  /** True when rendered from the public marketing demo. Hides the lead-capture
+   *  quote modal (which requires a tenant) and shows a demo banner. */
+  demo?: boolean;
 };
 
 const DEFAULT_STATE: ConfigState = {
@@ -200,16 +203,26 @@ export function ConfiguratorClient(props: Props) {
           <div className="text-5xl tabular-nums tracking-tight" style={{ fontFamily: 'serif' }}>{formatMoney(subtotalMinor, props.currency)}</div>
         </div>
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className="mt-4 w-full px-4 py-3 rounded-lg text-white text-sm font-medium hover:opacity-90"
-          style={{ background: 'var(--brand, #1c1917)' }}
-        >
-          Request detailed quote →
-        </button>
+        {props.demo ? (
+          <a
+            href="/sign-up"
+            className="mt-4 w-full px-4 py-3 rounded-lg text-white text-sm font-medium hover:opacity-90 text-center block"
+            style={{ background: 'var(--brand, #1c1917)' }}
+          >
+            Sell this in your own configurator →
+          </a>
+        ) : (
+          <button
+            onClick={() => setModalOpen(true)}
+            className="mt-4 w-full px-4 py-3 rounded-lg text-white text-sm font-medium hover:opacity-90"
+            style={{ background: 'var(--brand, #1c1917)' }}
+          >
+            Request detailed quote →
+          </button>
+        )}
       </aside>
 
-      {modalOpen && (
+      {modalOpen && !props.demo && (
         <QuoteModal
           state={state}
           subtotalMinor={subtotalMinor}
@@ -217,6 +230,16 @@ export function ConfiguratorClient(props: Props) {
           productKey={props.productKey}
           onClose={() => setModalOpen(false)}
         />
+      )}
+
+      {props.demo && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+          <div className="bg-stone-900 text-white text-[11px] px-4 py-2 rounded-full shadow-lg flex items-center gap-2.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Demo mode · pricing & products are illustrative
+            <a href="/" className="ml-2 underline underline-offset-2 hover:no-underline">← Marketing</a>
+          </div>
+        </div>
       )}
     </main>
   );

@@ -7,16 +7,6 @@ import type { Database } from './lib/database.types';
 export async function middleware(req: NextRequest) {
   const host = req.headers.get('host') ?? '';
   const platform = isPlatformHost(host);
-  const { pathname } = req.nextUrl;
-
-  // Root URL on the platform host serves the standalone configurator HTML
-  // (public/index.html). Tenant hosts fall through to page.tsx, which
-  // redirects to /showroom.
-  if (platform && pathname === '/') {
-    const url = req.nextUrl.clone();
-    url.pathname = '/index.html';
-    return NextResponse.rewrite(url);
-  }
 
   const res = NextResponse.next();
   res.headers.set('x-canopy-host', host);

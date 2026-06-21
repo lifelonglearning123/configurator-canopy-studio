@@ -5,7 +5,7 @@ import Script from 'next/script';
 import './marketing.css';
 
 const BOOK_URL = 'https://connect.artificialignorance.io/widget/bookings/15-min-phone-call-w-oliver';
-const CONFIGURATOR_URL = '/index.html';
+const CONFIGURATOR_URL = '/configurator.html';
 const CONTACT_EMAIL = 'oliver@artificialignorance.io';
 
 type Product = { key: string; name: string; tagline: string };
@@ -244,15 +244,23 @@ export function MarketingPage({ products }: { products: Product[] }) {
               {products.map((p, i) => {
                 const f = familyOf(p.key);
                 return (
-                  <article key={p.key} className="product-card reveal" data-delay={String(i % 4)}>
+                  <a
+                    key={p.key}
+                    href={`/demo/configure/${p.key}`}
+                    target="_blank"
+                    rel="noopener"
+                    className="product-card reveal"
+                    data-delay={String(i % 4)}
+                  >
                     <div className="product-card-art" style={{ background: `linear-gradient(135deg, ${f.from} 0%, ${f.to} 100%)` }}>
                       <span className="product-card-tag">{f.label}</span>
                     </div>
                     <div className="product-card-body">
                       <h3>{p.name}</h3>
                       <p>{p.tagline}</p>
+                      <span className="product-card-cta">Try it live →</span>
                     </div>
-                  </article>
+                  </a>
                 );
               })}
             </div>
