@@ -615,6 +615,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     if (productScene === 'container') { buildContainer(W, D, H); applyTime(); return; }
     if (productScene === 'fence')     { buildFenceLine(W, D, H); applyTime(); return; }
     if (productScene === 'garage')    { buildGarageWall(W, D, H); applyTime(); return; }
+    if (productScene === 'extension') { buildExtensionScene(W, D, H); applyTime(); return; }
 
     // Posts + feet
     const post = 0.12;
@@ -894,6 +895,208 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       m.rotation.y = c.rotY;
       m.castShadow = true; m.receiveShadow = true;
       canopyGroup.add(m);
+    }
+  }
+
+  // Per-elevation extension wall material — routes brick/render/cladding to the
+  // right factory. Cladding reuses the existing per-finish colour/texture mapping.
+  function extensionWallMaterial(kind: 'brick' | 'render' | 'cladding', finish: string): THREE.MeshStandardMaterial {
+    if (kind === 'brick')  return brickMaterial(finish);
+    if (kind === 'render') return renderMaterial(finish);
+    const key = `ext-clad-${finish}`;
+    const cached = matCache.get(key) as THREE.MeshStandardMaterial | undefined;
+    if (cached) return cached;
+    const colorByKey: Record<string, number> = { timber: 0xa67a47, cedar: 0x7b4a32, composite: 0x5e5247, pvc: 0xe8e4dc };
+    const mapByKey: Record<string, THREE.Texture | null> = { timber: woodTex, cedar: woodTex, composite: plasterTex, pvc: null };
+    const m = new THREE.MeshStandardMaterial({
+      color: colorByKey[finish] ?? 0xddd3c2,
+      roughness: 0.78, metalness: 0.02,
+      map: mapByKey[finish] ?? null,
+    });
+    matCache.set(key, m);
+    return m;
+  }
+
+  // Extension scene — masonry walls per elevation, pitched roof, optional
+  // lantern + upper storey. Stands in for a full architectural build.
+  function buildExtensionScene(W: number, D: number, H: number) {
+    if (!state) return;
+
+    // Floor slab inside the footprint
+    const floorMat = flooringMaterial() ?? new THREE.MeshStandardMaterial({ color: 0xa89c84, roughness: 0.9 });
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(W - 0.04, D - 0.04), floorMat);
+    floor.rotation.x = -Math.PI / 2; floor.position.y = 0.02;
+    floor.receiveShadow = true;
+    canopyGroup.add(floor);
+
+    const upper = state.storeys === 2 && state.upperStorey ? state.upperStorey : null;
+    const totalH = upper ? H * 2 : H;
+
+    // Build wall stack — one or two storeys.
+    const storeyCount = upper ? 2 : 1;
+    for (let s = 0; s < storeyCount; s++) {
+      const baseY = s * H;
+      buildExtensionWalls(W, D, H, baseY);
+      // Inter-storey separator for two-storey builds
+      if (s === 0 && storeyCount === 2) {
+        const sep = new THREE.Mesh(new THREE.BoxGeometry(W, 0.06, D), new THREE.MeshStandardMaterial({ color: 0xc7beac, roughness: 0.85 }));
+        sep.position.set(0, H, 0);
+        sep.castShadow = true; sep.receiveShadow = true;
+        canopyGroup.add(sep);
+      }
+    }
+
+    // Roof
+    if (state.extensionRoof) {
+      buildExtensionRoof(W, D, totalH, state.extensionRoof.shape, state.extensionRoof.tile, state.extensionRoof.lantern);
+    }
+
+    // Optional house backdrop behind the extension
+    if (state.houseBackdrop && state.houseBackdrop !== 'none') {
+      buildHouse(W, D, H);
+    }
+
+    // Furniture inside the ground floor for scale
+    buildFurniture(W, D);
+
+    pad.scale.set(W + 2.0, D + 2.0, 1);
+    paverTex.repeat.set((W + 2.0) / 2.4, (D + 2.0) / 2.4);
+    contact.scale.set(W + 1.4, D + 1.4, 1);
+  }
+
+  function buildExtensionWalls(W: number, D: number, H: number, baseY: number) {
+    if (!state?.extensionWalls) return;
+    const t = 0.18; // wall thickness
+    const sides: { side: 'front' | 'back' | 'left' | 'right'; w: number; pos: [number, number, number]; rotY: number }[] = [
+      { side: 'front', w: W, pos: [0,            baseY + H / 2,  D / 2 - t / 2], rotY: 0 },
+      { side: 'back',  w: W, pos: [0,            baseY + H / 2, -D / 2 + t / 2], rotY: Math.PI },
+      { side: 'left',  w: D, pos: [-W / 2 + t / 2, baseY + H / 2,  0],           rotY: Math.PI / 2 },
+      { side: 'right', w: D, pos: [ W / 2 - t / 2, baseY + H / 2,  0],           rotY: -Math.PI / 2 },
+    ];
+    for (const s of sides) {
+      const choice = state.extensionWalls[s.side];
+      if (!choice) continue;
+      const mat = extensionWallMaterial(choice.kind, choice.finish);
+      // Clone the underlying map so each elevation gets its own UV scale.
+      const mInst = mat.clone();
+      if (mInst.map && mat.map) {
+        mInst.map = mat.map.clone();
+        mInst.map.wrapS = mInst.map.wrapT = THREE.RepeatWrapping;
+        mInst.map.colorSpace = THREE.SRGBColorSpace;
+        const uRep = Math.max(1, s.w / 1.6);
+        const vRep = Math.max(1, H / 1.2);
+        mInst.map.repeat.set(uRep, vRep);
+        mInst.map.needsUpdate = true;
+      }
+      const geo = new THREE.BoxGeometry(s.w, H, t);
+      const mesh = new THREE.Mesh(geo, mInst);
+      mesh.position.set(s.pos[0], s.pos[1], s.pos[2]);
+      mesh.rotation.y = s.rotY;
+      mesh.castShadow = true; mesh.receiveShadow = true;
+      canopyGroup.add(mesh);
+    }
+  }
+
+  function buildExtensionRoof(W: number, D: number, baseY: number, shape: 'flat' | 'mono' | 'dual' | 'hipped', tileKey: string, lantern: boolean) {
+    const mat = tileMaterial(tileKey);
+    const ridgeH = Math.min(D, W) * 0.28;
+
+    if (shape === 'flat') {
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(W + 0.04, 0.14, D + 0.04), mat);
+      slab.position.set(0, baseY + 0.07, 0);
+      slab.castShadow = true; slab.receiveShadow = true;
+      canopyGroup.add(slab);
+      // Parapet course (thin upstand) — matches roof tile colour for cohesion
+      const upH = 0.18;
+      const parts: [number, number, number, number, number][] = [
+        [W + 0.04, upH, 0.08, 0, D / 2 + 0.02],
+        [W + 0.04, upH, 0.08, 0, -D / 2 - 0.02],
+        [0.08, upH, D + 0.04, -W / 2 - 0.02, 0],
+        [0.08, upH, D + 0.04,  W / 2 + 0.02, 0],
+      ];
+      for (const [w, h, d, x, z] of parts) {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        m.position.set(x, baseY + 0.14 + h / 2, z);
+        m.castShadow = true; m.receiveShadow = true;
+        canopyGroup.add(m);
+      }
+    } else if (shape === 'mono') {
+      const sloped = new THREE.Mesh(new THREE.BoxGeometry(W + 0.1, 0.12, D + 0.1), mat);
+      sloped.position.set(0, baseY + ridgeH / 2 + 0.06, 0);
+      sloped.rotation.x = Math.atan2(ridgeH, D);
+      sloped.castShadow = true; sloped.receiveShadow = true;
+      canopyGroup.add(sloped);
+    } else if (shape === 'dual') {
+      const pitch = Math.atan2(ridgeH, D / 2);
+      const slopeLen = Math.sqrt((D / 2) ** 2 + ridgeH ** 2);
+      const overhang = 0.1;
+      const front = new THREE.Mesh(new THREE.BoxGeometry(W + overhang * 2, 0.12, slopeLen + overhang), mat);
+      front.position.set(0, baseY + ridgeH / 2 + 0.06, D / 4);
+      front.rotation.x = -pitch;
+      front.castShadow = true; front.receiveShadow = true;
+      canopyGroup.add(front);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(W + overhang * 2, 0.12, slopeLen + overhang), mat);
+      back.position.set(0, baseY + ridgeH / 2 + 0.06, -D / 4);
+      back.rotation.x = pitch;
+      back.castShadow = true; back.receiveShadow = true;
+      canopyGroup.add(back);
+      // Gable end caps — match wall material on left/right elevations
+      if (state?.extensionWalls) {
+        for (const side of ['left', 'right'] as const) {
+          const choice = state.extensionWalls[side];
+          if (!choice) continue;
+          const gableMat = extensionWallMaterial(choice.kind, choice.finish);
+          const shape = new THREE.Shape();
+          shape.moveTo(-D / 2, 0);
+          shape.lineTo( D / 2, 0);
+          shape.lineTo( 0, ridgeH);
+          shape.closePath();
+          const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.04, bevelEnabled: false });
+          const mesh = new THREE.Mesh(geo, gableMat);
+          mesh.rotation.y = side === 'left' ? Math.PI / 2 : -Math.PI / 2;
+          mesh.position.set(side === 'left' ? -W / 2 + 0.09 : W / 2 - 0.09, baseY, 0);
+          mesh.castShadow = true; mesh.receiveShadow = true;
+          canopyGroup.add(mesh);
+        }
+      }
+    } else if (shape === 'hipped') {
+      // 4 triangular faces meeting at a single peak above the centre.
+      const peakY = baseY + ridgeH;
+      const v = new Float32Array([
+        -W / 2, baseY,  D / 2,   W / 2, baseY,  D / 2,   0, peakY, 0, // front (+z)
+         W / 2, baseY,  D / 2,   W / 2, baseY, -D / 2,   0, peakY, 0, // right (+x)
+         W / 2, baseY, -D / 2,  -W / 2, baseY, -D / 2,   0, peakY, 0, // back  (-z)
+        -W / 2, baseY, -D / 2,  -W / 2, baseY,  D / 2,   0, peakY, 0, // left  (-x)
+      ]);
+      const uv = new Float32Array([
+        0, 0, 1, 0, 0.5, 1,
+        0, 0, 1, 0, 0.5, 1,
+        0, 0, 1, 0, 0.5, 1,
+        0, 0, 1, 0, 0.5, 1,
+      ]);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(v, 3));
+      geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+      geo.computeVertexNormals();
+      const m = new THREE.Mesh(geo, mat);
+      m.castShadow = true; m.receiveShadow = true;
+      canopyGroup.add(m);
+    }
+
+    // Lantern: small raised glass box centred on the roof.
+    if (lantern) {
+      const lanternGlass = glassMaterial();
+      const lanternFrame = frameMaterial();
+      const ls = Math.min(W, D) * 0.32;
+      const lh = 0.45;
+      const lanternBase = baseY + (shape === 'flat' ? 0.14 : ridgeH * 0.55);
+      const box = new THREE.Mesh(new THREE.BoxGeometry(ls, lh, ls), lanternGlass);
+      box.position.set(0, lanternBase + lh / 2, 0);
+      canopyGroup.add(box);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(ls + 0.1, 0.06, ls + 0.1), lanternFrame);
+      cap.position.set(0, lanternBase + lh + 0.03, 0);
+      cap.castShadow = true;
+      canopyGroup.add(cap);
     }
   }
 

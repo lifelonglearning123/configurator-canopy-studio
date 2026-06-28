@@ -3,7 +3,7 @@
 // Renders a Section[] (from sections.ts) into the left-side configurator UI.
 // Reads from / writes to the parent's ConfigState via the `state` / `set` props.
 
-import { FRAME_COLORS, ADDONS, SERVICE } from '@/lib/catalog';
+import { FRAME_COLORS, ADDONS, SERVICE, CLADDING } from '@/lib/catalog';
 import type { ConfigState, Elevation, WallMaterialKind } from '@/lib/pricing';
 import {
   PRODUCT_PANELS, BRICK, RENDER, ROOF_TILE, GLAZING_GRADE, OPENING_PRESET,
@@ -149,7 +149,23 @@ export function PanelRenderer({ productKey, productName, productTagline, state, 
             {s.kind === 'extensionStoreys' && (
               <Chips value={String(state.storeys ?? 1)}
                 options={[['1', 'Single storey'], ['2', 'Two storeys']]}
-                onChange={v => set('storeys', (v === '2' ? 2 : 1) as 1 | 2)} />
+                onChange={v => setState(st => {
+                  const storeys = (v === '2' ? 2 : 1) as 1 | 2;
+                  if (storeys === 2) {
+                    // Mirror the primary footprint up onto storey 2 so the price
+                    // uplift fires and the 3D scene has something to render.
+                    const primary = st.extensionPlan?.primary ?? { length: st.length, depth: st.depth };
+                    return {
+                      ...st,
+                      storeys,
+                      upperStorey: st.upperStorey ?? {
+                        primary: { length: primary.length, depth: primary.depth, offset: { x: 0, z: 0 } },
+                        return: st.extensionPlan?.return ?? null,
+                      },
+                    };
+                  }
+                  return { ...st, storeys, upperStorey: undefined };
+                })} />
             )}
 
             {s.kind === 'extensionWalls' && (
@@ -157,7 +173,10 @@ export function PanelRenderer({ productKey, productName, productTagline, state, 
                 {(['front', 'back', 'left', 'right'] as const).map(side => {
                   const w = state.extensionWalls?.[side];
                   const kind = w?.kind ?? 'brick';
-                  const opts = kind === 'brick' ? BRICK : kind === 'render' ? RENDER : {};
+                  const opts: Record<string, { label: string }> =
+                    kind === 'brick' ? BRICK :
+                    kind === 'render' ? RENDER :
+                    Object.fromEntries(Object.entries(CLADDING).filter(([k]) => k !== 'none')) as Record<string, { label: string }>;
                   return (
                     <div key={side} className="space-y-1.5">
                       <div className="flex items-center justify-between gap-2 text-xs">
@@ -168,12 +187,10 @@ export function PanelRenderer({ productKey, productName, productTagline, state, 
                           <option value="render">Render</option>
                           <option value="cladding">Cladding</option>
                         </select>
-                        {kind !== 'cladding' && (
-                          <select value={w?.finish ?? Object.keys(opts)[0]} onChange={e => setWallMat(side, kind, e.target.value)}
-                            className="flex-1 px-2 py-1.5 rounded border border-stone-200 bg-white text-xs">
-                            {Object.entries(opts).map(([k, v]) => <option key={k} value={k}>{(v as { label: string }).label}</option>)}
-                          </select>
-                        )}
+                        <select value={w?.finish ?? Object.keys(opts)[0]} onChange={e => setWallMat(side, kind, e.target.value)}
+                          className="flex-1 px-2 py-1.5 rounded border border-stone-200 bg-white text-xs">
+                          {Object.entries(opts).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                        </select>
                       </div>
                     </div>
                   );
