@@ -1031,14 +1031,18 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       const pitch = Math.atan2(ridgeH, D / 2);
       const slopeLen = Math.sqrt((D / 2) ** 2 + ridgeH ** 2);
       const overhang = 0.1;
+      // Front slab spans (0, H+ridgeH, 0)→(0, H, D/2). After rot.x = +pitch
+      // around its center at (0, H+ridgeH/2, D/4), the +Z end (toward front
+      // eave) tips down and the −Z end (toward ridge) tips up. Using −pitch
+      // inverts the slope.
       const front = new THREE.Mesh(new THREE.BoxGeometry(W + overhang * 2, 0.12, slopeLen + overhang), mat);
       front.position.set(0, baseY + ridgeH / 2 + 0.06, D / 4);
-      front.rotation.x = -pitch;
+      front.rotation.x = pitch;
       front.castShadow = true; front.receiveShadow = true;
       canopyGroup.add(front);
       const back = new THREE.Mesh(new THREE.BoxGeometry(W + overhang * 2, 0.12, slopeLen + overhang), mat);
       back.position.set(0, baseY + ridgeH / 2 + 0.06, -D / 4);
-      back.rotation.x = pitch;
+      back.rotation.x = -pitch;
       back.castShadow = true; back.receiveShadow = true;
       canopyGroup.add(back);
       // Gable end caps — match wall material on left/right elevations

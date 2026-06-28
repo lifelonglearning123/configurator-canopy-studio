@@ -2391,14 +2391,17 @@ function buildExtensionRoof(W, D, baseY, shape, tileKey, lantern){
     const pitch = Math.atan2(ridgeH, D/2);
     const slopeLen = Math.sqrt((D/2)**2 + ridgeH**2);
     const overhang = 0.1;
+    // +pitch on front slab tips +Z (front eave) DOWN and −Z (ridge) UP.
+    // Inverting the sign would put the ridge at the eave — i.e. the bug
+    // shown in roof.png where the slabs sloped UP toward the eaves.
     const front = new THREE.Mesh(new THREE.BoxGeometry(W + overhang*2, 0.12, slopeLen + overhang), mat);
     front.position.set(0, baseY + ridgeH/2 + 0.06, D/4);
-    front.rotation.x = -pitch;
+    front.rotation.x = pitch;
     front.castShadow = true; front.receiveShadow = true;
     canopyGroup.add(front);
     const back = new THREE.Mesh(new THREE.BoxGeometry(W + overhang*2, 0.12, slopeLen + overhang), mat);
     back.position.set(0, baseY + ridgeH/2 + 0.06, -D/4);
-    back.rotation.x = pitch;
+    back.rotation.x = -pitch;
     back.castShadow = true; back.receiveShadow = true;
     canopyGroup.add(back);
     // Gable end caps matching wall finishes
