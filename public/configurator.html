@@ -3222,14 +3222,37 @@ applyTime();
 const thumbs = makeThumbnails();
 buildCards(thumbs);
 
-// One-shot thumbnail export: visit /configurator.html#dumpthumbs to download
-// one JPG per product. Drop them in /public/products/ to give the marketing
-// page real 3D previews instead of gradient placeholders.
+// One-shot thumbnail export: visit /configurator.html#dumpthumbs to capture
+// real 3D snapshots of every product for the marketing cards.
+//
+//  • In dev (localhost), POST to /api/save-thumbnails — files land in
+//    /public/products/ automatically and you just `git add` + commit.
+//  • Anywhere else, fall back to triggering 15 file downloads so you can
+//    manually drop them into /public/products/.
 if (location.hash.includes('dumpthumbs')) {
-  for (const [id, dataUrl] of Object.entries(thumbs)) {
-    const a = document.createElement('a');
-    a.href = dataUrl; a.download = `${id}.jpg`;
-    document.body.appendChild(a); a.click(); a.remove();
+  const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+  if (isLocal) {
+    fetch('/api/save-thumbnails', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ thumbnails: thumbs })
+    }).then(r => r.json()).then(r => {
+      console.log('Saved thumbnails:', r.written?.length ?? 0);
+      alert(`Saved ${r.written?.length ?? 0} thumbnails into public/products/.\n\nNow git add public/products/ and commit.`);
+    }).catch(e => {
+      console.error('save-thumbnails failed', e);
+      alert('Failed to save via API — falling back to file downloads.');
+      for (const [id, dataUrl] of Object.entries(thumbs)) {
+        const a = document.createElement('a');
+        a.href = dataUrl; a.download = `${id}.jpg`;
+        document.body.appendChild(a); a.click(); a.remove();
+      }
+    });
+  } else {
+    for (const [id, dataUrl] of Object.entries(thumbs)) {
+      const a = document.createElement('a');
+      a.href = dataUrl; a.download = `${id}.jpg`;
+      document.body.appendChild(a); a.click(); a.remove();
+    }
   }
 }
 
