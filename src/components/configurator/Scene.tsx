@@ -616,6 +616,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     if (productScene === 'fence')     { buildFenceLine(W, D, H); applyTime(); return; }
     if (productScene === 'garage')    { buildGarageWall(W, D, H); applyTime(); return; }
     if (productScene === 'extension') { buildExtensionScene(W, D, H); applyTime(); return; }
+    if ((productScene ?? '').startsWith('conservatory-')) { buildConservatoryScene(W, D, H); applyTime(); return; }
 
     // Posts + feet
     const post = 0.12;
@@ -1097,6 +1098,402 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       cap.position.set(0, lanternBase + lh + 0.03, 0);
       cap.castShadow = true;
       canopyGroup.add(cap);
+    }
+  }
+
+  // ─── Conservatory scenes ──────────────────────────────────────────────
+  // Each of the 4 styles renders as a unique build. Shared building blocks
+  // (`buildDwarfSegment`, `buildGlazedSegment`, `buildPerimeterFrame`) walk a
+  // polygon footprint so the Victorian faceted bay reuses the same plumbing.
+
+  // Plan-view CCW footprint. First edge (vertices 0→1) is the back wall, which
+  // sits against the house — we skip rendering it but still use it to anchor
+  // the polygon.
+  type Pt = [number, number];
+
+  function conservatoryFootprint(style: string, W: number, D: number, facets: 3 | 5): Pt[] {
+    if (style === 'conservatory-victorian') {
+      // Back wall along -D/2, bay projects forward to +D/2.
+      if (facets === 3) {
+        const chamfer = Math.min(D, W) * 0.35;
+        return [
+          [-W / 2, -D / 2],                         // back-left
+          [ W / 2, -D / 2],                         // back-right
+          [ W / 2,  D / 2 - chamfer],               // right side end
+          [ W / 2 - chamfer,  D / 2],               // right chamfer
+          [-W / 2 + chamfer,  D / 2],               // left chamfer (front centre between)
+          [-W / 2,  D / 2 - chamfer],               // left side end
+        ];
+      } else {
+        // 5 facets: approximate as a semi-ellipse fan over the front edge.
+        // Order is CCW (back-left → back-right → right-side → bay arc R→L → left-side).
+        const pts: Pt[] = [[-W / 2, -D / 2], [W / 2, -D / 2]];
+        const baseZ = -D / 2 + D * 0.4;
+        pts.push([ W / 2, baseZ]);
+        const segs = 5;
+        const cx = 0, cz = baseZ;
+        const rx = W / 2, rz = D - (D * 0.4);
+        // a sweeps 0 → π so cos·rx goes +rx → −rx (R→L) and sin·rz arches forward.
+        for (let i = 1; i < segs; i++) {
+          const t = i / segs;
+          const a = Math.PI * t;
+          pts.push([cx + Math.cos(a) * rx, cz + Math.sin(a) * rz]);
+        }
+        pts.push([-W / 2, baseZ]);
+        return pts;
+      }
+    }
+    // Rectangular footprint for lean-to / Edwardian / orangery.
+    return [
+      [-W / 2, -D / 2], [ W / 2, -D / 2],
+      [ W / 2,  D / 2], [-W / 2,  D / 2],
+    ];
+  }
+
+  function buildPolygonFloor(footprint: Pt[]) {
+    const floorMat = flooringMaterial() ?? new THREE.MeshStandardMaterial({ color: 0x9c8e76, roughness: 0.85 });
+    const n = footprint.length;
+    const positions = new Float32Array(3 * n);
+    for (let i = 0; i < n; i++) {
+      positions[i * 3]     = footprint[i][0];
+      positions[i * 3 + 1] = 0.02;
+      positions[i * 3 + 2] = footprint[i][1];
+    }
+    // Fan triangulation (works for convex polygons). Reversed winding so the
+    // normal points up (+Y) instead of down.
+    const indices: number[] = [];
+    for (let i = 1; i < n - 1; i++) indices.push(0, i + 1, i);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, floorMat);
+    m.receiveShadow = true;
+    canopyGroup.add(m);
+  }
+
+  // Build a brick dwarf-wall slab + cap along a single polygon edge.
+  function buildDwarfSegment(a: Pt, b: Pt, h: number, brickKey: string) {
+    if (h <= 0.02) return;
+    const dx = b[0] - a[0], dz = b[1] - a[1];
+    const len = Math.hypot(dx, dz);
+    if (len < 0.05) return;
+    const mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
+    const rotY = -Math.atan2(dz, dx);
+    const t = 0.12;
+    const mat = brickMaterial(brickKey);
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(len, h, t), mat);
+    wall.position.set(mx, h / 2, mz);
+    wall.rotation.y = rotY;
+    wall.castShadow = true; wall.receiveShadow = true;
+    canopyGroup.add(wall);
+    const capMat = new THREE.MeshStandardMaterial({ color: 0xd6cfc2, roughness: 0.6, metalness: 0.02 });
+    const capH = 0.04, capOver = 0.02;
+    const cap = new THREE.Mesh(new THREE.BoxGeometry(len + capOver * 2, capH, t + capOver * 2), capMat);
+    cap.position.set(mx, h + capH / 2, mz);
+    cap.rotation.y = rotY;
+    cap.castShadow = true; cap.receiveShadow = true;
+    canopyGroup.add(cap);
+  }
+
+  // Build a glazed wall panel + mullion grid above the dwarf wall on one edge.
+  function buildGlazedSegment(a: Pt, b: Pt, baseY: number, height: number) {
+    const dx = b[0] - a[0], dz = b[1] - a[1];
+    const len = Math.hypot(dx, dz);
+    if (len < 0.05) return;
+    const mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
+    const rotY = -Math.atan2(dz, dx);
+    const fm = frameMaterial();
+    const gm = glassMaterial();
+    const panelH = height - baseY - 0.08;
+    if (panelH <= 0.1) return;
+    const pane = new THREE.Mesh(new THREE.BoxGeometry(len - 0.08, panelH, 0.025), gm);
+    pane.position.set(mx, baseY + panelH / 2 + 0.04, mz);
+    pane.rotation.y = rotY;
+    canopyGroup.add(pane);
+    // Mullion grid: vertical mullions every ~1m + a single horizontal transom.
+    const cols = Math.max(2, Math.round(len / 1.05));
+    for (let i = 0; i <= cols; i++) {
+      const u = -len / 2 + (len * i) / cols;
+      const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.045, panelH, 0.06), fm);
+      // place along edge direction then rotate
+      const localX = u, localZ = 0;
+      const wx = mx + Math.cos(rotY) * localX + Math.sin(rotY) * localZ;
+      const wz = mz - Math.sin(rotY) * localX + Math.cos(rotY) * localZ;
+      mullion.position.set(wx, baseY + panelH / 2 + 0.04, wz);
+      mullion.rotation.y = rotY;
+      mullion.castShadow = true;
+      canopyGroup.add(mullion);
+    }
+    const transom = new THREE.Mesh(new THREE.BoxGeometry(len - 0.04, 0.06, 0.06), fm);
+    transom.position.set(mx, baseY + panelH * 0.65 + 0.04, mz);
+    transom.rotation.y = rotY;
+    canopyGroup.add(transom);
+  }
+
+  // Corner posts at every polygon vertex (except back wall, which is the house)
+  // + a perimeter beam ring at eaves level.
+  function buildPerimeterFrame(footprint: Pt[], H: number) {
+    const fm = frameMaterial();
+    const postSize = 0.12;
+    const beamH = 0.18, beamY = H - beamH / 2 + 0.01;
+    // Posts at vertices that touch a glazed edge (skip the two back-wall corners).
+    for (let i = 1; i < footprint.length; i++) {
+      const [x, z] = footprint[i];
+      const post = new THREE.Mesh(new THREE.BoxGeometry(postSize, H, postSize), fm);
+      post.position.set(x, H / 2, z);
+      post.castShadow = true; post.receiveShadow = true;
+      canopyGroup.add(post);
+    }
+    // Beams along each glazed edge.
+    for (let i = 1; i < footprint.length; i++) {
+      const a = footprint[i];
+      const b = footprint[(i + 1) % footprint.length];
+      const dx = b[0] - a[0], dz = b[1] - a[1];
+      const len = Math.hypot(dx, dz);
+      if (len < 0.05) continue;
+      const beam = new THREE.Mesh(new THREE.BoxGeometry(len, beamH, postSize), fm);
+      beam.position.set((a[0] + b[0]) / 2, beamY, (a[1] + b[1]) / 2);
+      beam.rotation.y = -Math.atan2(dz, dx);
+      beam.castShadow = true; beam.receiveShadow = true;
+      canopyGroup.add(beam);
+    }
+  }
+
+  function buildConservatoryScene(W: number, D: number, H: number) {
+    if (!state) return;
+    const style = productScene ?? 'conservatory-leanto';
+    const facets: 3 | 5 = state.victorianFacets === '5' ? 5 : 3;
+    const footprint = conservatoryFootprint(style, W, D, facets);
+    const dwarfHeight = state.dwarfWall ? state.dwarfWall.height : 0;
+    const brickKey = state.dwarfWall?.brick ?? 'red-engineering';
+
+    buildPolygonFloor(footprint);
+
+    // Skip edge 0 (back wall against the house) — it's not rendered as glazing.
+    for (let i = 1; i < footprint.length; i++) {
+      const a = footprint[i], b = footprint[(i + 1) % footprint.length];
+      buildDwarfSegment(a, b, dwarfHeight, brickKey);
+      buildGlazedSegment(a, b, dwarfHeight, H);
+    }
+
+    buildPerimeterFrame(footprint, H);
+
+    // Per-style roof
+    if (style === 'conservatory-leanto')         buildLeantoRoof(W, D, H);
+    else if (style === 'conservatory-edwardian') buildEdwardianRoof(W, D, H);
+    else if (style === 'conservatory-orangery')  buildOrangeryRoof(W, D, H, brickKey);
+    else if (style === 'conservatory-victorian') buildVictorianRoof(footprint, H);
+
+    if (state.structure === 'wallmounted') buildHouse(W, D, H);
+    if (state.addons.lighting) buildLighting(W, D, H);
+    if (state.addons.bar)      buildBarLights(W, D, H);
+    if (state.addons.heater)   buildHeaters(W, D, H);
+    if (state.addons.speakers) buildSpeakers(W, D, H);
+    buildBollards(W, D);
+    buildFurniture(W, D);
+
+    pad.scale.set(W + 1.8, D + 1.8, 1);
+    paverTex.repeat.set((W + 1.8) / 2.4, (D + 1.8) / 2.4);
+    contact.scale.set(W + 1.2, D + 1.2, 1);
+  }
+
+  // Lean-to: mono-pitch glass roof, ridge at back (against the house).
+  function buildLeantoRoof(W: number, D: number, H: number) {
+    const fm = frameMaterial();
+    const gm = glassMaterial();
+    const rise = D * 0.18;
+    const angle = Math.atan2(rise, D);
+    const slopeLen = Math.hypot(D, rise);
+    const overhang = 0.12;
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(W - 0.04, 0.05, slopeLen + overhang), gm);
+    panel.position.set(0, H + rise / 2 + 0.03, 0);
+    panel.rotation.x = -angle; // higher at back (-Z), lower at front (+Z)
+    canopyGroup.add(panel);
+    const cols = Math.max(3, Math.round(W / 1.05));
+    for (let i = 1; i < cols; i++) {
+      const x = -W / 2 + (W * i) / cols;
+      const mul = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, slopeLen + overhang), fm);
+      mul.position.set(x, H + rise / 2 + 0.06, 0);
+      mul.rotation.x = -angle;
+      mul.castShadow = true;
+      canopyGroup.add(mul);
+    }
+    const ridge = new THREE.Mesh(new THREE.BoxGeometry(W + 0.12, 0.14, 0.18), fm);
+    ridge.position.set(0, H + rise + 0.07, -D / 2);
+    ridge.castShadow = true;
+    canopyGroup.add(ridge);
+  }
+
+  // Edwardian: 4-face hipped glass roof meeting at a single peak above centre.
+  function buildEdwardianRoof(W: number, D: number, H: number) {
+    const gm = glassMaterial();
+    const fm = frameMaterial();
+    const ridgeH = Math.min(W, D) * 0.32;
+    const peakY = H + ridgeH;
+    const v = new Float32Array([
+      -W / 2, H,  D / 2,   W / 2, H,  D / 2,   0, peakY, 0,
+       W / 2, H,  D / 2,   W / 2, H, -D / 2,   0, peakY, 0,
+       W / 2, H, -D / 2,  -W / 2, H, -D / 2,   0, peakY, 0,
+      -W / 2, H, -D / 2,  -W / 2, H,  D / 2,   0, peakY, 0,
+    ]);
+    const uv = new Float32Array([
+      0, 0, 1, 0, 0.5, 1,  0, 0, 1, 0, 0.5, 1,
+      0, 0, 1, 0, 0.5, 1,  0, 0, 1, 0, 0.5, 1,
+    ]);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(v, 3));
+    geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, gm);
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    canopyGroup.add(mesh);
+    // Hip rafters along each ridge edge (4 sloping from peak to corners).
+    const corners: Pt[] = [[-W / 2,  D / 2], [W / 2,  D / 2], [W / 2, -D / 2], [-W / 2, -D / 2]];
+    for (const [cx, cz] of corners) {
+      const len = Math.hypot(cx, ridgeH, cz);
+      const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.08, len), fm);
+      rafter.position.set(cx / 2, H + ridgeH / 2 + 0.02, cz / 2);
+      rafter.lookAt(0, peakY, 0);
+      rafter.castShadow = true;
+      canopyGroup.add(rafter);
+    }
+  }
+
+  // Orangery: brick piers at corners + mid-front, flat opaque parapet roof
+  // around the perimeter, central raised glass lantern.
+  function buildOrangeryRoof(W: number, D: number, H: number, brickKey: string) {
+    const fm = frameMaterial();
+    const gm = glassMaterial();
+    const tileLikeMat = new THREE.MeshStandardMaterial({ color: 0xb8b1a3, roughness: 0.82 });
+    // Flat perimeter slab (with hole would need CSG; instead use 4 strips that
+    // frame the lantern opening).
+    const lanternW = W * 0.5;
+    const lanternD = D * 0.5;
+    const stripT = 0.16;
+    const slabY = H + stripT / 2;
+    const frontStrip = new THREE.Mesh(new THREE.BoxGeometry(W, stripT, (D - lanternD) / 2), tileLikeMat);
+    frontStrip.position.set(0, slabY, (D + lanternD) / 4);
+    canopyGroup.add(frontStrip);
+    const backStrip = new THREE.Mesh(new THREE.BoxGeometry(W, stripT, (D - lanternD) / 2), tileLikeMat);
+    backStrip.position.set(0, slabY, -(D + lanternD) / 4);
+    canopyGroup.add(backStrip);
+    const leftStrip = new THREE.Mesh(new THREE.BoxGeometry((W - lanternW) / 2, stripT, lanternD), tileLikeMat);
+    leftStrip.position.set(-(W + lanternW) / 4, slabY, 0);
+    canopyGroup.add(leftStrip);
+    const rightStrip = new THREE.Mesh(new THREE.BoxGeometry((W - lanternW) / 2, stripT, lanternD), tileLikeMat);
+    rightStrip.position.set((W + lanternW) / 4, slabY, 0);
+    canopyGroup.add(rightStrip);
+    // Parapet upstand along the outer edge.
+    const upH = 0.22;
+    const upY = H + stripT + upH / 2;
+    const parts: [number, number, number, number, number][] = [
+      [W + 0.04, upH, 0.1, 0,  D / 2 + 0.02],
+      [W + 0.04, upH, 0.1, 0, -D / 2 - 0.02],
+      [0.1, upH, D + 0.04, -W / 2 - 0.02, 0],
+      [0.1, upH, D + 0.04,  W / 2 + 0.02, 0],
+    ];
+    for (const [w, h, d, x, z] of parts) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), tileLikeMat);
+      m.position.set(x, upY, z);
+      m.castShadow = true; m.receiveShadow = true;
+      canopyGroup.add(m);
+    }
+    // Lantern: raised glass box with a low pyramid glass cap.
+    const lanternBase = H + stripT;
+    const lanternH = 0.55;
+    const lanternBox = new THREE.Mesh(new THREE.BoxGeometry(lanternW, lanternH, lanternD), gm);
+    lanternBox.position.set(0, lanternBase + lanternH / 2, 0);
+    canopyGroup.add(lanternBox);
+    // Lantern roof — 4-face glass pyramid.
+    const peakY = lanternBase + lanternH + Math.min(lanternW, lanternD) * 0.35;
+    const lv = new Float32Array([
+      -lanternW / 2, lanternBase + lanternH,  lanternD / 2,
+       lanternW / 2, lanternBase + lanternH,  lanternD / 2,
+       0, peakY, 0,
+       lanternW / 2, lanternBase + lanternH,  lanternD / 2,
+       lanternW / 2, lanternBase + lanternH, -lanternD / 2,
+       0, peakY, 0,
+       lanternW / 2, lanternBase + lanternH, -lanternD / 2,
+      -lanternW / 2, lanternBase + lanternH, -lanternD / 2,
+       0, peakY, 0,
+      -lanternW / 2, lanternBase + lanternH, -lanternD / 2,
+      -lanternW / 2, lanternBase + lanternH,  lanternD / 2,
+       0, peakY, 0,
+    ]);
+    const lgeo = new THREE.BufferGeometry();
+    lgeo.setAttribute('position', new THREE.BufferAttribute(lv, 3));
+    lgeo.computeVertexNormals();
+    const lroof = new THREE.Mesh(lgeo, gm);
+    lroof.castShadow = true;
+    canopyGroup.add(lroof);
+    // Lantern frame caps along the 4 base edges
+    const baseY = lanternBase + lanternH;
+    const baseEdges: [number, number, number, number, number, number][] = [
+      [lanternW, 0.06, 0.06, 0, baseY,  lanternD / 2],
+      [lanternW, 0.06, 0.06, 0, baseY, -lanternD / 2],
+      [0.06, 0.06, lanternD, -lanternW / 2, baseY, 0],
+      [0.06, 0.06, lanternD,  lanternW / 2, baseY, 0],
+    ];
+    for (const [w, h, d, x, y, z] of baseEdges) {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), fm);
+      m.position.set(x, y, z);
+      canopyGroup.add(m);
+    }
+    // Brick piers at the 4 outer corners + 2 mid-front.
+    const pierMat = brickMaterial(brickKey);
+    const pierW = 0.36, pierD = 0.36;
+    const piers: Pt[] = [
+      [-W / 2 + pierW / 2,  D / 2 - pierD / 2],
+      [ W / 2 - pierW / 2,  D / 2 - pierD / 2],
+      [ W / 2 - pierW / 2, -D / 2 + pierD / 2],
+      [-W / 2 + pierW / 2, -D / 2 + pierD / 2],
+      [-W / 6,              D / 2 - pierD / 2],
+      [ W / 6,              D / 2 - pierD / 2],
+    ];
+    for (const [px, pz] of piers) {
+      const pier = new THREE.Mesh(new THREE.BoxGeometry(pierW, H, pierD), pierMat);
+      pier.position.set(px, H / 2, pz);
+      pier.castShadow = true; pier.receiveShadow = true;
+      canopyGroup.add(pier);
+    }
+  }
+
+  // Victorian: faceted hip roof — one triangular glass panel per polygon edge
+  // (excluding the back wall), meeting at a peak above the bay centre.
+  function buildVictorianRoof(footprint: Pt[], H: number) {
+    const gm = glassMaterial();
+    const fm = frameMaterial();
+    // Peak above centroid of the front portion of the polygon.
+    let cx = 0, cz = 0, n = 0;
+    for (let i = 1; i < footprint.length; i++) { cx += footprint[i][0]; cz += footprint[i][1]; n++; }
+    cx /= Math.max(1, n); cz /= Math.max(1, n);
+    const maxR = footprint.slice(1).reduce((m, [x, z]) => Math.max(m, Math.hypot(x - cx, z - cz)), 0);
+    const peakY = H + maxR * 0.55;
+    // Build one triangle per glazed edge.
+    const positions: number[] = [];
+    const uvs: number[] = [];
+    for (let i = 1; i < footprint.length; i++) {
+      const a = footprint[i], b = footprint[(i + 1) % footprint.length];
+      positions.push(a[0], H, a[1], b[0], H, b[1], cx, peakY, cz);
+      uvs.push(0, 0, 1, 0, 0.5, 1);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setAttribute('uv',       new THREE.Float32BufferAttribute(uvs, 2));
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, gm);
+    mesh.castShadow = true; mesh.receiveShadow = true;
+    canopyGroup.add(mesh);
+    // Hip rafters from peak down to each glazed-edge corner.
+    for (let i = 1; i < footprint.length; i++) {
+      const [x, z] = footprint[i];
+      const len = Math.hypot(x - cx, peakY - H, z - cz);
+      const rafter = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, len), fm);
+      rafter.position.set((x + cx) / 2, (H + peakY) / 2, (z + cz) / 2);
+      rafter.lookAt(cx, peakY, cz);
+      rafter.castShadow = true;
+      canopyGroup.add(rafter);
     }
   }
 
