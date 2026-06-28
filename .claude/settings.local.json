@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p /tmp/chrome-headless-canopy)",
+      "Bash(rm -rf public/products/*)",
+      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\" --headless=new --disable-gpu --no-sandbox --user-data-dir=/tmp/chrome-headless-canopy --virtual-time-budget=20000 \"http://localhost:3001/configurator.html#dumpthumbs\")"
+    ]
+  }
+}
