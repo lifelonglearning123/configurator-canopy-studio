@@ -218,12 +218,21 @@ export function MarketingPage({ products }: { products: Product[] }) {
         </div>
       </section>
 
-      {/* CONFIGURATOR SHOWCASE */}
+      {/* CONFIGURATOR SHOWCASE — static poster + CTA. The full 3D
+          configurator is heavy (Three.js + 15 product thumbnails on boot),
+          so we link to it rather than embed it on the marketing page. */}
       <section id="configurator" className="wrap" style={{ paddingBottom: 'clamp(64px,9vw,140px)' }}>
         <div className="showcase reveal">
-          <div className="showcase-frame">
-            <iframe src={CONFIGURATOR_URL} title="Live 3D veranda configurator" loading="lazy" allow="fullscreen; xr-spatial-tracking" />
-          </div>
+          <a href={CONFIGURATOR_URL} target="_blank" rel="noopener" className="showcase-poster" aria-label="Open the live 3D configurator">
+            <img src="/products/veranda.jpg" alt="Live 3D configurator preview" loading="lazy" decoding="async" />
+            <div className="showcase-poster-overlay">
+              <span className="showcase-poster-cta">
+                Try the live configurator
+                <span className="arr">›</span>
+              </span>
+              <span className="showcase-poster-sub">Opens in a new tab · photoreal 3D, real prices</span>
+            </div>
+          </a>
           <div className="showcase-caption">
             <span><span className="dot" /> Live. Try the buyer experience for yourself.</span>
             <a href={CONFIGURATOR_URL} target="_blank" rel="noopener" className="link-more">Open full screen</a>
