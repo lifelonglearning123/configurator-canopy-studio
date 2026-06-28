@@ -3222,6 +3222,17 @@ applyTime();
 const thumbs = makeThumbnails();
 buildCards(thumbs);
 
+// One-shot thumbnail export: visit /configurator.html#dumpthumbs to download
+// one JPG per product. Drop them in /public/products/ to give the marketing
+// page real 3D previews instead of gradient placeholders.
+if (location.hash.includes('dumpthumbs')) {
+  for (const [id, dataUrl] of Object.entries(thumbs)) {
+    const a = document.createElement('a');
+    a.href = dataUrl; a.download = `${id}.jpg`;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+
 const fromHash = loadFromHash();
 refresh();
 resize();

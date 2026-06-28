@@ -253,6 +253,15 @@ export function MarketingPage({ products }: { products: Product[] }) {
                     data-delay={String(i % 4)}
                   >
                     <div className="product-card-art" style={{ background: `linear-gradient(135deg, ${f.from} 0%, ${f.to} 100%)` }}>
+                      {/* Real 3D snapshot if present in /public/products/; gradient bg shows through if missing. */}
+                      <img
+                        src={`/products/${p.key}.jpg`}
+                        alt={p.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="product-card-img"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                      />
                       <span className="product-card-tag">{f.label}</span>
                     </div>
                     <div className="product-card-body">
