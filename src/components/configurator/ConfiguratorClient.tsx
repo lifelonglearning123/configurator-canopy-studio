@@ -101,8 +101,18 @@ export function ConfiguratorClient(props: Props) {
         )}
       </aside>
 
-      {/* CENTER: 3D preview */}
-      <section className="col-span-12 lg:col-span-5 relative overflow-hidden min-h-[60vh] lg:min-h-[calc(100vh-3.5rem)]" style={{ background: '#0e1116' }}>
+      {/* CENTER: 3D preview.
+          Uses `h-` not `min-h-` deliberately: the inner Scene container relies
+          on `h-full` (height:100%) to size the canvas, and that only resolves
+          when its parent has a *definite* height. `min-height` leaves the
+          parent's `height` property at `auto`, so percent-height children
+          collapse to 0 — which is exactly why /configure/* on the tenant
+          subdomain was a black screen while /demo/configure/* on the platform
+          host worked: the demo route had no header wrapper, and a few quirks
+          of the surrounding flex layout happened to give the section a
+          definite height. On the tenant route, the (public) layout wraps
+          children in a header + main, breaking the chain.  */}
+      <section className="col-span-12 lg:col-span-5 relative overflow-hidden h-[60vh] lg:h-[calc(100vh-3.5rem)]" style={{ background: '#0e1116' }}>
         <Scene
           ref={sceneRef}
           state={state}
