@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { adminClient } from '@/lib/supabase-server';
 import { resolveTenantByHost } from '@/lib/tenant';
-import { deliverGhl } from '@/lib/ghl';
+import { deliverCrm } from '@/lib/crm';
 
 const Body = z.object({
   product_key: z.string().min(1),
@@ -57,7 +57,8 @@ export async function POST(req: NextRequest) {
     .single();
   if (error || !lead) return NextResponse.json({ error: 'db_insert_failed', detail: error?.message }, { status: 500 });
 
-  // Look up the tenant's GHL webhook URL.
+  // Look up the tenant's CRM webhook URL.
+  // (DB column is still named `ghl_webhook_url` — it's a generic webhook now.)
   const { data: ten } = await db
     .from('tenants')
     .select('ghl_webhook_url')
@@ -67,12 +68,12 @@ export async function POST(req: NextRequest) {
 
   if (!webhook) {
     await db.from('leads').update({ ghl_status: 'skipped' }).eq('id', (lead as { id: string }).id);
-    return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, ghl: 'skipped' });
+    return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, crm: 'skipped' });
   }
 
-  // Fire-and-await GHL delivery (this route is invoked from a form submit;
+  // Fire-and-await CRM delivery (this route is invoked from a form submit;
   // a small extra latency is acceptable and the user sees immediate confirmation).
-  const result = await deliverGhl(webhook, {
+  const result = await deliverCrm(webhook, {
     tenant_slug: tenant.slug,
     product_key: parsed.product_key,
     customer: parsed.customer,
@@ -91,5 +92,5 @@ export async function POST(req: NextRequest) {
     })
     .eq('id', (lead as { id: string }).id);
 
-  return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, ghl: result.ok ? 'sent' : 'failed' });
+  return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, crm: result.ok ? 'sent' : 'failed' });
 }

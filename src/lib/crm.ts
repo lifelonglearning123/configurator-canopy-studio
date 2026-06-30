@@ -1,8 +1,9 @@
-// Deliver a lead to the tenant's GHL inbound webhook.
-// Same shape as the FB CAPI Bridge / Retargeting Callback pattern:
-// fire-and-forget POST with retry-on-5xx.
+// Deliver a lead to the tenant's CRM inbound webhook.
+// CRM-agnostic — POSTs to whatever URL the tenant configured. Works with
+// GoHighLevel, Zapier, n8n, Make, Pipedrive webhooks, custom endpoints, etc.
+// Fire-and-await POST with retry-on-5xx.
 
-export type GhlPayload = {
+export type CrmPayload = {
   tenant_slug: string;
   product_key: string | null;
   customer: { first_name: string; last_name: string; email: string; phone?: string; postcode?: string; notes?: string };
@@ -12,10 +13,10 @@ export type GhlPayload = {
   source_url?: string;
 };
 
-export type GhlResult = { ok: boolean; status: number; body: string };
+export type CrmResult = { ok: boolean; status: number; body: string };
 
-export async function deliverGhl(webhookUrl: string, payload: GhlPayload, attempts = 3): Promise<GhlResult> {
-  let lastErr: GhlResult = { ok: false, status: 0, body: '' };
+export async function deliverCrm(webhookUrl: string, payload: CrmPayload, attempts = 3): Promise<CrmResult> {
+  let lastErr: CrmResult = { ok: false, status: 0, body: '' };
   for (let i = 0; i < attempts; i++) {
     try {
       const r = await fetch(webhookUrl, {

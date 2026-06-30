@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try { parsed = Body.parse(await req.json()); }
   catch (e) { return NextResponse.json({ error: 'invalid_payload', detail: String(e) }, { status: 400 }); }
 
-  // If a webhook URL is configured (e.g. a GHL inbound webhook for the
+  // If a webhook URL is configured (e.g. a CRM inbound webhook for the
   // marketing site), forward the lead there. Otherwise we just log it.
   const webhook = process.env.MARKETING_CONTACT_WEBHOOK_URL;
   if (webhook) {

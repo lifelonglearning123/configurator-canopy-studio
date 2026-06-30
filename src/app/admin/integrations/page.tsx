@@ -2,14 +2,14 @@ import { requireSessionTenant } from '@/lib/session';
 import { adminClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { deliverGhl, type GhlPayload } from '@/lib/ghl';
+import { deliverCrm, type CrmPayload } from '@/lib/crm';
 
 // Representative payload used by the "Send test payload" button. The shape
 // mirrors what the live /api/leads route ships on a real submission, so any
-// GHL workflow that handles this test event is guaranteed to handle real
+// CRM workflow that handles this test event is guaranteed to handle real
 // leads identically. Marked clearly as a test so it never gets mistaken for
 // a real enquiry.
-function buildTestPayload(slug: string, currency: string): GhlPayload {
+function buildTestPayload(slug: string, currency: string): CrmPayload {
   return {
     tenant_slug: slug,
     product_key: 'pergola',
@@ -19,7 +19,7 @@ function buildTestPayload(slug: string, currency: string): GhlPayload {
       email:      'test+integration@canopystudio.io',
       phone:      '+44 7000 000000',
       postcode:   'SW1A 1AA',
-      notes:      'TEST PAYLOAD — sent from the Canopy Studio integrations page to verify the GHL workflow. No real customer action; safe to delete in GHL.',
+      notes:      'TEST PAYLOAD — sent from the Canopy Studio integrations page to verify the CRM workflow. No real customer action; safe to delete in your CRM.',
     },
     configuration: {
       _test: true,
@@ -65,7 +65,7 @@ export default async function IntegrationsPage({ searchParams }: { searchParams:
     if (!webhook) {
       redirect('/admin/integrations?test=missing');
     }
-    const result = await deliverGhl(webhook, buildTestPayload(tenant.slug, tenant.currency));
+    const result = await deliverCrm(webhook, buildTestPayload(tenant.slug, tenant.currency));
     const params = new URLSearchParams({
       test: result.ok ? 'ok' : 'fail',
       status: String(result.status),
@@ -79,21 +79,21 @@ export default async function IntegrationsPage({ searchParams }: { searchParams:
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">GHL & integrations</h1>
-        <p className="text-sm text-stone-600">Every quote request is posted to your GHL inbound webhook in addition to being stored here.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">CRM & integrations</h1>
+        <p className="text-sm text-stone-600">Every quote request is posted to your CRM inbound webhook in addition to being stored here.</p>
       </header>
 
       {testBanner}
 
       <form action={save} className="bg-white border border-stone-200 rounded-xl p-6 space-y-4 max-w-xl">
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-stone-600">GHL inbound webhook URL</span>
-          <input name="ghl_webhook_url" defaultValue={t.ghl_webhook_url ?? ''} placeholder="https://services.leadconnectorhq.com/hooks/…"
+          <span className="text-xs uppercase tracking-wider text-stone-600">CRM inbound webhook URL</span>
+          <input name="ghl_webhook_url" defaultValue={t.ghl_webhook_url ?? ''} placeholder="https://your-crm.example.com/webhook/…"
             className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900 font-mono text-xs" />
-          <span className="text-[11px] text-stone-500 mt-1 block">In GHL: Automation → Workflows → Trigger: Inbound Webhook → copy URL.</span>
+          <span className="text-[11px] text-stone-500 mt-1 block">Paste an inbound webhook URL from your CRM (GoHighLevel, Zapier, n8n, Make, Pipedrive — any tool that accepts a JSON POST).</span>
         </label>
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-stone-600">GHL location ID (optional)</span>
+          <span className="text-xs uppercase tracking-wider text-stone-600">CRM location / account ID (optional)</span>
           <input name="ghl_location_id" defaultValue={t.ghl_location_id ?? ''} placeholder="abcDEF123…"
             className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900 font-mono text-xs" />
         </label>
@@ -105,13 +105,13 @@ export default async function IntegrationsPage({ searchParams }: { searchParams:
           <h2 className="text-sm font-semibold tracking-tight">Send a test payload</h2>
           <p className="text-xs text-stone-500 mt-1">
             Posts a representative example payload to the webhook URL above so you can wire up the workflow
-            in GHL against a real event. The payload is clearly marked as a test (customer name "Test Lead",
-            note included) — your GHL trigger will see exactly the same JSON shape as a live lead.
+            in your CRM against a real event. The payload is clearly marked as a test (customer name "Test Lead",
+            note included) — your CRM trigger will see exactly the same JSON shape as a live lead.
           </p>
         </div>
         <form action={sendTest}>
           <button className="px-4 py-2.5 rounded-lg border border-stone-900 text-sm font-medium hover:bg-stone-100">
-            Send test payload to GHL →
+            Send test payload to CRM →
           </button>
         </form>
       </div>
@@ -136,21 +136,21 @@ function TestResult({ test, status, detail }: { test: string; status?: string; d
   if (test === 'missing') {
     return (
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 max-w-xl text-sm text-amber-900">
-        Add a GHL webhook URL above and save it before sending a test payload.
+        Add a CRM webhook URL above and save it before sending a test payload.
       </div>
     );
   }
   if (test === 'ok') {
     return (
       <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 max-w-xl text-sm text-emerald-900">
-        ✓ Test payload delivered. GHL responded with <span className="font-mono">{status}</span>.
+        ✓ Test payload delivered. Your CRM responded with <span className="font-mono">{status}</span>.
         {detail ? <pre className="mt-2 text-[10px] font-mono whitespace-pre-wrap text-emerald-800">{detail}</pre> : null}
       </div>
     );
   }
   return (
     <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 max-w-xl text-sm text-rose-900">
-      ✗ Test payload failed. GHL responded with <span className="font-mono">{status || '(no response)'}</span>.
+      ✗ Test payload failed. Your CRM responded with <span className="font-mono">{status || '(no response)'}</span>.
       {detail ? <pre className="mt-2 text-[10px] font-mono whitespace-pre-wrap text-rose-800">{detail}</pre> : null}
       <p className="mt-2 text-xs">
         Double-check the webhook URL is correct and the workflow trigger is active. Save the URL again if you just pasted it.

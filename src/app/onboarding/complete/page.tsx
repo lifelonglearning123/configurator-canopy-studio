@@ -10,7 +10,7 @@ export default function CompletePage() {
           </svg>
         </div>
         <h1 className="text-2xl font-semibold tracking-tight">You're in.</h1>
-        <p className="text-sm text-stone-600 mt-2">Your workspace is provisioned. Set up your catalog, branding, and GHL webhook next.</p>
+        <p className="text-sm text-stone-600 mt-2">Your workspace is provisioned. Set up your catalog, branding, and CRM webhook next.</p>
         <Link href="/admin" className="inline-block mt-5 px-4 py-2.5 rounded-lg bg-stone-900 text-white text-sm font-medium hover:bg-black">Open admin →</Link>
       </div>
     </main>
