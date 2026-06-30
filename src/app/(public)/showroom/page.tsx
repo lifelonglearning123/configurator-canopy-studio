@@ -41,8 +41,19 @@ export default async function Showroom() {
               href={`/configure/${p.key}`}
               className="group bg-white rounded-2xl border border-stone-200 overflow-hidden transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <div className="aspect-[3/2] bg-gradient-to-br from-stone-200 to-stone-300 grid place-items-center text-stone-500 text-xs uppercase tracking-wider">
-                {p.key}
+              <div className="aspect-[3/2] bg-gradient-to-br from-stone-200 to-stone-300 overflow-hidden relative">
+                {/* Real 3D snapshot from /public/products/<key>.jpg. All 15 are
+                    committed in the repo; if a new product is added without a
+                    snapshot, the gradient shows through behind a broken-image
+                    icon — easy to spot. */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/products/${p.key}.jpg`}
+                  alt={p.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 w-full h-full object-cover transition group-hover:scale-[1.03]"
+                />
               </div>
               <div className="p-5">
                 <h3 className="text-2xl tracking-tight" style={{ fontFamily: 'serif' }}>{p.name}</h3>
