@@ -8,10 +8,10 @@ import { useEffect, useImperativeHandle, useRef, forwardRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { FRAME_COLORS, CLADDING, BRICK, RENDER, ROOF_TILE } from '@/lib/catalog';
@@ -118,14 +118,16 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // ACES filmic: its gentle warm shift + highlight desaturation balances the
+  // sky-env's blue cast. (Khronos Neutral was A/B tested for colour fidelity
+  // but renders the outdoor blue stack too literally — scene reads cold.)
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.8;
+  renderer.toneMappingExposure = 0.82;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xdde4ea, 35, 120);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 2000);
   camera.position.set(9, 5, 9);
@@ -144,6 +146,12 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   });
   const composer = new EffectComposer(renderer, composerRT);
   composer.addPass(new RenderPass(scene, camera));
+  // Ground-truth ambient occlusion — contact shading where surfaces meet
+  // (furniture→floor, beams→posts) so objects sit in the scene instead of
+  // floating. Runs before bloom so the darkening participates in the glow.
+  const gtao = new GTAOPass(scene, camera, 1, 1);
+  gtao.output = GTAOPass.OUTPUT.Default;
+  composer.addPass(gtao);
   const bloom = new UnrealBloomPass(new THREE.Vector2(1024, 1024), 0.12, 0.4, 0.9);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
@@ -157,6 +165,58 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   skyU.rayleigh.value = 1.6;
   skyU.mieCoefficient.value = 0.004;
   skyU.mieDirectionalG.value = 0.85;
+
+  // Environment lighting comes from the procedural sky itself rather than a
+  // canned indoor studio: the Sky is rendered into a PMREM cubemap so
+  // reflections and ambient bounce match the visible sky and track the
+  // time-of-day slider (sunset glass reflects a sunset sky). A ground plane
+  // below the horizon supplies grass-coloured bounce from beneath.
+  const envScene = new THREE.Scene();
+  const envSky = new Sky();
+  envSky.scale.setScalar(1000);
+  envScene.add(envSky);
+  const envGroundMat = new THREE.MeshBasicMaterial({ color: 0x5e7c46 });
+  const envGround = new THREE.Mesh(new THREE.PlaneGeometry(1500, 1500), envGroundMat);
+  envGround.rotation.x = -Math.PI / 2;
+  envGround.position.y = -1;
+  envScene.add(envGround);
+  // The Sky shader's sun disc reaches ~7e5 luminance at high sun — beyond the
+  // HalfFloat render-target max (65504). That overflows to +Inf in the PMREM
+  // env map / composer buffer, which the bloom mip chain turns into NaN and a
+  // fully black frame. Clamp radiance below the overflow point (4000 still
+  // blooms hard); applies to both the visible sky and the env-map sky.
+  function clampSkyRadiance(material: THREE.ShaderMaterial) {
+    material.onBeforeCompile = shader => {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        'gl_FragColor = vec4( texColor, 1.0 );',
+        'gl_FragColor = vec4( min( texColor, vec3( 4000.0 ) ), 1.0 );'
+      );
+    };
+    material.needsUpdate = true;
+  }
+  clampSkyRadiance(sky.material);
+  clampSkyRadiance(envSky.material);
+
+  let envRT: THREE.WebGLRenderTarget | null = null;
+  let envTime = -1;
+  function updateEnvironment(day = 1) {
+    const u = envSky.material.uniforms;
+    // Deliberately hazier + less saturated than the visible sky: the env map is
+    // the scene's fill light, and a deep Rayleigh-blue dome tints every diffuse
+    // surface cyan. Extra mie haze whitens it while reflections still read "sky".
+    u.turbidity.value = Math.max(8, skyU.turbidity.value as number);
+    u.rayleigh.value = (skyU.rayleigh.value as number) * 0.5;
+    u.mieCoefficient.value = Math.max(0.008, skyU.mieCoefficient.value as number);
+    u.mieDirectionalG.value = skyU.mieDirectionalG.value;
+    (u.sunPosition.value as THREE.Vector3).copy(skyU.sunPosition.value as THREE.Vector3);
+    // MeshBasicMaterial ignores lights, so fade the bounce plane with daylight
+    envGroundMat.color.setHex(0x5e7c46).multiplyScalar(0.12 + day * 0.88);
+    const rt = pmrem.fromScene(envScene, 0.04, 0.1, 1100);
+    scene.environment = rt.texture;
+    envRT?.dispose();
+    envRT = rt;
+  }
+  updateEnvironment();
 
   const sunLight = new THREE.DirectionalLight(0xfff2dc, 1.45);
   sunLight.castShadow = true;
@@ -172,9 +232,12 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   moonLight.position.set(-8, 12, -6);
   scene.add(moonLight);
 
-  const hemi = new THREE.HemisphereLight(0xcfe0f4, 0x8a7c66, 0.45);
+  // Near-neutral fill (a hint of cool sky / warm ground). The saturated blue
+  // ambience comes from the sky env map; keeping the fills neutral acts like
+  // a camera's white balance so product colours stay faithful.
+  const hemi = new THREE.HemisphereLight(0xe3eaf0, 0x9a8c78, 0.45);
   scene.add(hemi);
-  const ambient = new THREE.AmbientLight(0xffffff, 0.18);
+  const ambient = new THREE.AmbientLight(0xfff4e6, 0.18);
   scene.add(ambient);
 
   // --- stars ---
@@ -535,7 +598,10 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   function glassMaterial(): THREE.MeshPhysicalMaterial {
     const cached = matCache.get('glass') as THREE.MeshPhysicalMaterial | undefined;
     if (cached) return cached;
-    const m = new THREE.MeshPhysicalMaterial({ color: 0xf2fafc, transmission: 0.95, roughness: 0.03, ior: 1.5, thickness: 0.06, transparent: true, opacity: 0.45, reflectivity: 0.6, clearcoat: 0.6, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
+    const m = new THREE.MeshPhysicalMaterial({ color: 0xf2fafc, transmission: 0.95, roughness: 0.03, ior: 1.5, thickness: 0.06, transparent: true, opacity: 0.45, reflectivity: 0.5, clearcoat: 0.4, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
+    // Sky-env reflections at grazing angles turn the whole roof into a blue
+    // mirror that hides the product — damp env influence on glazing only.
+    m.userData.envScale = 0.35;
     matCache.set('glass', m);
     return m;
   }
@@ -543,6 +609,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const cached = matCache.get('tintedGlass') as THREE.MeshPhysicalMaterial | undefined;
     if (cached) return cached;
     const m = new THREE.MeshPhysicalMaterial({ color: 0x1c2a30, transmission: 0.55, roughness: 0.06, ior: 1.5, thickness: 0.06, transparent: true, opacity: 0.78, reflectivity: 0.7, clearcoat: 0.6, clearcoatRoughness: 0.1, side: THREE.DoubleSide });
+    m.userData.envScale = 0.5;
     matCache.set('tintedGlass', m);
     return m;
   }
@@ -576,6 +643,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       color: colorByKey[k] ?? 0xddd3c2,
       roughness: 0.78, metalness: 0.02,
       map: mapByKey[k] ?? null,
+      bumpMap: mapByKey[k] ?? null, bumpScale: 0.3,
     });
     void conf;
     matCache.set(key, m);
@@ -594,7 +662,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       concrete: { color: 0x9c9a96, map: plasterTex, rough: 0.6 },
     };
     const c = conf[k]; if (!c) return null;
-    const m = new THREE.MeshStandardMaterial({ color: c.color, roughness: c.rough, metalness: 0, map: c.map });
+    const m = new THREE.MeshStandardMaterial({ color: c.color, roughness: c.rough, metalness: 0, map: c.map, bumpMap: c.map, bumpScale: 0.25 });
     matCache.set(key, m);
     return m;
   }
@@ -602,6 +670,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const cached = matCache.get('poly') as THREE.MeshPhysicalMaterial | undefined;
     if (cached) return cached;
     const m = new THREE.MeshPhysicalMaterial({ color: 0xe7f1f3, transmission: 0.5, roughness: 0.32, ior: 1.4, thickness: 0.05, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
+    m.userData.envScale = 0.5;
     matCache.set('poly', m);
     return m;
   }
@@ -617,6 +686,8 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     });
     // each brick instance gets its own repeat so different walls don't share UV scale
     if (m.map) { m.map.wrapS = m.map.wrapT = THREE.RepeatWrapping; m.map.colorSpace = THREE.SRGBColorSpace; m.map.needsUpdate = true; }
+    // reuse the colour map as a bump map — mortar lines read as recessed
+    m.bumpMap = m.map; m.bumpScale = 0.5;
     matCache.set(key, m);
     return m;
   }
@@ -628,6 +699,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const m = new THREE.MeshStandardMaterial({
       color: new THREE.Color(conf?.hex ?? '#f0ede4'),
       map: renderTex,
+      bumpMap: renderTex, bumpScale: 0.15,
       roughness: 0.88, metalness: 0.0,
     });
     matCache.set(key, m);
@@ -644,6 +716,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       roughness: 0.78, metalness: 0.08,
     });
     if (m.map) { m.map.wrapS = m.map.wrapT = THREE.RepeatWrapping; m.map.colorSpace = THREE.SRGBColorSpace; m.map.needsUpdate = true; }
+    m.bumpMap = m.map; m.bumpScale = 0.35; // tile rows catch the light
     matCache.set(key, m);
     return m;
   }
@@ -1030,6 +1103,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       color: colorByKey[finish] ?? 0xddd3c2,
       roughness: 0.78, metalness: 0.02,
       map: mapByKey[finish] ?? null,
+      bumpMap: mapByKey[finish] ?? null, bumpScale: 0.3,
     });
     matCache.set(key, m);
     return m;
@@ -1037,6 +1111,88 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
   // Extension scene — masonry walls per elevation, pitched roof, optional
   // lantern + upper storey. Stands in for a full architectural build.
+  // ---- door / window opening assemblies --------------------------------
+  // OPENING_PRESET options are priced and configurable in the panel but were
+  // never rendered — customers picked "French doors" and saw nothing change.
+  // Build the chosen preset as a framed glazed assembly overlaid on the wall
+  // face (walls are solid slabs — no CSG — so openings sit proud of the
+  // surface). Local coords: origin at wall centre on the floor, x along the
+  // wall, +z outward.
+  function buildOpeningAssembly(preset: string, wallW: number, wallH: number, glassMat: THREE.Material): THREE.Group | null {
+    if (!preset || preset === 'solid') return null;
+    const fm = frameMaterial();
+    const g = new THREE.Group();
+    const doorH = Math.min(2.05, wallH - 0.2);
+    const usable = Math.max(1.2, wallW - 0.5);
+
+    const bar = (w: number, h: number, x: number, y: number) => {
+      const m = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(w), Math.abs(h), 0.07), fm);
+      m.position.set(x, y, 0.03);
+      m.castShadow = true;
+      g.add(m);
+    };
+    // A glazed unit (door-leaf run or window): pane + border + leaf stiles + handle.
+    const unit = (w: number, h: number, cx: number, sill: number, leaves = 1) => {
+      const pane = new THREE.Mesh(new THREE.BoxGeometry(w - 0.05, h - 0.05, 0.02), glassMat);
+      pane.position.set(cx, sill + h / 2, 0.015);
+      g.add(pane);
+      bar(w, 0.06, cx, sill + 0.03);
+      bar(w, 0.06, cx, sill + h - 0.03);
+      bar(0.06, h, cx - w / 2 + 0.03, sill + h / 2);
+      bar(0.06, h, cx + w / 2 - 0.03, sill + h / 2);
+      for (let i = 1; i < leaves; i++) bar(0.045, h - 0.08, cx - w / 2 + (w * i) / leaves, sill + h / 2);
+      if (sill === 0 && h > 1.6) { // it's a door — handle at the centre stile
+        const handle = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.14, 0.035), fm);
+        handle.position.set(cx - 0.09, 1.02, 0.06);
+        g.add(handle);
+      }
+    };
+
+    if (preset === 'bifold-full') {
+      const w = Math.max(1.6, usable);
+      unit(w, doorH, 0, 0, Math.max(3, Math.round(w / 0.8)));
+    } else if (preset === 'french-pair') {
+      const w = Math.min(3.4, usable);
+      unit(w / 2 - 0.02, doorH, -w / 4, 0, 2);
+      unit(w / 2 - 0.02, doorH,  w / 4, 0, 2);
+    } else if (preset === 'sliders-side-window') {
+      const sw = Math.min(2.6, usable * 0.62);
+      const sx = -usable / 2 + sw / 2;
+      unit(sw, doorH, sx, 0, 3);
+      const ww = Math.max(0.7, Math.min(1.2, usable - sw - 0.15));
+      unit(ww, 1.1, sx + sw / 2 + 0.12 + ww / 2, 0.9, 1);
+    } else if (preset === 'single-french-windows') {
+      const dw = Math.min(1.7, usable * 0.5);
+      unit(dw, doorH, 0, 0, 2);
+      const ww = Math.min(1.0, (usable - dw) / 2 - 0.15);
+      if (ww > 0.4) {
+        const wx = dw / 2 + 0.12 + ww / 2;
+        unit(ww, 1.1, -wx, 0.9, 1);
+        unit(ww, 1.1,  wx, 0.9, 1);
+      }
+    } else if (preset === 'window-large') {
+      unit(Math.min(2.2, usable), 1.4, 0, 0.8, 2);
+    } else if (preset === 'window-medium') {
+      unit(Math.min(1.2, usable), 1.1, 0, 0.9, 1);
+    } else if (preset === 'window-small') {
+      unit(0.7, 0.8, 0, 1.1, 1);
+    } else {
+      return null;
+    }
+    return g;
+  }
+
+  // Place an opening assembly on a wall: `at` is the wall centre at floor
+  // level, `n` the outward normal (unit, xz), `offset` how proud it sits.
+  function placeOpening(preset: string | undefined, wallW: number, wallH: number, at: [number, number, number], n: [number, number], offset: number, glassMat: THREE.Material) {
+    if (!preset || preset === 'solid') return;
+    const asm = buildOpeningAssembly(preset, wallW, wallH, glassMat);
+    if (!asm) return;
+    asm.position.set(at[0] + n[0] * offset, at[1], at[2] + n[1] * offset);
+    asm.rotation.y = Math.atan2(n[0], n[1]);
+    canopyGroup.add(asm);
+  }
+
   function buildExtensionScene(W: number, D: number, H: number) {
     if (!state) return;
 
@@ -1085,11 +1241,11 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   function buildExtensionWalls(W: number, D: number, H: number, baseY: number) {
     if (!state?.extensionWalls) return;
     const t = 0.18; // wall thickness
-    const sides: { side: 'front' | 'back' | 'left' | 'right'; w: number; pos: [number, number, number]; rotY: number }[] = [
-      { side: 'front', w: W, pos: [0,            baseY + H / 2,  D / 2 - t / 2], rotY: 0 },
-      { side: 'back',  w: W, pos: [0,            baseY + H / 2, -D / 2 + t / 2], rotY: Math.PI },
-      { side: 'left',  w: D, pos: [-W / 2 + t / 2, baseY + H / 2,  0],           rotY: Math.PI / 2 },
-      { side: 'right', w: D, pos: [ W / 2 - t / 2, baseY + H / 2,  0],           rotY: -Math.PI / 2 },
+    const sides: { side: 'front' | 'back' | 'left' | 'right'; w: number; pos: [number, number, number]; rotY: number; n: [number, number] }[] = [
+      { side: 'front', w: W, pos: [0,            baseY + H / 2,  D / 2 - t / 2], rotY: 0,            n: [0, 1] },
+      { side: 'back',  w: W, pos: [0,            baseY + H / 2, -D / 2 + t / 2], rotY: Math.PI,      n: [0, -1] },
+      { side: 'left',  w: D, pos: [-W / 2 + t / 2, baseY + H / 2,  0],           rotY: Math.PI / 2,  n: [-1, 0] },
+      { side: 'right', w: D, pos: [ W / 2 - t / 2, baseY + H / 2,  0],           rotY: -Math.PI / 2, n: [1, 0] },
     ];
     for (const s of sides) {
       const choice = state.extensionWalls[s.side];
@@ -1112,6 +1268,10 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       mesh.rotation.y = s.rotY;
       mesh.castShadow = true; mesh.receiveShadow = true;
       canopyGroup.add(mesh);
+      // Doors/windows on the ground storey — tinted glazing reads as interior.
+      if (baseY < 0.05) {
+        placeOpening(state.openings?.[s.side], s.w, H, [s.pos[0], 0, s.pos[2]], s.n, t / 2 + 0.02, tintedGlassMaterial());
+      }
     }
   }
 
@@ -1400,6 +1560,30 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
     buildPerimeterFrame(footprint, H);
 
+    // Doors / windows: overlay each configured elevation's opening on its
+    // longest matching edge (facets classified by outward normal, so the
+    // Victorian bay's front door lands on the widest front-facing facet).
+    if (state.openings) {
+      const best = new Map<string, { a: Pt; b: Pt; len: number }>();
+      for (let i = 1; i < footprint.length; i++) {
+        const a = footprint[i], b = footprint[(i + 1) % footprint.length];
+        const dx = b[0] - a[0], dz = b[1] - a[1];
+        const len = Math.hypot(dx, dz);
+        if (len < 0.3) continue;
+        const nx = dz / len, nz = -dx / len; // outward normal (CCW footprint)
+        const side = Math.abs(nx) > Math.abs(nz) ? (nx > 0 ? 'right' : 'left') : (nz > 0 ? 'front' : 'back');
+        const cur = best.get(side);
+        if (!cur || len > cur.len) best.set(side, { a, b, len });
+      }
+      for (const [side, e] of best) {
+        const preset = state.openings[side as 'front' | 'back' | 'left' | 'right'];
+        if (!preset || preset === 'solid') continue;
+        const dx = e.b[0] - e.a[0], dz = e.b[1] - e.a[1];
+        const nx = dz / e.len, nz = -dx / e.len;
+        placeOpening(preset, e.len, H - 0.2, [(e.a[0] + e.b[0]) / 2, 0, (e.a[1] + e.b[1]) / 2], [nx, nz], 0.09, glassMaterial());
+      }
+    }
+
     // Per-style roof
     if (style === 'conservatory-leanto')         buildLeantoRoof(W, D, H);
     else if (style === 'conservatory-edwardian') buildEdwardianRoof(W, D, H);
@@ -1619,7 +1803,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   }
 
   function buildHouse(W: number, D: number, H: number) {
-    const wallMat = claddingMaterial() ?? new THREE.MeshStandardMaterial({ map: plasterTex, roughness: 0.9 });
+    const wallMat = claddingMaterial() ?? new THREE.MeshStandardMaterial({ map: plasterTex, bumpMap: plasterTex, bumpScale: 0.15, roughness: 0.9 });
     const houseW = W + 4, houseH = H + 1.9, houseT = 0.35;
     const house = new THREE.Mesh(new THREE.BoxGeometry(houseW, houseH, houseT), wallMat);
     house.position.set(0, houseH / 2, -D / 2 - houseT / 2 - 0.02);
@@ -2134,18 +2318,22 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const lowSun = elev > 0 && elev < 22 ? 1 - elev / 22 : 0;
 
     sunLight.position.copy(sunVec).multiplyScalar(35);
-    sunLight.intensity = day * 1.45;
+    sunLight.intensity = day * 1.9;
     const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
     sunLight.color.setRGB(1, lerp(0.95, 0.62, lowSun), lerp(0.86, 0.38, lowSun));
     sunLight.castShadow = day > 0.02;
 
     moonLight.intensity = night * 0.22;
     hemi.intensity = 0.06 + day * 0.42;
-    ambient.intensity = 0.04 + day * 0.16;
+    ambient.intensity = 0.04 + day * 0.2;
 
     skyU.turbidity.value = lerp(5, 11, lowSun);
     skyU.rayleigh.value = lerp(1.4, 2.6, lowSun);
     skyU.mieCoefficient.value = lerp(0.004, 0.012, lowSun);
+
+    // Refresh sky-based environment reflections once the time has moved enough
+    // to matter — PMREM regeneration costs a few ms, so not per slider tick.
+    if (Math.abs(timeOfDay - envTime) > 0.2) { envTime = timeOfDay; updateEnvironment(day); }
 
     starMat.opacity = night * 0.9;
 
@@ -2155,7 +2343,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
     bloom.strength = 0.08 + night * 0.55 + lowSun * 0.08;
     bloom.threshold = lerp(0.95, 0.55, night);
-    renderer.toneMappingExposure = lerp(0.80, 0.55, night);
+    renderer.toneMappingExposure = lerp(0.82, 0.55, night);
 
     const ledOn = 0.2 + night * 4.2;
     ledMeshes.forEach(m => {
@@ -2166,12 +2354,18 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     bollardLights.forEach(l => { l.intensity = night * 0.8; });
     heaterEmitters.forEach(m => { (m.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.4 + night * 2.6; });
 
-    const envI = 0.22 + day * 0.55;
+    // Sky env: strong enough for real reflections on glass/metal, weak enough
+    // that the blue Rayleigh dome doesn't tint diffuse surfaces cyan.
+    const envI = 0.18 + day * 0.27;
     scene.traverse(o => {
       const m = (o as THREE.Mesh).material;
       if (!m) return;
       const ms = Array.isArray(m) ? m : [m];
-      ms.forEach(material => { if ('envMapIntensity' in material) (material as THREE.MeshStandardMaterial).envMapIntensity = envI; });
+      ms.forEach(material => {
+        if (!('envMapIntensity' in material)) return;
+        const scale = (material.userData?.envScale as number | undefined) ?? 1;
+        (material as THREE.MeshStandardMaterial).envMapIntensity = envI * scale;
+      });
     });
   }
 
@@ -2291,6 +2485,12 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       }));
       modelCache.clear();
       pavingMaps.forEach(t => t.dispose());
+      gtao.dispose();
+      envRT?.dispose();
+      envSky.geometry.dispose();
+      (envSky.material as THREE.Material).dispose();
+      envGround.geometry.dispose();
+      envGroundMat.dispose();
       pmrem.dispose();
       composerRT.dispose();
       renderer.dispose();

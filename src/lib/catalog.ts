@@ -250,3 +250,37 @@ export function defaultPricingLineItems(): Array<{ key: string; label: string; a
 
   return rows;
 }
+
+// -----------------------------------------------------------
+// Which pricing rows apply to which product — mirrors the branches in
+// quote() (src/lib/pricing.ts). Used by the pricing admin to present a
+// per-product view instead of one flat list covering every product.
+// A row may apply to several products: it is ONE price shared by all of
+// them (per-product override values would need a data-model change).
+// -----------------------------------------------------------
+
+// The 10 pre-conservatory products all share the classic canopy option set.
+export const LEGACY_PRODUCT_KEYS = [
+  'pergola', 'veranda', 'carport', 'studio', 'awning',
+  'container', 'fence', 'garage', 'glassroom', 'enclosure',
+];
+
+export function pricingRowAppliesTo(lineItemKey: string, productKey: string): boolean {
+  const k = lineItemKey;
+  const starts = (...prefixes: string[]) => prefixes.some(p => k.startsWith(p));
+
+  if (productKey === 'extension') {
+    return k === 'product.extension.base'
+      || starts('extension.', 'material.brick.', 'material.render.', 'material.tile.',
+                'opening.', 'cladding.', 'flooring.', 'electrical.', 'service.');
+  }
+  if (productKey.startsWith('conservatory-')) {
+    return k === `product.${productKey}.base`
+      || (productKey === 'conservatory-orangery' && starts('orangery.'))
+      || starts('conservatory.', 'material.brick.', 'material.glazing.', 'opening.',
+                'wall.', 'addon.', 'flooring.', 'automation.', 'electrical.', 'service.');
+  }
+  // Legacy canopy products — the classic shared option set.
+  return starts('base.', 'roof.', 'wall.', 'slats.', 'misc.', 'addon.', 'cladding.',
+                'flooring.', 'interior.', 'automation.', 'electrical.', 'service.');
+}

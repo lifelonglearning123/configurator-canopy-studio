@@ -75,43 +75,55 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
 } {
   const lines: PriceLine[] = [];
   const get = (key: string) => prices.get(key);
+  // Guard on the RESOLVED amount (rule price falling back to the given amount).
+  // Guarding on the fallback alone silently dropped every rule-priced line
+  // whose call site passed 0 — product bases, services, addons, lanterns…
   const push = (key: string, fallbackLabel: string, amountMinor: number) => {
-    if (amountMinor <= 0) return;
     const rule = get(key);
-    lines.push({ key, label: rule?.label ?? fallbackLabel, amountMinor: rule?.amountMinor ?? amountMinor });
+    const amt = rule?.amountMinor ?? amountMinor;
+    if (amt <= 0) return;
+    lines.push({ key, label: rule?.label ?? fallbackLabel, amountMinor: amt });
   };
 
   const area = state.length * state.depth;
 
-  // Base
-  push(`base.${state.structure}`, `Base (${state.structure})`, 0);
+  // Conservatories + extensions price their structure via their own rows
+  // (product bases, extension.roof.*, material.*) — the legacy canopy rows
+  // (structure base, canopy roof, slats, overhang, oversize) must not fire
+  // for them or quotes double-charge with irrelevant lines.
+  const isNewProduct = state.product.startsWith('conservatory-') || state.product === 'extension';
 
-  // Roof: base + perM2*area
-  const rk = state.roof;
-  const roofBase = get(`roof.${rk}.base`)?.amountMinor ?? 0;
-  const roofPerM2 = get(`roof.${rk}.perM2`)?.amountMinor ?? 0;
-  const roofLabel = ROOF[rk as keyof typeof ROOF]?.label ?? rk;
-  if (roofBase + roofPerM2 > 0) {
-    lines.push({
-      key: `roof.${rk}`,
-      label: `${roofLabel} · ${area.toFixed(1)} m²`,
-      amountMinor: roofBase + Math.round(roofPerM2 * area),
-    });
-  }
+  if (!isNewProduct) {
+    // Base
+    push(`base.${state.structure}`, `Base (${state.structure})`, 0);
 
-  // Slat upgrades
-  if (rk.startsWith('louvred') && state.slatIsolation) push('slats.isolation', 'Insulated slats', 0);
-  if (state.slatColor !== state.frameColor) {
-    const c = FRAME_COLORS[state.slatColor as keyof typeof FRAME_COLORS];
-    push('slats.twotone', `Two-tone slat colour (${c?.label.split(' — ')[0] ?? state.slatColor})`, 0);
-  }
+    // Roof: base + perM2*area
+    const rk = state.roof;
+    const roofBase = get(`roof.${rk}.base`)?.amountMinor ?? 0;
+    const roofPerM2 = get(`roof.${rk}.perM2`)?.amountMinor ?? 0;
+    const roofLabel = ROOF[rk as keyof typeof ROOF]?.label ?? rk;
+    if (roofBase + roofPerM2 > 0) {
+      lines.push({
+        key: `roof.${rk}`,
+        label: `${roofLabel} · ${area.toFixed(1)} m²`,
+        amountMinor: roofBase + Math.round(roofPerM2 * area),
+      });
+    }
 
-  // Overhang
-  if (state.overhang > 0.05) {
-    const per = get('misc.overhang_per_m')?.amountMinor ?? 0;
-    const dim = Math.max(state.length, state.depth);
-    if (per > 0) {
-      lines.push({ key: 'misc.overhang', label: `Roof overhang (+${state.overhang.toFixed(2)} m)`, amountMinor: Math.round(per * state.overhang * dim) });
+    // Slat upgrades
+    if (rk.startsWith('louvred') && state.slatIsolation) push('slats.isolation', 'Insulated slats', 0);
+    if (state.slatColor !== state.frameColor) {
+      const c = FRAME_COLORS[state.slatColor as keyof typeof FRAME_COLORS];
+      push('slats.twotone', `Two-tone slat colour (${c?.label.split(' — ')[0] ?? state.slatColor})`, 0);
+    }
+
+    // Overhang
+    if (state.overhang > 0.05) {
+      const per = get('misc.overhang_per_m')?.amountMinor ?? 0;
+      const dim = Math.max(state.length, state.depth);
+      if (per > 0) {
+        lines.push({ key: 'misc.overhang', label: `Roof overhang (+${state.overhang.toFixed(2)} m)`, amountMinor: Math.round(per * state.overhang * dim) });
+      }
     }
   }
 
@@ -139,8 +151,8 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   if (state.electrical && state.electrical !== 'none') push(`electrical.${state.electrical}`, 'Electrical', 0);
   if (state.service) push(`service.${state.service}`, 'Service', 0);
 
-  // Oversize premium
-  if (state.length > 5) {
+  // Oversize premium (legacy canopy structures only)
+  if (!isNewProduct && state.length > 5) {
     const per = get('misc.oversize_per_m')?.amountMinor ?? 0;
     if (per > 0) lines.push({ key: 'misc.oversize', label: 'Oversize structural premium', amountMinor: Math.round(per * (state.length - 5)) });
   }
@@ -150,7 +162,7 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   // -----------------------------------------------------------
 
   // Per-product base for new products
-  if (state.product.startsWith('conservatory-') || state.product === 'extension') {
+  if (isNewProduct) {
     push(`product.${state.product}.base`, `${state.product} — base`, 0);
   }
 
