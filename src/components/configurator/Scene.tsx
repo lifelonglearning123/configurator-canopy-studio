@@ -700,6 +700,48 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const slopeAngle = userAngleRad + (presetSloped ? Math.atan(presetSlope / D) : 0);
     const lift = (presetSloped ? presetSlope / 2 : 0) + Math.sin(userAngleRad) * Dr / 2;
 
+    // A sloped lean-to roof leaves an open triangular wedge on each side, between the
+    // tilted roof and the horizontal side beam — it reads as unfinished. Close each
+    // side with a glazed gable panel (matching the roof) framed by a rake beam that
+    // follows the slope, so the sides look enclosed. No-op on flat roofs.
+    const addSlopedGables = (infillMat: THREE.Material) => {
+      if (Math.abs(slopeAngle) < 0.02) return;
+      const postW = 0.12;
+      const tanS = Math.tan(slopeAngle);
+      const centerY = H + 0.03 + lift;
+      const z0 = -D / 2 + postW / 2;   // back edge (high side of the slope)
+      const z1 =  D / 2 - postW / 2;   // front edge (low side of the slope)
+      const yb = H + 0.01;             // top of the horizontal side beam
+      // glass underside height at a given depth, tucked just under the roof
+      const yGlass = (z: number) => centerY - z * tanS - 0.02;
+      const yTopBack = yGlass(z0);
+      const yTopFront = Math.max(yb + 0.005, yGlass(z1));
+      for (const sx of [-(W / 2 - postW / 2), W / 2 - postW / 2]) {
+        // Trapezoidal infill drawn in the (depth, height) plane, then rotated into
+        // the side plane at x = sx and given a little thickness so it reads as glazing.
+        const shape = new THREE.Shape();
+        shape.moveTo(z0, yb);
+        shape.lineTo(z1, yb);
+        shape.lineTo(z1, yTopFront);
+        shape.lineTo(z0, yTopBack);
+        shape.closePath();
+        const geo = new THREE.ExtrudeGeometry(shape, { depth: 0.03, bevelEnabled: false });
+        geo.rotateY(-Math.PI / 2);
+        geo.translate(sx + 0.015, 0, 0);
+        const panel = new THREE.Mesh(geo, infillMat);
+        panel.castShadow = true; panel.receiveShadow = true;
+        canopyGroup.add(panel);
+
+        // Rake beam along the sloped top edge, tilted to match the roof.
+        const dz = z1 - z0, dy = yTopFront - yTopBack;
+        const rake = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.09, Math.hypot(dz, dy)), fm);
+        rake.position.set(sx, (yTopBack + yTopFront) / 2 + 0.02, (z0 + z1) / 2);
+        rake.rotation.x = Math.atan2(dy, dz);
+        rake.castShadow = true; rake.receiveShadow = true;
+        canopyGroup.add(rake);
+      }
+    };
+
     if (state!.roof.startsWith('louvred')) {
       const slatThick = 0.05, slatW = 0.3, gap = 0.045;
       const isolThick = state!.slatIsolation ? slatThick * 1.5 : slatThick;
@@ -759,6 +801,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         mul.castShadow = true;
         canopyGroup.add(mul);
       }
+      addSlopedGables(glassMaterial());
     } else {
       const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.04, 0.04, Dr - 0.04), polyMaterial());
       roof.position.set(0, H + 0.02 + lift, 0);
@@ -774,6 +817,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         if (slopeAngle) strip.rotation.x = slopeAngle;
         canopyGroup.add(strip);
       }
+      addSlopedGables(polyMaterial());
     }
   }
 
