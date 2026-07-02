@@ -21,6 +21,7 @@ export type Section =
   | { kind: 'glazing' }
   | { kind: 'roofFinishGlass' }                                          // conservatory glass tint placeholder
   | { kind: 'openings' }
+  | { kind: 'upperOpenings' }                                            // extension 2nd-storey windows
   | { kind: 'addons' }
   | { kind: 'service' }
   | { kind: 'extensionPlan' }
@@ -71,6 +72,7 @@ export const PRODUCT_PANELS: Record<string, SectionEntry[]> = {
     { title: 'Walls',           section: { kind: 'extensionWalls' } },
     { title: 'Roof',            section: { kind: 'extensionRoof' } },
     { title: 'Openings',        section: { kind: 'openings' } },
+    { title: 'Upper windows',   section: { kind: 'upperOpenings' } },
     { title: 'House backdrop',  section: { kind: 'houseBackdrop' } },
     { title: 'Add-ons',         section: { kind: 'addons' } },
     { title: 'Service',         section: { kind: 'service' } },
@@ -124,6 +126,8 @@ export function productDefaults(productKey: string): Partial<ConfigState> {
       },
       extensionRoof: { shape: 'dual', tile: 'slate-grey', lantern: false },
       openings: { front: 'bifold-full', back: 'solid', left: 'window-medium', right: 'window-medium' },
+      // back abuts the house — no windows there by default (same as openings.back)
+      upperOpenings: { front: 'window-medium', back: 'solid', left: 'solid', right: 'solid' },
       houseBackdrop: 'modern-detached',
     };
   }

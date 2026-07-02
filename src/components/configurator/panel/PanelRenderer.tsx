@@ -4,6 +4,7 @@
 // Reads from / writes to the parent's ConfigState via the `state` / `set` props.
 
 import { FRAME_COLORS, ADDONS, SERVICE, CLADDING } from '@/lib/catalog';
+import { UPPER_WINDOW_PRESETS } from '@/lib/openings';
 import type { ConfigState, Elevation, WallMaterialKind } from '@/lib/pricing';
 import {
   PRODUCT_PANELS, BRICK, RENDER, ROOF_TILE, GLAZING_GRADE, OPENING_PRESET,
@@ -25,6 +26,8 @@ export function PanelRenderer({ productKey, productName, productTagline, state, 
   const set = <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => setState(s => ({ ...s, [k]: v }));
   const setOpening = (side: Elevation, v: string) =>
     setState(s => ({ ...s, openings: { front: s.openings?.front ?? 'solid', back: s.openings?.back ?? 'solid', left: s.openings?.left ?? 'solid', right: s.openings?.right ?? 'solid', [side]: v } }));
+  const setUpperOpening = (side: Elevation, v: string) =>
+    setState(s => ({ ...s, upperOpenings: { front: s.upperOpenings?.front ?? 'solid', back: s.upperOpenings?.back ?? 'solid', left: s.upperOpenings?.left ?? 'solid', right: s.upperOpenings?.right ?? 'solid', [side]: v } }));
   const setWallMat = (side: Elevation, kind: WallMaterialKind, finish: string) =>
     setState(s => ({ ...s, extensionWalls: { ...(s.extensionWalls ?? { front: { kind, finish }, back: { kind, finish }, left: { kind, finish }, right: { kind, finish } }), [side]: { kind, finish } } }));
   const setAddon = (k: keyof ConfigState['addons'], v: boolean) =>
@@ -106,6 +109,24 @@ export function PanelRenderer({ productKey, productName, productTagline, state, 
                     onChange={v => setOpening(side, v)} />
                 ))}
               </>
+            )}
+
+            {s.kind === 'upperOpenings' && (
+              state.storeys === 2 ? (
+                <>
+                  <p className="text-[11px] text-stone-500 mb-1">
+                    Windows only on the upper storey. Wide elevations repeat the window automatically.
+                  </p>
+                  {(['front', 'back', 'left', 'right'] as const).map(side => (
+                    <Select key={side} label={cap(side)}
+                      value={state.upperOpenings?.[side] ?? 'solid'}
+                      options={UPPER_WINDOW_PRESETS.map(k => ({ value: k, label: OPENING_PRESET[k].label }))}
+                      onChange={v => setUpperOpening(side, v)} />
+                  ))}
+                </>
+              ) : (
+                <p className="text-[11px] text-stone-500">Available with a two-storey build — switch under “Storeys”.</p>
+              )
             )}
 
             {s.kind === 'addons' && (

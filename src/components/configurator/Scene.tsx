@@ -15,6 +15,7 @@ import { GTAOPass } from 'three/examples/jsm/postprocessing/GTAOPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { FRAME_COLORS, CLADDING, BRICK, RENDER, ROOF_TILE } from '@/lib/catalog';
+import { upperWindowLayout } from '@/lib/openings';
 import type { ConfigState } from '@/lib/pricing';
 
 export type SceneView = 'iso' | 'front' | 'side' | 'top';
@@ -1114,16 +1115,69 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   // ---- door / window opening assemblies --------------------------------
   // OPENING_PRESET options are priced and configurable in the panel but were
   // never rendered — customers picked "French doors" and saw nothing change.
-  // Build the chosen preset as a framed glazed assembly overlaid on the wall
-  // face (walls are solid slabs — no CSG — so openings sit proud of the
-  // surface). Local coords: origin at wall centre on the floor, x along the
-  // wall, +z outward.
-  function buildOpeningAssembly(preset: string, wallW: number, wallH: number, glassMat: THREE.Material): THREE.Group | null {
-    if (!preset || preset === 'solid') return null;
-    const fm = frameMaterial();
-    const g = new THREE.Group();
+  // Each preset is a set of glazed units (doors/windows). The SAME layout
+  // drives both the visible frame assembly and the wall builders, which cut
+  // real apertures around the units — a door must never have brickwork,
+  // dwarf wall or glazing running through it.
+  // Local coords: origin at wall centre on the floor, x along wall, +z outward.
+  type OpeningUnit = { w: number; h: number; cx: number; sill: number; leaves: number };
+
+  function openingLayout(preset: string, wallW: number, wallH: number): OpeningUnit[] {
     const doorH = Math.min(2.05, wallH - 0.2);
     const usable = Math.max(1.2, wallW - 0.5);
+    const u: OpeningUnit[] = [];
+    if (preset === 'bifold-full') {
+      const w = Math.max(1.6, usable);
+      u.push({ w, h: doorH, cx: 0, sill: 0, leaves: Math.max(3, Math.round(w / 0.8)) });
+    } else if (preset === 'french-pair') {
+      const w = Math.min(3.4, usable);
+      u.push({ w: w / 2 - 0.02, h: doorH, cx: -w / 4, sill: 0, leaves: 2 });
+      u.push({ w: w / 2 - 0.02, h: doorH, cx:  w / 4, sill: 0, leaves: 2 });
+    } else if (preset === 'sliders-side-window') {
+      const sw = Math.min(2.6, usable * 0.62);
+      const sx = -usable / 2 + sw / 2;
+      u.push({ w: sw, h: doorH, cx: sx, sill: 0, leaves: 3 });
+      const ww = Math.max(0.7, Math.min(1.2, usable - sw - 0.15));
+      u.push({ w: ww, h: 1.1, cx: sx + sw / 2 + 0.12 + ww / 2, sill: 0.9, leaves: 1 });
+    } else if (preset === 'single-french-windows') {
+      const dw = Math.min(1.7, usable * 0.5);
+      u.push({ w: dw, h: doorH, cx: 0, sill: 0, leaves: 2 });
+      const ww = Math.min(1.0, (usable - dw) / 2 - 0.15);
+      if (ww > 0.4) {
+        const wx = dw / 2 + 0.12 + ww / 2;
+        u.push({ w: ww, h: 1.1, cx: -wx, sill: 0.9, leaves: 1 });
+        u.push({ w: ww, h: 1.1, cx:  wx, sill: 0.9, leaves: 1 });
+      }
+    } else if (preset === 'window-large') {
+      u.push({ w: Math.min(2.2, usable), h: 1.4, cx: 0, sill: 0.8, leaves: 2 });
+    } else if (preset === 'window-medium') {
+      u.push({ w: Math.min(1.2, usable), h: 1.1, cx: 0, sill: 0.9, leaves: 1 });
+    } else if (preset === 'window-small') {
+      u.push({ w: 0.7, h: 0.8, cx: 0, sill: 1.1, leaves: 1 });
+    }
+    return u;
+  }
+
+  // Complement of the units' x-ranges along a wall run: the kept [x0, x1]
+  // intervals of [-len/2, len/2] once each aperture (± margin) is cut out.
+  function cutIntervals(len: number, apertures: Array<{ cx: number; w: number }>, margin = 0.04): Array<[number, number]> {
+    const cuts = apertures
+      .map(a => [a.cx - a.w / 2 - margin, a.cx + a.w / 2 + margin] as [number, number])
+      .sort((p, q) => p[0] - q[0]);
+    const kept: Array<[number, number]> = [];
+    let x = -len / 2;
+    for (const [c0, c1] of cuts) {
+      if (c0 > x + 0.02) kept.push([x, Math.min(c0, len / 2)]);
+      x = Math.max(x, c1);
+    }
+    if (x < len / 2 - 0.02) kept.push([x, len / 2]);
+    return kept;
+  }
+
+  function buildOpeningAssembly(units: OpeningUnit[], glassMat: THREE.Material): THREE.Group | null {
+    if (!units.length) return null;
+    const fm = frameMaterial();
+    const g = new THREE.Group();
 
     const bar = (w: number, h: number, x: number, y: number) => {
       const m = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(w), Math.abs(h), 0.07), fm);
@@ -1131,8 +1185,8 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       m.castShadow = true;
       g.add(m);
     };
-    // A glazed unit (door-leaf run or window): pane + border + leaf stiles + handle.
-    const unit = (w: number, h: number, cx: number, sill: number, leaves = 1) => {
+    for (const un of units) {
+      const { w, h, cx, sill, leaves } = un;
       const pane = new THREE.Mesh(new THREE.BoxGeometry(w - 0.05, h - 0.05, 0.02), glassMat);
       pane.position.set(cx, sill + h / 2, 0.015);
       g.add(pane);
@@ -1146,47 +1200,14 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         handle.position.set(cx - 0.09, 1.02, 0.06);
         g.add(handle);
       }
-    };
-
-    if (preset === 'bifold-full') {
-      const w = Math.max(1.6, usable);
-      unit(w, doorH, 0, 0, Math.max(3, Math.round(w / 0.8)));
-    } else if (preset === 'french-pair') {
-      const w = Math.min(3.4, usable);
-      unit(w / 2 - 0.02, doorH, -w / 4, 0, 2);
-      unit(w / 2 - 0.02, doorH,  w / 4, 0, 2);
-    } else if (preset === 'sliders-side-window') {
-      const sw = Math.min(2.6, usable * 0.62);
-      const sx = -usable / 2 + sw / 2;
-      unit(sw, doorH, sx, 0, 3);
-      const ww = Math.max(0.7, Math.min(1.2, usable - sw - 0.15));
-      unit(ww, 1.1, sx + sw / 2 + 0.12 + ww / 2, 0.9, 1);
-    } else if (preset === 'single-french-windows') {
-      const dw = Math.min(1.7, usable * 0.5);
-      unit(dw, doorH, 0, 0, 2);
-      const ww = Math.min(1.0, (usable - dw) / 2 - 0.15);
-      if (ww > 0.4) {
-        const wx = dw / 2 + 0.12 + ww / 2;
-        unit(ww, 1.1, -wx, 0.9, 1);
-        unit(ww, 1.1,  wx, 0.9, 1);
-      }
-    } else if (preset === 'window-large') {
-      unit(Math.min(2.2, usable), 1.4, 0, 0.8, 2);
-    } else if (preset === 'window-medium') {
-      unit(Math.min(1.2, usable), 1.1, 0, 0.9, 1);
-    } else if (preset === 'window-small') {
-      unit(0.7, 0.8, 0, 1.1, 1);
-    } else {
-      return null;
     }
     return g;
   }
 
-  // Place an opening assembly on a wall: `at` is the wall centre at floor
-  // level, `n` the outward normal (unit, xz), `offset` how proud it sits.
-  function placeOpening(preset: string | undefined, wallW: number, wallH: number, at: [number, number, number], n: [number, number], offset: number, glassMat: THREE.Material) {
-    if (!preset || preset === 'solid') return;
-    const asm = buildOpeningAssembly(preset, wallW, wallH, glassMat);
+  // Place an opening assembly on a wall: `at` is the wall centre at the
+  // storey floor, `n` the outward normal (unit, xz), `offset` how proud it sits.
+  function placeOpening(units: OpeningUnit[], at: [number, number, number], n: [number, number], offset: number, glassMat: THREE.Material) {
+    const asm = buildOpeningAssembly(units, glassMat);
     if (!asm) return;
     asm.position.set(at[0] + n[0] * offset, at[1], at[2] + n[1] * offset);
     asm.rotation.y = Math.atan2(n[0], n[1]);
@@ -1251,26 +1272,57 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       const choice = state.extensionWalls[s.side];
       if (!choice) continue;
       const mat = extensionWallMaterial(choice.kind, choice.finish);
-      // Clone the underlying map so each elevation gets its own UV scale.
-      const mInst = mat.clone();
-      if (mInst.map && mat.map) {
-        mInst.map = mat.map.clone();
-        mInst.map.wrapS = mInst.map.wrapT = THREE.RepeatWrapping;
-        mInst.map.colorSpace = THREE.SRGBColorSpace;
-        const uRep = Math.max(1, s.w / 1.6);
-        const vRep = Math.max(1, H / 1.2);
-        mInst.map.repeat.set(uRep, vRep);
-        mInst.map.needsUpdate = true;
-      }
-      const geo = new THREE.BoxGeometry(s.w, H, t);
-      const mesh = new THREE.Mesh(geo, mInst);
-      mesh.position.set(s.pos[0], s.pos[1], s.pos[2]);
-      mesh.rotation.y = s.rotY;
-      mesh.castShadow = true; mesh.receiveShadow = true;
-      canopyGroup.add(mesh);
-      // Doors/windows on the ground storey — tinted glazing reads as interior.
-      if (baseY < 0.05) {
-        placeOpening(state.openings?.[s.side], s.w, H, [s.pos[0], 0, s.pos[2]], s.n, t / 2 + 0.02, tintedGlassMaterial());
+
+      // Openings cut real apertures out of the wall; the wall is then built
+      // as pier / header / sill segments around each unit. Ground storey uses
+      // the full opening presets; upper storeys take windows only, auto-
+      // repeated across the elevation (shared layout module keeps the count
+      // in lock-step with quote() pricing).
+      const isGround = baseY < 0.05;
+      const preset = isGround ? state.openings?.[s.side] : state.upperOpenings?.[s.side];
+      const units: OpeningUnit[] = !preset || preset === 'solid' ? []
+        : isGround
+          ? openingLayout(preset, s.w, H)
+          : upperWindowLayout(preset, s.w).map(u => ({ ...u, leaves: u.w > 1.5 ? 2 : 1 }));
+
+      // Wall group rotated by the outward normal — same axis convention as the
+      // opening assembly, so asymmetric layouts land exactly in their apertures.
+      const wallGroup = new THREE.Group();
+      wallGroup.position.set(s.pos[0], baseY, s.pos[2]);
+      wallGroup.rotation.y = Math.atan2(s.n[0], s.n[1]);
+      canopyGroup.add(wallGroup);
+
+      // Segment with its own map clone so the brick/render scale stays constant
+      // regardless of segment size.
+      const seg = (x0: number, x1: number, y0: number, y1: number) => {
+        const w = x1 - x0, h = y1 - y0;
+        if (w < 0.03 || h < 0.03) return;
+        const mSeg = mat.clone();
+        if (mSeg.map && mat.map) {
+          mSeg.map = mat.map.clone();
+          mSeg.map.wrapS = mSeg.map.wrapT = THREE.RepeatWrapping;
+          mSeg.map.colorSpace = THREE.SRGBColorSpace;
+          mSeg.map.repeat.set(Math.max(0.25, w / 1.6), Math.max(0.25, h / 1.2));
+          mSeg.map.needsUpdate = true;
+          if (mSeg.bumpMap) mSeg.bumpMap = mSeg.map;
+        }
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, t), mSeg);
+        m.position.set((x0 + x1) / 2, (y0 + y1) / 2, 0);
+        m.castShadow = true; m.receiveShadow = true;
+        wallGroup.add(m);
+      };
+
+      if (!units.length) {
+        seg(-s.w / 2, s.w / 2, 0, H);
+      } else {
+        for (const [x0, x1] of cutIntervals(s.w, units)) seg(x0, x1, 0, H); // piers
+        for (const un of units) {
+          const x0 = un.cx - un.w / 2 - 0.04, x1 = un.cx + un.w / 2 + 0.04;
+          if (un.sill > 0.05) seg(x0, x1, 0, un.sill);                   // below a window
+          if (un.sill + un.h < H - 0.05) seg(x0, x1, un.sill + un.h, H); // header above
+        }
+        // Frame assembly recessed into the reveal, slightly proud of the face.
+        placeOpening(units, [s.pos[0], baseY, s.pos[2]], s.n, t / 2 - 0.05, tintedGlassMaterial());
       }
     }
   }
@@ -1454,62 +1506,108 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   }
 
   // Build a brick dwarf-wall slab + cap along a single polygon edge.
-  function buildDwarfSegment(a: Pt, b: Pt, h: number, brickKey: string) {
+  // Door apertures (units whose sill sits below the wall top) cut the run
+  // into separate segments — the dwarf wall must not pass through a door.
+  function buildDwarfSegment(a: Pt, b: Pt, h: number, brickKey: string, apertures?: OpeningUnit[]) {
     if (h <= 0.02) return;
     const dx = b[0] - a[0], dz = b[1] - a[1];
     const len = Math.hypot(dx, dz);
     if (len < 0.05) return;
     const mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
-    const rotY = -Math.atan2(dz, dx);
+    const nx = dz / len, nz = -dx / len;            // outward normal (CCW footprint)
+    const rotA = Math.atan2(nx, nz);                // same convention as placeOpening
+    const local = (lx: number): [number, number] => [mx + Math.cos(rotA) * lx, mz - Math.sin(rotA) * lx];
     const t = 0.12;
     const mat = brickMaterial(brickKey);
-    const wall = new THREE.Mesh(new THREE.BoxGeometry(len, h, t), mat);
-    wall.position.set(mx, h / 2, mz);
-    wall.rotation.y = rotY;
-    wall.castShadow = true; wall.receiveShadow = true;
-    canopyGroup.add(wall);
     const capMat = new THREE.MeshStandardMaterial({ color: 0xd6cfc2, roughness: 0.6, metalness: 0.02 });
     const capH = 0.04, capOver = 0.02;
-    const cap = new THREE.Mesh(new THREE.BoxGeometry(len + capOver * 2, capH, t + capOver * 2), capMat);
-    cap.position.set(mx, h + capH / 2, mz);
-    cap.rotation.y = rotY;
-    cap.castShadow = true; cap.receiveShadow = true;
-    canopyGroup.add(cap);
+
+    const doorCuts = (apertures ?? []).filter(u => u.sill < h - 0.02);
+    const runs = doorCuts.length ? cutIntervals(len, doorCuts) : [[-len / 2, len / 2] as [number, number]];
+    for (const [x0, x1] of runs) {
+      const w = x1 - x0;
+      if (w < 0.05) continue;
+      const [wx, wz] = local((x0 + x1) / 2);
+      const wall = new THREE.Mesh(new THREE.BoxGeometry(w, h, t), mat);
+      wall.position.set(wx, h / 2, wz);
+      wall.rotation.y = rotA;
+      wall.castShadow = true; wall.receiveShadow = true;
+      canopyGroup.add(wall);
+      const cap = new THREE.Mesh(new THREE.BoxGeometry(w + capOver * 2, capH, t + capOver * 2), capMat);
+      cap.position.set(wx, h + capH / 2, wz);
+      cap.rotation.y = rotA;
+      cap.castShadow = true; cap.receiveShadow = true;
+      canopyGroup.add(cap);
+    }
   }
 
   // Build a glazed wall panel + mullion grid above the dwarf wall on one edge.
-  function buildGlazedSegment(a: Pt, b: Pt, baseY: number, height: number) {
+  // Apertures cut the pane/mullions/transom around door + window units, so a
+  // door shows a clear opening (with a glazed toplight above) instead of the
+  // glazing grid running through it.
+  function buildGlazedSegment(a: Pt, b: Pt, baseY: number, height: number, apertures?: OpeningUnit[]) {
     const dx = b[0] - a[0], dz = b[1] - a[1];
     const len = Math.hypot(dx, dz);
     if (len < 0.05) return;
     const mx = (a[0] + b[0]) / 2, mz = (a[1] + b[1]) / 2;
-    const rotY = -Math.atan2(dz, dx);
+    const nx = dz / len, nz = -dx / len;            // outward normal (CCW footprint)
+    const rotA = Math.atan2(nx, nz);                // same convention as placeOpening
+    const local = (lx: number): [number, number] => [mx + Math.cos(rotA) * lx, mz - Math.sin(rotA) * lx];
     const fm = frameMaterial();
     const gm = glassMaterial();
     const panelH = height - baseY - 0.08;
     if (panelH <= 0.1) return;
-    const pane = new THREE.Mesh(new THREE.BoxGeometry(len - 0.08, panelH, 0.025), gm);
-    pane.position.set(mx, baseY + panelH / 2 + 0.04, mz);
-    pane.rotation.y = rotY;
-    canopyGroup.add(pane);
-    // Mullion grid: vertical mullions every ~1m + a single horizontal transom.
+    const paneY0 = baseY + 0.04, paneY1 = baseY + panelH + 0.04;
+    const units = apertures ?? [];
+
+    const pane = (x0: number, x1: number, y0: number, y1: number) => {
+      const w = x1 - x0, h = y1 - y0;
+      if (w < 0.04 || h < 0.04) return;
+      const p = new THREE.Mesh(new THREE.BoxGeometry(w, h, 0.025), gm);
+      const [wx, wz] = local((x0 + x1) / 2);
+      p.position.set(wx, (y0 + y1) / 2, wz);
+      p.rotation.y = rotA;
+      canopyGroup.add(p);
+    };
+
+    if (!units.length) {
+      pane(-len / 2 + 0.04, len / 2 - 0.04, paneY0, paneY1);
+    } else {
+      for (const [x0, x1] of cutIntervals(len, units)) {
+        pane(Math.max(x0, -len / 2 + 0.04), Math.min(x1, len / 2 - 0.04), paneY0, paneY1);
+      }
+      for (const un of units) {
+        const x0 = un.cx - un.w / 2 - 0.04, x1 = un.cx + un.w / 2 + 0.04;
+        const top = un.sill + un.h;
+        if (top < paneY1 - 0.05) pane(x0, x1, top + 0.02, paneY1);          // toplight above
+        if (un.sill > paneY0 + 0.05) pane(x0, x1, paneY0, un.sill - 0.02);  // glass below a window
+      }
+    }
+
+    // Mullion grid: vertical mullions every ~1m — skipped inside apertures
+    // (the opening's own border frame takes over there).
     const cols = Math.max(2, Math.round(len / 1.05));
     for (let i = 0; i <= cols; i++) {
       const u = -len / 2 + (len * i) / cols;
+      if (units.some(un => Math.abs(u - un.cx) < un.w / 2 + 0.06)) continue;
       const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.045, panelH, 0.06), fm);
-      // place along edge direction then rotate
-      const localX = u, localZ = 0;
-      const wx = mx + Math.cos(rotY) * localX + Math.sin(rotY) * localZ;
-      const wz = mz - Math.sin(rotY) * localX + Math.cos(rotY) * localZ;
+      const [wx, wz] = local(u);
       mullion.position.set(wx, baseY + panelH / 2 + 0.04, wz);
-      mullion.rotation.y = rotY;
+      mullion.rotation.y = rotA;
       mullion.castShadow = true;
       canopyGroup.add(mullion);
     }
-    const transom = new THREE.Mesh(new THREE.BoxGeometry(len - 0.04, 0.06, 0.06), fm);
-    transom.position.set(mx, baseY + panelH * 0.65 + 0.04, mz);
-    transom.rotation.y = rotY;
-    canopyGroup.add(transom);
+    // Transom — split around apertures.
+    const transomY = baseY + panelH * 0.65 + 0.04;
+    const tRuns = units.length ? cutIntervals(len, units) : [[-len / 2 + 0.02, len / 2 - 0.02] as [number, number]];
+    for (const [x0, x1] of tRuns) {
+      if (x1 - x0 < 0.1) continue;
+      const transom = new THREE.Mesh(new THREE.BoxGeometry(x1 - x0 - 0.02, 0.06, 0.06), fm);
+      const [wx, wz] = local((x0 + x1) / 2);
+      transom.position.set(wx, transomY, wz);
+      transom.rotation.y = rotA;
+      canopyGroup.add(transom);
+    }
   }
 
   // Corner posts at every polygon vertex (except back wall, which is the house)
@@ -1551,20 +1649,13 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
     buildPolygonFloor(footprint);
 
-    // Skip edge 0 (back wall against the house) — it's not rendered as glazing.
-    for (let i = 1; i < footprint.length; i++) {
-      const a = footprint[i], b = footprint[(i + 1) % footprint.length];
-      buildDwarfSegment(a, b, dwarfHeight, brickKey);
-      buildGlazedSegment(a, b, dwarfHeight, H);
-    }
-
-    buildPerimeterFrame(footprint, H);
-
-    // Doors / windows: overlay each configured elevation's opening on its
-    // longest matching edge (facets classified by outward normal, so the
-    // Victorian bay's front door lands on the widest front-facing facet).
+    // Doors / windows land on each configured elevation's longest matching
+    // edge (facets classified by outward normal, so the Victorian bay's front
+    // door lands on the widest front-facing facet). Resolved BEFORE building
+    // segments so dwarf wall + glazing cut real apertures around the units.
+    const edgeOpenings = new Map<number, { preset: string; units: OpeningUnit[]; len: number; mid: [number, number]; n: [number, number] }>();
     if (state.openings) {
-      const best = new Map<string, { a: Pt; b: Pt; len: number }>();
+      const best = new Map<string, { i: number; len: number; mid: [number, number]; n: [number, number] }>();
       for (let i = 1; i < footprint.length; i++) {
         const a = footprint[i], b = footprint[(i + 1) % footprint.length];
         const dx = b[0] - a[0], dz = b[1] - a[1];
@@ -1573,15 +1664,28 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         const nx = dz / len, nz = -dx / len; // outward normal (CCW footprint)
         const side = Math.abs(nx) > Math.abs(nz) ? (nx > 0 ? 'right' : 'left') : (nz > 0 ? 'front' : 'back');
         const cur = best.get(side);
-        if (!cur || len > cur.len) best.set(side, { a, b, len });
+        if (!cur || len > cur.len) best.set(side, { i, len, mid: [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2], n: [nx, nz] });
       }
       for (const [side, e] of best) {
         const preset = state.openings[side as 'front' | 'back' | 'left' | 'right'];
         if (!preset || preset === 'solid') continue;
-        const dx = e.b[0] - e.a[0], dz = e.b[1] - e.a[1];
-        const nx = dz / e.len, nz = -dx / e.len;
-        placeOpening(preset, e.len, H - 0.2, [(e.a[0] + e.b[0]) / 2, 0, (e.a[1] + e.b[1]) / 2], [nx, nz], 0.09, glassMaterial());
+        edgeOpenings.set(e.i, { preset, units: openingLayout(preset, e.len, H - 0.2), len: e.len, mid: e.mid, n: e.n });
       }
+    }
+
+    // Skip edge 0 (back wall against the house) — it's not rendered as glazing.
+    for (let i = 1; i < footprint.length; i++) {
+      const a = footprint[i], b = footprint[(i + 1) % footprint.length];
+      const units = edgeOpenings.get(i)?.units;
+      buildDwarfSegment(a, b, dwarfHeight, brickKey, units);
+      buildGlazedSegment(a, b, dwarfHeight, H, units);
+    }
+
+    buildPerimeterFrame(footprint, H);
+
+    // The opening frame assemblies, seated in their apertures.
+    for (const e of edgeOpenings.values()) {
+      placeOpening(e.units, [e.mid[0], 0, e.mid[1]], e.n, 0.02, glassMaterial());
     }
 
     // Per-style roof
@@ -2377,8 +2481,11 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   }
   function applyView(animate = true) {
     if (!state) return;
-    const W = state.length, D = state.depth, H = state.height;
-    const r = Math.max(W, D) * 1.55;
+    const W = state.length, D = state.depth;
+    // Two-storey extensions are ~2× taller — frame the full build, not just
+    // the ground floor.
+    const H = state.product === 'extension' && state.storeys === 2 ? state.height * 2 : state.height;
+    const r = Math.max(W, D, H * 1.6) * 1.55;
     let pos: THREE.Vector3, tgt: THREE.Vector3;
     if (view === 'iso')        { pos = new THREE.Vector3(r, r * 0.62, r);    tgt = new THREE.Vector3(0, H * 0.42, 0); controls.enableRotate = true; }
     else if (view === 'front') { pos = new THREE.Vector3(0, H / 2 + 0.2, r * 1.45); tgt = new THREE.Vector3(0, H / 2, 0); controls.enableRotate = false; }

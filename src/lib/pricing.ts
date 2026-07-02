@@ -1,6 +1,7 @@
 // Pure pricing functions (client-safe). The server-only loader lives in pricing-server.ts.
 
 import { WALL, ROOF, FRAME_COLORS } from './catalog';
+import { upperWindowCount, isUpperWindowPreset } from './openings';
 
 export type Elevation = 'front' | 'back' | 'left' | 'right';
 
@@ -63,6 +64,8 @@ export type ConfigState = {
   upperStorey?: UpperStorey;
   extensionWalls?: ExtensionWalls;
   extensionRoof?: ExtensionRoof;
+  /** Upper-storey windows per elevation (window presets only — no doors). */
+  upperOpenings?: Openings;
 };
 
 export type PriceLine = { key: string; label: string; amountMinor: number };
@@ -191,6 +194,27 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
       if (rule && rule.amountMinor > 0) {
         lines.push({ key: `opening.${preset}.${side}`, label: `${cap(side)}: ${rule.label.replace(/ — per opening$/, '')}`, amountMinor: rule.amountMinor });
       }
+    }
+  }
+
+  // Extension upper-storey windows — same opening.window-*.unit rows, but a
+  // preset auto-repeats across the elevation, so price = rule × unit count.
+  // The count comes from the shared layout module, so what's rendered is
+  // exactly what's billed.
+  if (state.product === 'extension' && state.storeys === 2 && state.upperOpenings) {
+    const sideLen = (s: Elevation) => (s === 'front' || s === 'back') ? state.length : state.depth;
+    for (const side of ['front', 'back', 'left', 'right'] as const) {
+      const preset = state.upperOpenings[side];
+      if (!preset || preset === 'solid' || !isUpperWindowPreset(preset)) continue;
+      const rule = get(`opening.${preset}.unit`);
+      if (!rule || rule.amountMinor <= 0) continue;
+      const n = upperWindowCount(preset, sideLen(side));
+      if (n <= 0) continue;
+      lines.push({
+        key: `opening.${preset}.upper.${side}`,
+        label: `Upper ${side}: ${n}× ${rule.label.replace(/ — per opening$/, '')}`,
+        amountMinor: rule.amountMinor * n,
+      });
     }
   }
 
