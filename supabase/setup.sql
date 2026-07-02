@@ -70,7 +70,7 @@ create table tenant_products (
   tenant_id     uuid not null references tenants(id) on delete cascade,
   product_id    uuid not null references products(id) on delete cascade,
   enabled       boolean not null default true,
-  custom_name   text,                                          -- override "Pergola Lux" with their own
+  custom_name   text,                                          -- override e.g. "Motorised Louvred Roof Pergola" with their own
   custom_tagline text,
   sort_order    int not null default 0,
   primary key (tenant_id, product_id)
@@ -207,12 +207,14 @@ create policy leads_update on leads
 -- already implemented in the HTML prototype.
 -- =============================================================
 insert into products (key, name, tagline, default_schema_json) values
-('pergola',   'Pergola Lux',        'Free-standing louvred pergola with motorised slats',
+('pergola',   'Motorised Louvred Roof Pergola', 'Free-standing louvred pergola with motorised slats',
   '{"structure":"freestanding","roof":"louvred-retract"}'::jsonb),
-('veranda',   'Veranda Glass',      'Wall-mounted glass veranda with side glazing',
+('veranda',   'Veranda Glass/Polycarbonate Roof', 'Wall-mounted veranda with a choice of glass or polycarbonate roof',
   '{"structure":"wallmounted","roof":"glass-sloped"}'::jsonb),
 ('carport',   'Carport Pro',        'Sheltered parking with polycarbonate canopy',
   '{"structure":"freestanding","roof":"poly-sloped","scene":"car"}'::jsonb),
+('carport-premium', 'Premium Carport', 'Pergola-style carport with a solid insulated aluminium roof',
+  '{"structure":"freestanding","roof":"solid-alu","scene":"car"}'::jsonb),
 ('studio',    'Garden Room',        'Fully enclosed outdoor room, glazed front',
   '{"structure":"freestanding","roof":"glass-flat"}'::jsonb),
 ('awning',    'Awning Flex',        'Wall-mounted retractable fabric awning',

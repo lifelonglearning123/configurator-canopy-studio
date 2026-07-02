@@ -337,7 +337,7 @@ export function MarketingPage({ products }: { products: Product[] }) {
                 </div>
                 <div className="lc-block">
                   <div className="lc-label">Product</div>
-                  <div className="lc-name">Pergola Lux. · Free-standing</div>
+                  <div className="lc-name">Motorised Louvred Roof Pergola · Free-standing</div>
                   <div className="lc-spec" style={{ marginTop: 8 }}>
                     <span><b className="tabular">5.00 × 3.50 m</b> · Anthracite aluminium</span>
                     <span>Louvred retractable roof</span>
@@ -374,7 +374,7 @@ export function MarketingPage({ products }: { products: Product[] }) {
                   <div>
                     <div className="notif-meta"><b>Mail</b><span ref={lcTimeRef}>now</span></div>
                     <div className="notif-title">New quote · Sarah Kowalski · £14,820</div>
-                    <div className="notif-body">Pergola Lux. 5×3.5m anthracite alu, louvred retractable roof, 2× sliding glass walls. Call: +44 7700 900 042</div>
+                    <div className="notif-body">Motorised Louvred Roof Pergola. 5×3.5m anthracite alu, louvred retractable roof, 2× sliding glass walls. Call: +44 7700 900 042</div>
                   </div>
                 </div>
                 <div className="lead-card">
@@ -394,7 +394,7 @@ export function MarketingPage({ products }: { products: Product[] }) {
                   <div className="lc-block">
                     <div className="lc-label">Configured</div>
                     <div className="lc-spec">
-                      <span><b>Pergola Lux.</b> · Free-standing</span>
+                      <span><b>Motorised Louvred Roof Pergola</b> · Free-standing</span>
                       <span><b className="tabular">5.00 × 3.50m</b> · Anthracite aluminium</span>
                       <span>Louvred retractable roof · 2× sliding glass</span>
                       <span>LED · heating · full install</span>

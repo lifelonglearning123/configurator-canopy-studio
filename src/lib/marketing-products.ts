@@ -6,9 +6,10 @@
 export type MarketingProduct = { key: string; name: string; tagline: string };
 
 export const MARKETING_PRODUCTS: MarketingProduct[] = [
-  { key: 'pergola',                 name: 'Pergola Lux',           tagline: 'Free-standing louvred pergola with motorised slats' },
-  { key: 'veranda',                 name: 'Veranda Glass',         tagline: 'Wall-mounted glass veranda with side glazing' },
+  { key: 'pergola',                 name: 'Motorised Louvred Roof Pergola', tagline: 'Free-standing louvred pergola with motorised slats' },
+  { key: 'veranda',                 name: 'Veranda Glass/Polycarbonate Roof', tagline: 'Wall-mounted veranda with a choice of glass or polycarbonate roof' },
   { key: 'carport',                 name: 'Carport Pro',           tagline: 'Sheltered parking with polycarbonate canopy' },
+  { key: 'carport-premium',         name: 'Premium Carport',       tagline: 'Pergola-style carport with a solid insulated aluminium roof' },
   { key: 'studio',                  name: 'Garden Room',           tagline: 'Fully enclosed outdoor room, glazed front' },
   { key: 'awning',                  name: 'Awning Flex',           tagline: 'Wall-mounted retractable fabric awning' },
   { key: 'container',               name: 'Container Studio',      tagline: 'Converted shipping container garden room' },

@@ -13,6 +13,7 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
   const schema: Record<string, unknown> =
     key === 'extension' ? { scene: 'extension' } :
     key.startsWith('conservatory-') ? { scene: key, structure: 'wallmounted' } :
+    key === 'carport-premium' ? { structure: 'freestanding', roof: 'solid-alu', scene: 'car' } :
     { structure: 'wallmounted', roof: 'glass-sloped' };
   const pricing = defaultPricingLineItems().map(r => ({ key: r.key, label: r.label, amountMinor: r.amountMinor }));
   return (

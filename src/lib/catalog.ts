@@ -17,6 +17,7 @@ export const ROOF = {
   'glass-flat':      { label: 'Flat glass roof',           short: 'Flat glass',       price: 2400, perM2: 160 },
   'glass-sloped':    { label: 'Sloped glass roof',         short: 'Sloped glass',     price: 2000, perM2: 140 },
   'poly-sloped':     { label: 'Sloped polycarbonate roof', short: 'Sloped poly',      price: 1100, perM2:  80 },
+  'solid-alu':       { label: 'Solid aluminium roof',      short: 'Solid alu',        price: 1600, perM2: 110 },
   'fabric-retract':  { label: 'Retractable fabric awning', short: 'Fabric retract.',  price:  950, perM2: 120 },
   'fabric-fixed':    { label: 'Fixed fabric canopy',       short: 'Fabric fixed',     price:  650, perM2:  90 },
 } as const;
@@ -259,9 +260,9 @@ export function defaultPricingLineItems(): Array<{ key: string; label: string; a
 // them (per-product override values would need a data-model change).
 // -----------------------------------------------------------
 
-// The 10 pre-conservatory products all share the classic canopy option set.
+// The pre-conservatory products all share the classic canopy option set.
 export const LEGACY_PRODUCT_KEYS = [
-  'pergola', 'veranda', 'carport', 'studio', 'awning',
+  'pergola', 'veranda', 'carport', 'carport-premium', 'studio', 'awning',
   'container', 'fence', 'garage', 'glassroom', 'enclosure',
 ];
 

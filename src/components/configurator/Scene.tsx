@@ -949,6 +949,46 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         canopyGroup.add(mul);
       }
       addSlopedGables(glassMaterial());
+    } else if (state!.roof === 'solid-alu') {
+      // Solid insulated aluminium deck (Premium Carport) — opaque roof on the
+      // pergola frame. Deck + fascia + rafters live in one group so the whole
+      // roof tilts together when an angle is configured.
+      let solidMat = matCache.get('solidRoof') as THREE.MeshStandardMaterial | undefined;
+      if (!solidMat) {
+        const c = FRAME_COLORS[state!.frameColor as keyof typeof FRAME_COLORS];
+        solidMat = new THREE.MeshStandardMaterial({ color: new THREE.Color(c.hex).multiplyScalar(0.92), roughness: 0.4, metalness: 0.55 });
+        matCache.set('solidRoof', solidMat);
+      }
+      const roofGroup = new THREE.Group();
+      roofGroup.position.set(0, H + 0.06 + lift, 0);
+      if (slopeAngle) roofGroup.rotation.x = slopeAngle;
+      canopyGroup.add(roofGroup);
+      const deck = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.02, 0.08, Dr - 0.02), solidMat);
+      deck.castShadow = true; deck.receiveShadow = true;
+      roofGroup.add(deck);
+      // Fascia trim around the deck edge
+      const fasciaParts: [number, number, number, number][] = [
+        [Wr + 0.06, 0.06, 0,  Dr / 2 + 0.02],
+        [Wr + 0.06, 0.06, 0, -Dr / 2 - 0.02],
+        [0.06, Dr + 0.06, -Wr / 2 - 0.02, 0],
+        [0.06, Dr + 0.06,  Wr / 2 + 0.02, 0],
+      ];
+      for (const [w, d, x, z] of fasciaParts) {
+        const f = new THREE.Mesh(new THREE.BoxGeometry(w, 0.14, d), fm);
+        f.position.set(x, 0, z);
+        f.castShadow = true;
+        roofGroup.add(f);
+      }
+      // Rafters under the deck — keeps the pergola character from below.
+      const rafters = Math.max(2, Math.round(Wr / 1.2));
+      for (let i = 1; i < rafters; i++) {
+        const x = -Wr / 2 + (Wr * i) / rafters;
+        const r = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, Dr - 0.12), fm);
+        r.position.set(x, -0.075, 0);
+        r.castShadow = true;
+        roofGroup.add(r);
+      }
+      addSlopedGables(solidMat);
     } else {
       const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.04, 0.04, Dr - 0.04), polyMaterial());
       roof.position.set(0, H + 0.02 + lift, 0);
