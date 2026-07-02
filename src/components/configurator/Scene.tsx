@@ -732,11 +732,13 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         panel.castShadow = true; panel.receiveShadow = true;
         canopyGroup.add(panel);
 
-        // Rake beam along the sloped top edge, tilted to match the roof.
+        // Rake beam along the sloped top edge — same treatment as the roof
+        // mullions (tilt by slopeAngle, sit at mullion height), just at the
+        // outer side edge so it lies along the glass instead of over it.
         const dz = z1 - z0, dy = yTopFront - yTopBack;
         const rake = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.09, Math.hypot(dz, dy)), fm);
-        rake.position.set(sx, (yTopBack + yTopFront) / 2 + 0.02, (z0 + z1) / 2);
-        rake.rotation.x = Math.atan2(dy, dz);
+        rake.position.set(sx, H + 0.06 + lift, 0);
+        rake.rotation.x = slopeAngle;
         rake.castShadow = true; rake.receiveShadow = true;
         canopyGroup.add(rake);
       }
