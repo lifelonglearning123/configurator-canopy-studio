@@ -7,6 +7,7 @@
 import { useEffect, useImperativeHandle, useRef, forwardRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { Sky } from 'three/examples/jsm/objects/Sky.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
@@ -328,7 +329,8 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   const envGroup = new THREE.Group();
   scene.add(envGroup);
 
-  const lawn = new THREE.Mesh(new THREE.PlaneGeometry(160, 160), new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1, metalness: 0, color: 0xbcc9a8 }));
+  const lawnMat = new THREE.MeshStandardMaterial({ map: grassTex, roughness: 1, metalness: 0, color: 0xbcc9a8 });
+  const lawn = new THREE.Mesh(new THREE.PlaneGeometry(160, 160), lawnMat);
   lawn.rotation.x = -Math.PI / 2;
   lawn.receiveShadow = true;
   envGroup.add(lawn);
@@ -430,6 +432,72 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   contact.rotation.x = -Math.PI / 2;
   contact.position.y = 0.012;
   scene.add(contact);
+
+  // --- real PBR ground textures (CC0, ambientcg.com) ---
+  // Photo-based colour/normal/roughness maps upgrade the procedural canvas
+  // textures once fetched. Until then (or if a fetch fails) the canvas versions
+  // render, so first paint stays instant and offline dev still works.
+  const texLoader = new THREE.TextureLoader();
+  function pbrTex(url: string, srgb: boolean, apply: (t: THREE.Texture) => void) {
+    texLoader.load(url, t => {
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+      apply(t);
+    });
+  }
+  pbrTex('/textures/grass_color.jpg', true, t => { t.repeat.set(64, 64); lawnMat.map = t; lawnMat.color.set(0xe6ead9); lawnMat.needsUpdate = true; });
+  pbrTex('/textures/grass_normal.jpg', false, t => { t.repeat.set(64, 64); lawnMat.normalMap = t; lawnMat.needsUpdate = true; });
+  pbrTex('/textures/grass_rough.jpg', false, t => { t.repeat.set(64, 64); lawnMat.roughnessMap = t; lawnMat.needsUpdate = true; });
+
+  // Paver repeat depends on the configured footprint — kept in sync by buildCanopy.
+  const pavingMaps: THREE.Texture[] = [];
+  function syncPavingRepeat() {
+    if (!state) return;
+    const rx = (state.length + 1.6) / 2.4, ry = (state.depth + 1.6) / 2.4;
+    for (const t of pavingMaps) t.repeat.set(rx, ry);
+  }
+  pbrTex('/textures/paving_color.jpg', true, t => { pavingMaps.push(t); syncPavingRepeat(); padMat.map = t; padMat.needsUpdate = true; });
+  pbrTex('/textures/paving_normal.jpg', false, t => { pavingMaps.push(t); syncPavingRepeat(); padMat.normalMap = t; padMat.needsUpdate = true; });
+  pbrTex('/textures/paving_rough.jpg', false, t => { pavingMaps.push(t); syncPavingRepeat(); padMat.roughnessMap = t; padMat.needsUpdate = true; });
+
+  // --- real furniture models (CC0, polyhaven.com) ---
+  // Photoscanned glTF furniture replacing the box-built pieces. Each model
+  // loads once into modelCache and is cloned into the scene per rebuild; until
+  // it arrives (or if loading fails) buildFurniture builds the box fallback.
+  const gltfLoader = new GLTFLoader();
+  const modelCache = new Map<string, THREE.Object3D>();
+  const MODEL_DEFS: Array<{ key: string; url: string }> = [
+    { key: 'sofa', url: '/models/Sofa_01/Sofa_01_1k.gltf' },
+    { key: 'coffeeTable', url: '/models/coffee_table_round_01/coffee_table_round_01_1k.gltf' },
+    { key: 'outdoorSet', url: '/models/outdoor_table_chair_set_01/outdoor_table_chair_set_01_1k.gltf' },
+    { key: 'plant', url: '/models/potted_plant_04/potted_plant_04_1k.gltf' },
+  ];
+  for (const { key, url } of MODEL_DEFS) {
+    gltfLoader.load(url, g => {
+      const strip: THREE.Object3D[] = [];
+      g.scene.traverse(o => {
+        // photoscan base patches (e.g. potted_plant_04_ground) don't belong on the patio
+        if (o.name.endsWith('_ground')) strip.push(o);
+        const m = o as THREE.Mesh;
+        if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; }
+      });
+      strip.forEach(o => o.parent?.remove(o));
+      modelCache.set(key, g.scene);
+      if (state) buildCanopy(); // swap the box fallback for the real model
+    }, undefined, () => { /* fetch failed — box fallback stays */ });
+  }
+  function placeModel(key: string, x: number, z: number, rotY = 0, scale = 1): boolean {
+    const src = modelCache.get(key);
+    if (!src) return false;
+    const inst = src.clone(true);
+    inst.userData.sharedAssets = true; // geometry/materials owned by modelCache — see disposeGroup
+    inst.position.set(x, 0, z);
+    inst.rotation.y = rotY;
+    if (scale !== 1) inst.scale.setScalar(scale);
+    canopyGroup.add(inst);
+    return true;
+  }
 
   // --- mutable state held across rebuilds ---
   let state: ConfigState | null = null;
@@ -591,6 +659,8 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   function disposeGroup(g: THREE.Group) {
     while (g.children.length) {
       const c = g.children.pop() as THREE.Object3D;
+      // Cloned model subtrees share geometry/materials with modelCache — just detach.
+      if (c.userData.sharedAssets) continue;
       const mesh = c as THREE.Mesh;
       if (mesh.geometry) mesh.geometry.dispose();
       if ((c as THREE.Group).children?.length) disposeGroup(c as THREE.Group);
@@ -609,6 +679,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
     pad.scale.set(W + 1.6, D + 1.6, 1);
     paverTex.repeat.set((W + 1.6) / 2.4, (D + 1.6) / 2.4);
+    syncPavingRepeat();
     contact.scale.set(W + 1.0, D + 1.0, 1);
 
     // Custom scenes bail out of the canopy pattern entirely
@@ -1677,63 +1748,82 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     rug.receiveShadow = true;
     canopyGroup.add(rug);
 
-    const fabricMat = new THREE.MeshStandardMaterial({ color: 0x504a44, roughness: 0.95 });
-    const cushMat = new THREE.MeshStandardMaterial({ color: 0xa79a85, roughness: 0.95 });
-
-    const sofa = new THREE.Group();
-    const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 0.95), fabricMat);
-    base.position.y = 0.175; sofa.add(base);
-    for (const ax of [-1.12, 1.12]) {
-      const arm = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.55, 0.95), fabricMat);
-      arm.position.set(ax, 0.275, 0); sofa.add(arm);
-    }
-    const back = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.55, 0.18), fabricMat);
-    back.position.set(0, 0.55, -0.38); sofa.add(back);
-    for (const cx of [-0.6, 0.6]) {
-      const cush = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.16, 0.82), cushMat);
-      cush.position.set(cx, 0.43, 0.02); sofa.add(cush);
-      const bc = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.36, 0.18), cushMat);
-      bc.position.set(cx, 0.66, -0.30); sofa.add(bc);
-    }
-    sofa.position.set(0, 0, -0.45);
-    sofa.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
-    canopyGroup.add(sofa);
-
-    const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.55 });
-    const top = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.05, 0.6), woodMat);
-    top.position.set(0, 0.4, 0.85);
-    top.castShadow = true; top.receiveShadow = true;
-    canopyGroup.add(top);
-    const legMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.5, metalness: 0.4 });
-    for (const [lx, lz] of [[-0.44, -0.24], [0.44, -0.24], [0.44, 0.24], [-0.44, 0.24]]) {
-      const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.04), legMat);
-      leg.position.set(lx, 0.2, 0.85 + lz);
-      leg.castShadow = true;
-      canopyGroup.add(leg);
-    }
-    for (const [cx, rot] of [[-1.7, 0.5], [1.7, -0.5]]) {
-      const ch = new THREE.Group();
-      const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.1, 0.55), cushMat);
-      seat.position.y = 0.4; ch.add(seat);
-      const backr = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.08), fabricMat);
-      backr.position.set(0, 0.7, -0.24); ch.add(backr);
-      for (const [lx, lz] of [[-0.23, -0.23], [0.23, -0.23], [0.23, 0.23], [-0.23, 0.23]]) {
-        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.4, 0.035), legMat);
-        leg.position.set(lx, 0.2, lz); ch.add(leg);
+    // Sofa — photoscanned model once loaded, box construction as fallback.
+    if (!placeModel('sofa', 0, -0.5)) {
+      const fabricMat = new THREE.MeshStandardMaterial({ color: 0x504a44, roughness: 0.95 });
+      const cushMat = new THREE.MeshStandardMaterial({ color: 0xa79a85, roughness: 0.95 });
+      const sofa = new THREE.Group();
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.35, 0.95), fabricMat);
+      base.position.y = 0.175; sofa.add(base);
+      for (const ax of [-1.12, 1.12]) {
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.55, 0.95), fabricMat);
+        arm.position.set(ax, 0.275, 0); sofa.add(arm);
       }
-      ch.position.set(cx * W / 5, 0, 0.5);
-      ch.rotation.y = rot;
-      ch.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
-      canopyGroup.add(ch);
+      const back = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.55, 0.18), fabricMat);
+      back.position.set(0, 0.55, -0.38); sofa.add(back);
+      for (const cx of [-0.6, 0.6]) {
+        const cush = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.16, 0.82), cushMat);
+        cush.position.set(cx, 0.43, 0.02); sofa.add(cush);
+        const bc = new THREE.Mesh(new THREE.BoxGeometry(1.08, 0.36, 0.18), cushMat);
+        bc.position.set(cx, 0.66, -0.30); sofa.add(bc);
+      }
+      sofa.position.set(0, 0, -0.45);
+      sofa.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
+      canopyGroup.add(sofa);
     }
-    const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.42, 18), new THREE.MeshStandardMaterial({ color: 0xb0a28c, roughness: 0.8 }));
-    pot.position.set(W / 2 - 0.5, 0.21, D / 2 - 0.45);
-    pot.castShadow = true;
-    canopyGroup.add(pot);
-    const bush = new THREE.Mesh(jitterGeo(new THREE.SphereGeometry(0.34, 12, 10), 0.07), leafMat);
-    bush.position.set(W / 2 - 0.5, 0.68, D / 2 - 0.45);
-    bush.castShadow = true;
-    canopyGroup.add(bush);
+
+    // Coffee table — round photoscanned table, or the box top + legs.
+    if (!placeModel('coffeeTable', 0, 0.7)) {
+      const woodMat = new THREE.MeshStandardMaterial({ map: woodTex, roughness: 0.55 });
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.5, metalness: 0.4 });
+      const top = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.05, 0.6), woodMat);
+      top.position.set(0, 0.4, 0.85);
+      top.castShadow = true; top.receiveShadow = true;
+      canopyGroup.add(top);
+      for (const [lx, lz] of [[-0.44, -0.24], [0.44, -0.24], [0.44, 0.24], [-0.44, 0.24]]) {
+        const leg = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.4, 0.04), legMat);
+        leg.position.set(lx, 0.2, 0.85 + lz);
+        leg.castShadow = true;
+        canopyGroup.add(leg);
+      }
+    }
+
+    // Side seating — the folding table + chairs set when there's room for it,
+    // otherwise the two box chairs flanking the sofa.
+    const setX = Math.min(W / 4 + 0.4, W / 2 - 1.0);
+    if (!(W >= 4.6 && placeModel('outdoorSet', setX, 0.35, -0.35))) {
+      const fabricMat = new THREE.MeshStandardMaterial({ color: 0x504a44, roughness: 0.95 });
+      const cushMat = new THREE.MeshStandardMaterial({ color: 0xa79a85, roughness: 0.95 });
+      const legMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.5, metalness: 0.4 });
+      for (const [cx, rot] of [[-1.7, 0.5], [1.7, -0.5]]) {
+        const ch = new THREE.Group();
+        const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.1, 0.55), cushMat);
+        seat.position.y = 0.4; ch.add(seat);
+        const backr = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.5, 0.08), fabricMat);
+        backr.position.set(0, 0.7, -0.24); ch.add(backr);
+        for (const [lx, lz] of [[-0.23, -0.23], [0.23, -0.23], [0.23, 0.23], [-0.23, 0.23]]) {
+          const leg = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.4, 0.035), legMat);
+          leg.position.set(lx, 0.2, lz); ch.add(leg);
+        }
+        ch.position.set(cx * W / 5, 0, 0.5);
+        ch.rotation.y = rot;
+        ch.traverse(o => { const m = o as THREE.Mesh; if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; } });
+        canopyGroup.add(ch);
+      }
+    }
+
+    // Potted plant in the corner — photoscanned plant (scaled up so the
+    // real-world ~40cm pot reads at patio distance), or pot + jittered bush.
+    if (!placeModel('plant', W / 2 - 0.55, D / 2 - 0.5, 0, 1.5)) {
+      const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.17, 0.42, 18), new THREE.MeshStandardMaterial({ color: 0xb0a28c, roughness: 0.8 }));
+      pot.position.set(W / 2 - 0.5, 0.21, D / 2 - 0.45);
+      pot.castShadow = true;
+      canopyGroup.add(pot);
+      const bush = new THREE.Mesh(jitterGeo(new THREE.SphereGeometry(0.34, 12, 10), 0.07), leafMat);
+      bush.position.set(W / 2 - 0.5, 0.68, D / 2 - 0.45);
+      bush.castShadow = true;
+      canopyGroup.add(bush);
+    }
   }
 
   function buildCar() {
@@ -2187,6 +2277,20 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
       resizeObs.disconnect();
       disposeGroup(canopyGroup);
       clearMaterialCache();
+      modelCache.forEach(root => root.traverse(o => {
+        const m = o as THREE.Mesh;
+        if (!m.isMesh) return;
+        m.geometry.dispose();
+        const mats = Array.isArray(m.material) ? m.material : [m.material];
+        mats.forEach(mat => {
+          const s = mat as THREE.MeshStandardMaterial;
+          s.map?.dispose(); s.normalMap?.dispose(); s.roughnessMap?.dispose();
+          s.metalnessMap?.dispose(); s.aoMap?.dispose();
+          mat.dispose();
+        });
+      }));
+      modelCache.clear();
+      pavingMaps.forEach(t => t.dispose());
       pmrem.dispose();
       composerRT.dispose();
       renderer.dispose();
