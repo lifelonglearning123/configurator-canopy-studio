@@ -118,7 +118,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.9;
+  renderer.toneMappingExposure = 0.8;
 
   const scene = new THREE.Scene();
   scene.fog = new THREE.Fog(0xdde4ea, 35, 120);
@@ -157,7 +157,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   skyU.mieCoefficient.value = 0.004;
   skyU.mieDirectionalG.value = 0.85;
 
-  const sunLight = new THREE.DirectionalLight(0xfff2dc, 1.6);
+  const sunLight = new THREE.DirectionalLight(0xfff2dc, 1.45);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.set(2048, 2048);
   sunLight.shadow.camera.near = 1; sunLight.shadow.camera.far = 80;
@@ -1998,7 +1998,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const lowSun = elev > 0 && elev < 22 ? 1 - elev / 22 : 0;
 
     sunLight.position.copy(sunVec).multiplyScalar(35);
-    sunLight.intensity = day * 1.9;
+    sunLight.intensity = day * 1.45;
     const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
     sunLight.color.setRGB(1, lerp(0.95, 0.62, lowSun), lerp(0.86, 0.38, lowSun));
     sunLight.castShadow = day > 0.02;
@@ -2017,9 +2017,9 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const fogC = fogDay.clone().lerp(fogSet, lowSun).lerp(fogNight, night);
     if (scene.fog) (scene.fog as THREE.Fog).color.copy(fogC);
 
-    bloom.strength = 0.10 + night * 0.55 + lowSun * 0.08;
-    bloom.threshold = lerp(0.92, 0.55, night);
-    renderer.toneMappingExposure = lerp(0.92, 0.55, night);
+    bloom.strength = 0.08 + night * 0.55 + lowSun * 0.08;
+    bloom.threshold = lerp(0.95, 0.55, night);
+    renderer.toneMappingExposure = lerp(0.80, 0.55, night);
 
     const ledOn = 0.2 + night * 4.2;
     ledMeshes.forEach(m => {
@@ -2030,7 +2030,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     bollardLights.forEach(l => { l.intensity = night * 0.8; });
     heaterEmitters.forEach(m => { (m.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.4 + night * 2.6; });
 
-    const envI = 0.25 + day * 0.85;
+    const envI = 0.22 + day * 0.55;
     scene.traverse(o => {
       const m = (o as THREE.Mesh).material;
       if (!m) return;
