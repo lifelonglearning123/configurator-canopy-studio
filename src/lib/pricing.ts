@@ -2,6 +2,7 @@
 
 import { WALL, ROOF, FRAME_COLORS } from './catalog';
 import { upperWindowCount, isUpperWindowPreset } from './openings';
+import { matrixLookup, type PriceMatrix } from './price-matrix';
 
 export type Elevation = 'front' | 'back' | 'left' | 'right';
 
@@ -72,7 +73,10 @@ export type PriceLine = { key: string; label: string; amountMinor: number };
 
 // Pure pricing function. Takes the rules map + state, returns the breakdown.
 // Mirrors priceBreakdown() in the HTML prototype but in tenant pricing terms.
-export function quote(state: ConfigState, prices: Map<string, { label: string; amountMinor: number }>): {
+// `priceMatrix` (optional, per product) prices the structural roof line from
+// a seller's size-band grid instead of the base + perM2 formula; sizes/roofs
+// the grid doesn't cover fall back to the formula automatically.
+export function quote(state: ConfigState, prices: Map<string, { label: string; amountMinor: number }>, priceMatrix?: PriceMatrix | null): {
   lines: PriceLine[];
   subtotalMinor: number;
 } {
@@ -96,21 +100,36 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   // for them or quotes double-charge with irrelevant lines.
   const isNewProduct = state.product.startsWith('conservatory-') || state.product === 'extension';
 
+  // True when the structural roof line came from a size-band matrix cell —
+  // band prices are all-inclusive of size, so size surcharges must not stack.
+  let usedMatrix = false;
+
   if (!isNewProduct) {
     // Base
     push(`base.${state.structure}`, `Base (${state.structure})`, 0);
 
-    // Roof: base + perM2*area
+    // Roof: seller's size-band matrix when it covers this size + roof,
+    // otherwise base + perM2*area formula.
     const rk = state.roof;
-    const roofBase = get(`roof.${rk}.base`)?.amountMinor ?? 0;
-    const roofPerM2 = get(`roof.${rk}.perM2`)?.amountMinor ?? 0;
     const roofLabel = ROOF[rk as keyof typeof ROOF]?.label ?? rk;
-    if (roofBase + roofPerM2 > 0) {
+    const hit = priceMatrix ? matrixLookup(priceMatrix, rk, state.length, state.depth) : null;
+    usedMatrix = hit != null;
+    if (hit) {
       lines.push({
         key: `roof.${rk}`,
-        label: `${roofLabel} · ${area.toFixed(1)} m²`,
-        amountMinor: roofBase + Math.round(roofPerM2 * area),
+        label: `${roofLabel} · up to ${hit.bandW} × ${hit.bandD} m`,
+        amountMinor: hit.amountMinor,
       });
+    } else {
+      const roofBase = get(`roof.${rk}.base`)?.amountMinor ?? 0;
+      const roofPerM2 = get(`roof.${rk}.perM2`)?.amountMinor ?? 0;
+      if (roofBase + roofPerM2 > 0) {
+        lines.push({
+          key: `roof.${rk}`,
+          label: `${roofLabel} · ${area.toFixed(1)} m²`,
+          amountMinor: roofBase + Math.round(roofPerM2 * area),
+        });
+      }
     }
 
     // Slat upgrades
@@ -154,8 +173,9 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   if (state.electrical && state.electrical !== 'none') push(`electrical.${state.electrical}`, 'Electrical', 0);
   if (state.service) push(`service.${state.service}`, 'Service', 0);
 
-  // Oversize premium (legacy canopy structures only)
-  if (!isNewProduct && state.length > 5) {
+  // Oversize premium (legacy canopy structures only; a matrix band price
+  // already includes the cost of its size — don't stack a size surcharge)
+  if (!isNewProduct && !usedMatrix && state.length > 5) {
     const per = get('misc.oversize_per_m')?.amountMinor ?? 0;
     if (per > 0) lines.push({ key: 'misc.oversize', label: 'Oversize structural premium', amountMinor: Math.round(per * (state.length - 5)) });
   }

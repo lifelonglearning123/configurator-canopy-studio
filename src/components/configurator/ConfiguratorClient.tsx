@@ -7,6 +7,7 @@ import {
   AUTOMATION, ELECTRICAL, SERVICE,
 } from '@/lib/catalog';
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
+import type { PriceMatrix } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
 import { PanelRenderer } from './panel/PanelRenderer';
 import { usesNewPanel, productDefaults } from './panel/sections';
@@ -23,6 +24,8 @@ type Props = {
   productTagline: string;
   defaultSchema: Record<string, unknown>;
   pricing: { key: string; label: string; amountMinor: number }[];
+  /** Seller's size-band price grid for this product (null = formula pricing only). */
+  priceMatrix?: PriceMatrix | null;
   /** True when rendered from the public marketing demo. Hides the lead-capture
    *  quote modal (which requires a tenant) and shows a demo banner. */
   demo?: boolean;
@@ -76,7 +79,7 @@ export function ConfiguratorClient(props: Props) {
     [props.pricing]
   );
 
-  const { lines, subtotalMinor } = useMemo(() => quote(state, pricingMap), [state, pricingMap]);
+  const { lines, subtotalMinor } = useMemo(() => quote(state, pricingMap, props.priceMatrix), [state, pricingMap, props.priceMatrix]);
 
   const set = <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => setState(s => ({ ...s, [k]: v }));
   const setWall = (side: keyof ConfigState['walls'], v: string) =>
@@ -207,10 +210,13 @@ export function ConfiguratorClient(props: Props) {
 
         <div className="mt-6 pt-5 border-t border-stone-100 bg-stone-50/60 -mx-6 px-6 pb-5">
           <div className="flex items-baseline justify-between mb-1">
-            <span className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Total</span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Estimated guide price</span>
             <span className="text-[10px] text-stone-400">ex. VAT, ex. delivery</span>
           </div>
           <div className="text-5xl tabular-nums tracking-tight" style={{ fontFamily: 'serif' }}>{formatMoney(subtotalMinor, props.currency)}</div>
+          <p className="text-[11px] text-stone-500 mt-2">
+            This is a guide, not a final quote — {props.tenantName} will confirm your exact price after a free survey.
+          </p>
         </div>
 
         {props.demo ? (

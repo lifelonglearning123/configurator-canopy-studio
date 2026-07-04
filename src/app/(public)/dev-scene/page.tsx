@@ -5,6 +5,7 @@
 //        /dev-scene?p=conservatory-leanto (or -victorian, -edwardian, -orangery)
 // Safe to delete.
 import { defaultPricingLineItems } from '@/lib/catalog';
+import { defaultVerandaMatrix } from '@/lib/price-matrix';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 
 export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string }> }) {
@@ -26,6 +27,7 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
       productTagline="Dev preview"
       defaultSchema={schema}
       pricing={pricing}
+      priceMatrix={key === 'veranda' ? defaultVerandaMatrix() : null}
       demo
     />
   );

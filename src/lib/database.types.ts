@@ -88,6 +88,15 @@ type LeadRow = {
   created_at: string;
 };
 
+type PriceMatrixRow = {
+  id: string;
+  tenant_id: string;
+  product_key: string;
+  grid: Json;
+  enabled: boolean;
+  updated_at: string;
+};
+
 type R = []; // No declared FK relationships; queries that select related rows still work, just untyped.
 
 export type Database = {
@@ -99,6 +108,7 @@ export type Database = {
       products:        { Row: ProductRow;       Insert: Partial<ProductRow> & Pick<ProductRow, 'key' | 'name' | 'default_schema_json'>; Update: Partial<ProductRow>;        Relationships: R };
       tenant_products: { Row: TenantProductRow; Insert: Partial<TenantProductRow> & Pick<TenantProductRow, 'tenant_id' | 'product_id'>; Update: Partial<TenantProductRow>;  Relationships: R };
       pricing_rules:   { Row: PricingRuleRow;   Insert: Partial<PricingRuleRow> & Pick<PricingRuleRow, 'tenant_id' | 'line_item_key' | 'label'>; Update: Partial<PricingRuleRow>; Relationships: R };
+      price_matrices:  { Row: PriceMatrixRow;   Insert: Partial<PriceMatrixRow> & Pick<PriceMatrixRow, 'tenant_id' | 'product_key' | 'grid'>; Update: Partial<PriceMatrixRow>; Relationships: R };
       leads:           { Row: LeadRow;          Insert: Partial<LeadRow> & Pick<LeadRow, 'tenant_id' | 'first_name' | 'last_name' | 'email' | 'config_json'>; Update: Partial<LeadRow>; Relationships: R };
     };
     Views: Record<string, never>;

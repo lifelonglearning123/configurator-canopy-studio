@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { resolveTenantByHost } from '@/lib/tenant';
 import { adminClient } from '@/lib/supabase-server';
-import { loadTenantPricing } from '@/lib/pricing-server';
+import { loadTenantPricing, loadTenantPriceMatrix } from '@/lib/pricing-server';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 import { notFound } from 'next/navigation';
 
@@ -30,6 +30,8 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
   const pricingMap = await loadTenantPricing(tenant.id);
   // Serialize the Map to an array for client transfer
   const pricing = Array.from(pricingMap.entries()).map(([k, v]) => ({ key: k, label: v.label, amountMinor: v.amountMinor }));
+  // Seller's size-band grid (null until the seller saves one → formula pricing).
+  const priceMatrix = await loadTenantPriceMatrix(tenant.id, productKey);
 
   return (
     <ConfiguratorClient
@@ -41,6 +43,7 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
       productTagline={link.custom_tagline ?? link.products.tagline}
       defaultSchema={link.products.default_schema_json}
       pricing={pricing}
+      priceMatrix={priceMatrix}
     />
   );
 }

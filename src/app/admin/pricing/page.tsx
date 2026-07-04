@@ -2,7 +2,8 @@ import { requireSessionTenant } from '@/lib/session';
 import { adminClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 import { formatMoney } from '@/lib/pricing';
-import { pricingRowAppliesTo } from '@/lib/catalog';
+import { pricingRowAppliesTo, ROOF } from '@/lib/catalog';
+import { defaultVerandaMatrix, matrixProductKeys, priceMatrixSchema, type PriceMatrix } from '@/lib/price-matrix';
 import { MARKETING_PRODUCTS } from '@/lib/marketing-products';
 import Link from 'next/link';
 
@@ -28,6 +29,29 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
   // A row shown under one product may be shared by others — same single price.
   const sharedCount = (key: string) => productKeys.filter(p => pricingRowAppliesTo(key, p)).length;
 
+  // Size-band grid for matrix-priced products (rollout: veranda first).
+  // The seller edits example prices per width×projection band; blank cells
+  // fall back to the formula rows below.
+  const matrixProduct = selected && matrixProductKeys().includes(selected) ? selected : null;
+  let matrix: PriceMatrix | null = null;
+  let matrixEnabled = false;
+  if (matrixProduct) {
+    const { data: mrow } = await db
+      .from('price_matrices')
+      .select('grid, enabled')
+      .eq('tenant_id', tenant.id)
+      .eq('product_key', matrixProduct)
+      .maybeSingle();
+    if (mrow) {
+      const parsed = priceMatrixSchema.safeParse((mrow as { grid: unknown }).grid);
+      if (parsed.success) {
+        matrix = parsed.data;
+        matrixEnabled = (mrow as { enabled: boolean }).enabled;
+      }
+    }
+    if (!matrix) matrix = defaultVerandaMatrix(); // template prefilled from formula rates
+  }
+
   // Group by namespace prefix (e.g. "roof", "wall", "addon")
   const grouped = new Map<string, Rule[]>();
   for (const r of visible) {
@@ -44,6 +68,33 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
     const enabled = formData.get('enabled') === 'on';
     const db = adminClient();
     await db.from('pricing_rules').update({ amount_minor: amountMinor, enabled }).eq('id', id).eq('tenant_id', tenant.id);
+    revalidatePath('/admin/pricing');
+  }
+
+  async function saveMatrix(formData: FormData) {
+    'use server';
+    const { tenant } = await requireSessionTenant();
+    const productKey = String(formData.get('productKey'));
+    const enabled = formData.get('enabled') === 'on';
+    const widths = String(formData.get('widths')).split(',').map(Number);
+    const depths = String(formData.get('depths')).split(',').map(Number);
+    const roofs = String(formData.get('roofs')).split(',');
+    const columns: Record<string, (number | null)[][]> = {};
+    for (const rk of roofs) {
+      columns[rk] = depths.map((_, di) => widths.map((_, wi) => {
+        const v = String(formData.get(`cell:${rk}:${di}:${wi}`) ?? '').trim();
+        if (!v) return null; // blank = this band falls back to formula pricing
+        const n = Number(v);
+        return Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : null;
+      }));
+    }
+    const parsed = priceMatrixSchema.safeParse({ widths, depths, columns });
+    if (!parsed.success) return;
+    const db = adminClient();
+    await db.from('price_matrices').upsert(
+      { tenant_id: tenant.id, product_key: productKey, grid: parsed.data, enabled, updated_at: new Date().toISOString() },
+      { onConflict: 'tenant_id,product_key' }
+    );
     revalidatePath('/admin/pricing');
   }
 
@@ -65,6 +116,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
     }
     revalidatePath('/admin/pricing');
   }
+
+  // const alias so TS narrowing survives into the JSX map callbacks below
+  const m = matrix;
 
   return (
     <div className="space-y-6">
@@ -110,6 +164,62 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           Rows marked <span className="inline-block px-1.5 rounded bg-stone-100 border border-stone-200">shared</span> are
           used by other products too — changing them here changes every quote that uses them.
         </p>
+      )}
+
+      {matrixProduct && m && (
+        <section className="bg-white border border-stone-200 rounded-xl p-5">
+          <div className="flex items-baseline justify-between mb-1">
+            <h2 className="text-sm font-medium">Size-band guide prices</h2>
+            <span className="text-[11px] text-stone-500">£ per structure · width × projection</span>
+          </div>
+          <p className="text-xs text-stone-500 mb-4">
+            Enter the price you would quote for each size — buyers between sizes are charged at the
+            next band up. Leave a cell blank to price that size with the per-m² rows below instead.
+          </p>
+          <form action={saveMatrix} className="space-y-5">
+            <input type="hidden" name="productKey" value={matrixProduct} />
+            <input type="hidden" name="widths" value={m.widths.join(',')} />
+            <input type="hidden" name="depths" value={m.depths.join(',')} />
+            <input type="hidden" name="roofs" value={Object.keys(m.columns).join(',')} />
+            {Object.entries(m.columns).map(([rk, rows]) => (
+              <div key={rk}>
+                <h3 className="text-xs uppercase tracking-wider text-stone-500 mb-2">{ROOF[rk as keyof typeof ROOF]?.label ?? rk}</h3>
+                <table className="text-sm">
+                  <thead>
+                    <tr>
+                      <th className="text-left pr-3 text-[10px] uppercase tracking-wider text-stone-400 font-normal">proj ↓ · width →</th>
+                      {m.widths.map(w => <th key={w} className="px-1 pb-1 text-xs text-stone-500 font-normal">{w} m</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r, di) => (
+                      <tr key={di}>
+                        <td className="pr-3 text-xs text-stone-500">{m.depths[di]} m</td>
+                        {r.map((cell, wi) => (
+                          <td key={wi} className="p-0.5">
+                            <input
+                              name={`cell:${rk}:${di}:${wi}`}
+                              type="number" step="1" min="0"
+                              defaultValue={cell == null ? '' : Math.round(cell / 100)}
+                              className="w-20 px-2 py-1 rounded border border-stone-300 text-xs tabular-nums"
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2 text-xs text-stone-600">
+                <input type="checkbox" name="enabled" defaultChecked={matrixEnabled} className="w-3.5 h-3.5 accent-stone-900" />
+                Use this grid for quotes
+              </label>
+              <button className="px-3 py-1.5 rounded-md bg-stone-900 text-white text-xs">Save grid</button>
+            </div>
+          </form>
+        </section>
       )}
 
       <div className="space-y-6">
