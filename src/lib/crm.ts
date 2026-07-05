@@ -15,6 +15,39 @@ export type CrmPayload = {
 
 export type CrmResult = { ok: boolean; status: number; body: string };
 
+// Create-or-update a contact in GoHighLevel (LeadConnector API v2) using the
+// tenant's Location ID + private-integration token. Used by the lead gate,
+// where we only hold name/email/phone — upsert keys on email so a returning
+// visitor never creates a duplicate contact.
+export type GhlContact = { name: string; email: string; phone?: string; sourceUrl?: string; tags?: string[] };
+
+export async function upsertGhlContact(locationId: string, token: string, c: GhlContact): Promise<CrmResult> {
+  const [firstName, ...rest] = c.name.trim().split(/\s+/);
+  try {
+    const r = await fetch('https://services.leadconnectorhq.com/contacts/upsert', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Version: '2021-07-28',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        locationId,
+        firstName,
+        lastName: rest.join(' ') || undefined,
+        email: c.email,
+        phone: c.phone || undefined,
+        source: c.sourceUrl ?? 'configurator',
+        tags: c.tags ?? ['configurator-visitor'],
+      }),
+    });
+    const body = await r.text().catch(() => '');
+    return { ok: r.ok, status: r.status, body };
+  } catch (e) {
+    return { ok: false, status: 0, body: e instanceof Error ? e.message : String(e) };
+  }
+}
+
 export async function deliverCrm(webhookUrl: string, payload: CrmPayload, attempts = 3): Promise<CrmResult> {
   let lastErr: CrmResult = { ok: false, status: 0, body: '' };
   for (let i = 0; i < attempts; i++) {

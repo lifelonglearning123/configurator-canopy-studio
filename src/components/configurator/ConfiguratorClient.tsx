@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import {
   FRAME_COLORS, ROOF, WALL, ADDONS, CLADDING, FLOORING, INTERIOR_WALLS,
@@ -65,6 +65,10 @@ export function ConfiguratorClient(props: Props) {
     roof: (props.defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
   }));
   const [modalOpen, setModalOpen] = useState(false);
+  // Who is designing — captured up-front (tenant sites only) so the seller
+  // holds a contact even if the buyer never requests the final quote.
+  // undefined = not yet checked (first client render), null = gate required.
+  const [visitor, setVisitor] = useState<Visitor | null | undefined>(undefined);
   const [view, setView] = useState<SceneView>('iso');
   const [time, setTime] = useState(13);
   const [spin, setSpin] = useState(false);
@@ -81,6 +85,17 @@ export function ConfiguratorClient(props: Props) {
 
   const { lines, subtotalMinor } = useMemo(() => quote(state, pricingMap, props.priceMatrix), [state, pricingMap, props.priceMatrix]);
 
+  const visitorKey = `canopy-visitor:${props.tenantSlug}`;
+  useEffect(() => {
+    if (props.demo) return; // demo mode is ungated
+    try {
+      const raw = localStorage.getItem(visitorKey);
+      setVisitor(raw ? (JSON.parse(raw) as Visitor) : null);
+    } catch {
+      setVisitor(null);
+    }
+  }, [props.demo, visitorKey]);
+
   const set = <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => setState(s => ({ ...s, [k]: v }));
   const setWall = (side: keyof ConfigState['walls'], v: string) =>
     setState(s => ({ ...s, walls: { ...s.walls, [side]: v } }));
@@ -88,9 +103,11 @@ export function ConfiguratorClient(props: Props) {
     setState(s => ({ ...s, addons: { ...s.addons, [k]: v } }));
 
   return (
-    <main className="grid grid-cols-12 max-w-[1700px] mx-auto">
+    // The 3D preview is the product — side rails are fixed-width and the
+    // canvas takes every remaining pixel, full-bleed.
+    <main className="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)_280px]">
       {/* LEFT: options */}
-      <aside className="col-span-12 lg:col-span-4 border-r border-stone-200 bg-white p-6 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+      <aside className="border-r border-stone-200 bg-white p-5 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
         {usesNewPanel(props.productKey) ? (
           <PanelRenderer
             productKey={props.productKey}
@@ -115,7 +132,7 @@ export function ConfiguratorClient(props: Props) {
           of the surrounding flex layout happened to give the section a
           definite height. On the tenant route, the (public) layout wraps
           children in a header + main, breaking the chain.  */}
-      <section className="col-span-12 lg:col-span-5 relative overflow-hidden h-[60vh] lg:h-[calc(100vh-3.5rem)]" style={{ background: '#0e1116' }}>
+      <section className="relative overflow-hidden h-[60vh] lg:h-[calc(100vh-3.5rem)]" style={{ background: '#0e1116' }}>
         <Scene
           ref={sceneRef}
           state={state}
@@ -192,32 +209,30 @@ export function ConfiguratorClient(props: Props) {
         </div>
       </section>
 
-      {/* RIGHT: summary */}
-      <aside className="col-span-12 lg:col-span-3 border-l border-stone-200 bg-white p-6 max-h-[calc(100vh-3.5rem)] overflow-y-auto flex flex-col">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">Summary</div>
-        <h2 className="text-3xl tracking-tight" style={{ fontFamily: 'serif' }}>Your quote.</h2>
+      {/* RIGHT: compact summary — the price + CTA lead; breakdown folds away */}
+      <aside className="border-l border-stone-200 bg-white p-5 max-h-[calc(100vh-3.5rem)] overflow-y-auto flex flex-col">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-2">Estimated guide price</div>
+        <div className="text-4xl tabular-nums tracking-tight" style={{ fontFamily: 'serif' }}>{formatMoney(subtotalMinor, props.currency)}</div>
+        <p className="text-[10px] text-stone-400 mt-1">ex. VAT, ex. delivery</p>
+        <p className="text-[11px] text-stone-500 mt-2">
+          This is a guide, not a final quote — {props.tenantName} will confirm your exact price after a free survey.
+        </p>
 
-        <div className="mt-5 space-y-2 text-xs flex-1">
-          {lines.length === 0 ? (
-            <p className="text-stone-500">No priced line items yet. Your admin can configure prices under Pricing.</p>
-          ) : lines.map((l, i) => (
-            <div key={i} className="flex items-start justify-between gap-3">
-              <span className="text-stone-600">{l.label}</span>
-              <span className="font-medium text-stone-900 tabular-nums">{formatMoney(l.amountMinor, props.currency)}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 pt-5 border-t border-stone-100 bg-stone-50/60 -mx-6 px-6 pb-5">
-          <div className="flex items-baseline justify-between mb-1">
-            <span className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Estimated guide price</span>
-            <span className="text-[10px] text-stone-400">ex. VAT, ex. delivery</span>
+        <details className="mt-4 text-xs flex-1">
+          <summary className="cursor-pointer select-none text-stone-600 hover:text-stone-900">
+            Price breakdown{lines.length ? ` · ${lines.length} items` : ''}
+          </summary>
+          <div className="mt-3 space-y-2">
+            {lines.length === 0 ? (
+              <p className="text-stone-500">No priced line items yet. Your admin can configure prices under Pricing.</p>
+            ) : lines.map((l, i) => (
+              <div key={i} className="flex items-start justify-between gap-3">
+                <span className="text-stone-600">{l.label}</span>
+                <span className="font-medium text-stone-900 tabular-nums">{formatMoney(l.amountMinor, props.currency)}</span>
+              </div>
+            ))}
           </div>
-          <div className="text-5xl tabular-nums tracking-tight" style={{ fontFamily: 'serif' }}>{formatMoney(subtotalMinor, props.currency)}</div>
-          <p className="text-[11px] text-stone-500 mt-2">
-            This is a guide, not a final quote — {props.tenantName} will confirm your exact price after a free survey.
-          </p>
-        </div>
+        </details>
 
         {props.demo ? (
           <a
@@ -244,7 +259,33 @@ export function ConfiguratorClient(props: Props) {
           subtotalMinor={subtotalMinor}
           currency={props.currency}
           productKey={props.productKey}
+          visitor={visitor ?? undefined}
           onClose={() => setModalOpen(false)}
+        />
+      )}
+
+      {/* Lead gate: tenant sites collect who's designing before the tools unlock. */}
+      {visitor === null && !props.demo && (
+        <LeadGate
+          tenantName={props.tenantName}
+          onDone={v => {
+            try { localStorage.setItem(visitorKey, JSON.stringify(v)); } catch { /* private mode */ }
+            setVisitor(v);
+            // Push the contact to the seller's CRM (GoHighLevel) in the
+            // background — the buyer never waits on it, and failures are the
+            // seller's integration problem, not the buyer's.
+            fetch('/api/visitors', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                name: v.first,
+                email: v.email,
+                phone: v.phone,
+                product_key: props.productKey,
+                source_url: window.location.href,
+              }),
+            }).catch(() => { /* fire-and-forget */ });
+          }}
         />
       )}
 
@@ -258,6 +299,47 @@ export function ConfiguratorClient(props: Props) {
         </div>
       )}
     </main>
+  );
+}
+
+type Visitor = { first: string; email: string; phone: string };
+
+/* Pre-configuration lead capture — the seller holds a contact even if the
+   buyer designs but never requests the detailed quote. Stored per tenant in
+   localStorage so returning visitors go straight to the tools. */
+function LeadGate({ tenantName, onDone }: { tenantName: string; onDone: (v: Visitor) => void }) {
+  return (
+    <div className="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-50 grid place-items-center p-4">
+      <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">{tenantName}</div>
+        <h3 className="text-2xl" style={{ fontFamily: 'serif' }}>Design your own — with live guide prices.</h3>
+        <p className="text-xs text-stone-500 mt-2">
+          Tell us where to send your design and we&apos;ll open the configurator.
+        </p>
+        <form
+          className="space-y-3 mt-4"
+          onSubmit={e => {
+            e.preventDefault();
+            const fd = new FormData(e.currentTarget);
+            onDone({
+              first: String(fd.get('first')).trim(),
+              email: String(fd.get('email')).trim(),
+              phone: String(fd.get('phone')).trim(),
+            });
+          }}
+        >
+          <Input name="first" label="Name" required />
+          <Input name="email" label="Email" type="email" required />
+          <Input name="phone" label="Phone" type="tel" required />
+          <button className="w-full px-4 py-3 rounded-lg text-white font-medium text-sm hover:opacity-90" style={{ background: 'var(--brand, #1c1917)' }}>
+            Start designing →
+          </button>
+          <p className="text-[10px] text-stone-400 text-center">
+            No obligation — prices shown are guide estimates confirmed by {tenantName} after a free survey.
+          </p>
+        </form>
+      </div>
+    </div>
   );
 }
 
@@ -329,7 +411,7 @@ function LegacyPanel({ state, set, setWall, setAddon, productName, productTaglin
   );
 }
 
-function QuoteModal({ state, subtotalMinor, currency, productKey, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; onClose: () => void }) {
+function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -378,11 +460,11 @@ function QuoteModal({ state, subtotalMinor, currency, productKey, onClose }: { s
             </div>
             <form onSubmit={submit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Input name="first" label="First name" required />
+                <Input name="first" label="First name" required defaultValue={visitor?.first} />
                 <Input name="last"  label="Last name" required />
               </div>
-              <Input name="email"    label="Email" type="email" required />
-              <Input name="phone"    label="Phone (optional)" />
+              <Input name="email"    label="Email" type="email" required defaultValue={visitor?.email} />
+              <Input name="phone"    label="Phone (optional)" defaultValue={visitor?.phone} />
               <Input name="postcode" label="Postcode" required />
               <label className="block">
                 <span className="text-[10px] uppercase tracking-wider text-stone-600">Notes (optional)</span>
@@ -482,11 +564,11 @@ function Checkbox({ label, checked, onChange }: { label: string; checked: boolea
     </label>
   );
 }
-function Input({ name, label, type = 'text', required }: { name: string; label: string; type?: string; required?: boolean }) {
+function Input({ name, label, type = 'text', required, defaultValue }: { name: string; label: string; type?: string; required?: boolean; defaultValue?: string }) {
   return (
     <label className="block">
       <span className="text-[10px] uppercase tracking-wider text-stone-600">{label}</span>
-      <input name={name} type={type} required={required} className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900" />
+      <input name={name} type={type} required={required} defaultValue={defaultValue} className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900" />
     </label>
   );
 }

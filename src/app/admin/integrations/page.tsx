@@ -42,16 +42,20 @@ export default async function IntegrationsPage({ searchParams }: { searchParams:
   const { tenant } = await requireSessionTenant();
   const sp = await searchParams;
   const db = adminClient();
-  const { data } = await db.from('tenants').select('ghl_webhook_url, ghl_location_id').eq('id', tenant.id).maybeSingle();
-  const t = (data as { ghl_webhook_url: string | null; ghl_location_id: string | null } | null) ?? { ghl_webhook_url: '', ghl_location_id: '' };
+  const { data } = await db.from('tenants').select('ghl_webhook_url, ghl_location_id, ghl_api_token').eq('id', tenant.id).maybeSingle();
+  const t = (data as { ghl_webhook_url: string | null; ghl_location_id: string | null; ghl_api_token: string | null } | null)
+    ?? { ghl_webhook_url: '', ghl_location_id: '', ghl_api_token: '' };
 
   async function save(formData: FormData) {
     'use server';
     const { tenant } = await requireSessionTenant();
     const db = adminClient();
+    const token = String(formData.get('ghl_api_token') ?? '');
     await db.from('tenants').update({
       ghl_webhook_url: String(formData.get('ghl_webhook_url') ?? '') || null,
       ghl_location_id: String(formData.get('ghl_location_id') ?? '') || null,
+      // masked placeholder means "unchanged" — only overwrite on real input
+      ...(token && !token.startsWith('••') ? { ghl_api_token: token } : {}),
     }).eq('id', tenant.id);
     revalidatePath('/admin/integrations');
   }
@@ -93,9 +97,21 @@ export default async function IntegrationsPage({ searchParams }: { searchParams:
           <span className="text-[11px] text-stone-500 mt-1 block">Paste an inbound webhook URL from your CRM (GoHighLevel, Zapier, n8n, Make, Pipedrive — any tool that accepts a JSON POST).</span>
         </label>
         <label className="block">
-          <span className="text-xs uppercase tracking-wider text-stone-600">CRM location / account ID (optional)</span>
+          <span className="text-xs uppercase tracking-wider text-stone-600">GoHighLevel Location ID</span>
           <input name="ghl_location_id" defaultValue={t.ghl_location_id ?? ''} placeholder="abcDEF123…"
             className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900 font-mono text-xs" />
+          <span className="text-[11px] text-stone-500 mt-1 block">
+            With the API token below, visitors who unlock the configurator are pushed straight into your
+            GHL location as contacts (tagged <span className="font-mono">configurator-visitor</span>) — even if they never request a quote.
+          </span>
+        </label>
+        <label className="block">
+          <span className="text-xs uppercase tracking-wider text-stone-600">GoHighLevel API token</span>
+          <input name="ghl_api_token" type="password" defaultValue={t.ghl_api_token ? '••••••••••••' : ''} placeholder="pit-…"
+            className="mt-1 w-full px-3 py-2 rounded-lg border border-stone-300 text-sm focus:outline-none focus:border-stone-900 font-mono text-xs" />
+          <span className="text-[11px] text-stone-500 mt-1 block">
+            Private-integration token from GHL (Settings → Private Integrations, with Contacts write scope). Leave untouched to keep the saved token.
+          </span>
         </label>
         <button className="px-4 py-2.5 rounded-lg bg-stone-900 text-white text-sm font-medium hover:bg-black">Save</button>
       </form>

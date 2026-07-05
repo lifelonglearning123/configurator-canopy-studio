@@ -8,7 +8,7 @@
 
 import { adminClient } from '@/lib/supabase-server';
 import { defaultPricingLineItems } from '@/lib/catalog';
-import { defaultVerandaMatrix } from '@/lib/price-matrix';
+import { defaultMatrixFor } from '@/lib/price-matrix';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 import { notFound } from 'next/navigation';
 
@@ -37,7 +37,7 @@ export default async function DemoConfigurePage({ params }: { params: Promise<{ 
       productTagline={p.tagline}
       defaultSchema={p.default_schema_json}
       pricing={pricing}
-      priceMatrix={p.key === 'veranda' ? defaultVerandaMatrix() : null}
+      priceMatrix={defaultMatrixFor(p.key)}
       demo
     />
   );

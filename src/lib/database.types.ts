@@ -13,6 +13,7 @@ type TenantRow = {
   primary_color: string | null;
   ghl_webhook_url: string | null;
   ghl_location_id: string | null;
+  ghl_api_token: string | null;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   subscription_status: string;

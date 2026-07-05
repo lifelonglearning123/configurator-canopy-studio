@@ -123,10 +123,10 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   // sky-env's blue cast. (Khronos Neutral was A/B tested for colour fidelity
   // but renders the outdoor blue stack too literally — scene reads cold.)
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.82;
+  renderer.toneMappingExposure = 0.7;
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xdde4ea, 35, 120);
+  scene.fog = new THREE.Fog(0xdde4ea, 48, 160);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
 
@@ -599,7 +599,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   function glassMaterial(): THREE.MeshPhysicalMaterial {
     const cached = matCache.get('glass') as THREE.MeshPhysicalMaterial | undefined;
     if (cached) return cached;
-    const m = new THREE.MeshPhysicalMaterial({ color: 0xf2fafc, transmission: 0.95, roughness: 0.03, ior: 1.5, thickness: 0.06, transparent: true, opacity: 0.45, reflectivity: 0.5, clearcoat: 0.4, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
+    const m = new THREE.MeshPhysicalMaterial({ color: 0xf2fafc, transmission: 0.95, roughness: 0.03, ior: 1.5, thickness: 0.06, transparent: true, opacity: 0.3, reflectivity: 0.5, clearcoat: 0.4, clearcoatRoughness: 0.08, side: THREE.DoubleSide });
     // Sky-env reflections at grazing angles turn the whole roof into a blue
     // mirror that hides the product — damp env influence on glazing only.
     m.userData.envScale = 0.35;
@@ -2467,7 +2467,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     sunLight.color.setRGB(1, lerp(0.95, 0.62, lowSun), lerp(0.86, 0.38, lowSun));
     sunLight.castShadow = day > 0.02;
 
-    moonLight.intensity = night * 0.22;
+    moonLight.intensity = night * 0.35;
     hemi.intensity = 0.06 + day * 0.42;
     ambient.intensity = 0.04 + day * 0.2;
 
@@ -2485,9 +2485,11 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const fogC = fogDay.clone().lerp(fogSet, lowSun).lerp(fogNight, night);
     if (scene.fog) (scene.fog as THREE.Fog).color.copy(fogC);
 
-    bloom.strength = 0.08 + night * 0.55 + lowSun * 0.08;
+    // Daylight gets NO bloom — on real GPUs the bright sky blooms a milky
+    // veil over everything against it. Bloom is for night LEDs + sunset glow.
+    bloom.strength = night * 0.55 + lowSun * 0.06;
     bloom.threshold = lerp(0.95, 0.55, night);
-    renderer.toneMappingExposure = lerp(0.82, 0.55, night);
+    renderer.toneMappingExposure = lerp(0.7, 0.55, night);
 
     const ledOn = 0.2 + night * 4.2;
     ledMeshes.forEach(m => {
@@ -2500,7 +2502,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
 
     // Sky env: strong enough for real reflections on glass/metal, weak enough
     // that the blue Rayleigh dome doesn't tint diffuse surfaces cyan.
-    const envI = 0.18 + day * 0.27;
+    const envI = 0.14 + day * 0.21;
     scene.traverse(o => {
       const m = (o as THREE.Mesh).material;
       if (!m) return;

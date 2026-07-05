@@ -3,7 +3,7 @@ import { adminClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 import { formatMoney } from '@/lib/pricing';
 import { pricingRowAppliesTo, ROOF } from '@/lib/catalog';
-import { defaultVerandaMatrix, matrixProductKeys, priceMatrixSchema, type PriceMatrix } from '@/lib/price-matrix';
+import { defaultMatrixFor, matrixProductKeys, priceMatrixSchema, type PriceMatrix } from '@/lib/price-matrix';
 import { MARKETING_PRODUCTS } from '@/lib/marketing-products';
 import Link from 'next/link';
 
@@ -49,7 +49,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
         matrixEnabled = (mrow as { enabled: boolean }).enabled;
       }
     }
-    if (!matrix) matrix = defaultVerandaMatrix(); // template prefilled from formula rates
+    if (!matrix) matrix = defaultMatrixFor(matrixProduct); // template prefilled from formula rates
   }
 
   // Group by namespace prefix (e.g. "roof", "wall", "addon")

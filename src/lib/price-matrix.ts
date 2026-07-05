@@ -45,24 +45,32 @@ export function matrixLookup(m: PriceMatrix, roofKey: string, lengthM: number, d
   return { amountMinor, bandW: m.widths[wi], bandD: m.depths[di] };
 }
 
-// Default veranda grid — same band steps as real trade price lists
-// (the seller workbook uses 4–7 m × 2.5–4 m). Cells are derived from the
-// current formula rates so switching a tenant to matrix mode changes
-// nothing until the seller edits cells.
-export const VERANDA_MATRIX_ROOFS = ['glass-sloped', 'poly-sloped'] as const;
-
-export function defaultVerandaMatrix(): PriceMatrix {
-  const widths = [3, 4, 5, 6, 7];
-  const depths = [2.5, 3, 3.5, 4];
-  const columns: PriceMatrix['columns'] = {};
-  for (const rk of VERANDA_MATRIX_ROOFS) {
-    const r = ROOF[rk];
-    columns[rk] = depths.map(d => widths.map(w => Math.round((r.price + r.perM2 * w * d) * 100)));
-  }
-  return { widths, depths, columns };
-}
+// Per-product matrix configuration: which roof materials get a price column
+// and which size bands the grid uses — the same band steps as real trade
+// price lists (the seller workbook uses 4–7 m × 2.5–4 m). Carports run
+// deeper (a car is ~5 m long).
+const MATRIX_PRODUCTS: Record<string, { roofs: (keyof typeof ROOF)[]; widths: number[]; depths: number[] }> = {
+  veranda: { roofs: ['glass-sloped', 'poly-sloped'],       widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
+  pergola: { roofs: ['louvred-retract', 'louvred-fixed'],  widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
+  carport: { roofs: ['poly-sloped', 'solid-alu'],          widths: [3, 4, 5, 6, 7], depths: [3, 4, 5, 6] },
+  studio:  { roofs: ['glass-flat', 'solid-alu'],           widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
+};
 
 // Which products have matrix pricing available (rollout list).
 export function matrixProductKeys(): string[] {
-  return ['veranda'];
+  return Object.keys(MATRIX_PRODUCTS);
+}
+
+// Default grid for a product — cells derived from the current formula rates,
+// so enabling matrix mode changes nothing until the seller edits cells.
+// Returns null for products without matrix pricing.
+export function defaultMatrixFor(productKey: string): PriceMatrix | null {
+  const conf = MATRIX_PRODUCTS[productKey];
+  if (!conf) return null;
+  const columns: PriceMatrix['columns'] = {};
+  for (const rk of conf.roofs) {
+    const r = ROOF[rk];
+    columns[rk] = conf.depths.map(d => conf.widths.map(w => Math.round((r.price + r.perM2 * w * d) * 100)));
+  }
+  return { widths: conf.widths, depths: conf.depths, columns };
 }
