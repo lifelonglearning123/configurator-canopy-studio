@@ -572,6 +572,8 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   let roofOpen = false;
 
   let louvreSlats: THREE.Mesh[] = [];
+  // Retractable awning cloth — the render loop scales it towards the cassette.
+  let awning: { cloth: THREE.Group; bar: THREE.Mesh; backZ: number; span: number; yBack: number; yFront: number; ext: number } | null = null;
   let ledMeshes: THREE.Mesh[] = [];
   let glowLights: THREE.PointLight[] = [];
   let heaterEmitters: THREE.Mesh[] = [];
@@ -621,6 +623,13 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const col = new THREE.Color(c.hex).multiplyScalar(0.85);
     const m = new THREE.MeshStandardMaterial({ color: col, roughness: 0.32, metalness: 0.85, side: THREE.DoubleSide });
     matCache.set('metalLam', m);
+    return m;
+  }
+  function fabricMaterial(): THREE.MeshStandardMaterial {
+    const cached = matCache.get('fabric') as THREE.MeshStandardMaterial | undefined;
+    if (cached) return cached;
+    const m = new THREE.MeshStandardMaterial({ color: 0xf2e5cf, roughness: 0.95, metalness: 0, side: THREE.DoubleSide });
+    matCache.set('fabric', m);
     return m;
   }
   function screenRoloMaterial(): THREE.MeshStandardMaterial {
@@ -745,7 +754,7 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
   function buildCanopy() {
     if (!state) return;
     disposeGroup(canopyGroup);
-    louvreSlats = []; ledMeshes = []; heaterEmitters = []; bollardLights = [];
+    louvreSlats = []; awning = null; ledMeshes = []; heaterEmitters = []; bollardLights = [];
     glowLights.forEach(l => l.parent?.remove(l)); glowLights = [];
 
     const W = state.length, D = state.depth, H = state.height;
@@ -918,21 +927,97 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
         }
       }
     } else if (state!.roof.startsWith('fabric')) {
-      const fabricMat = new THREE.MeshStandardMaterial({ color: 0xf2e5cf, roughness: 0.95, metalness: 0, side: THREE.DoubleSide });
-      const cloth = new THREE.Mesh(new THREE.PlaneGeometry(Wr - 0.04, Dr - 0.04, 12, 6), fabricMat);
-      cloth.rotation.x = -Math.PI / 2 + (slopeAngle || THREE.MathUtils.degToRad(12));
-      cloth.position.set(0, H + 0.02, 0);
-      cloth.castShadow = true;
-      canopyGroup.add(cloth);
-      const bar = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, Wr, 12), fm);
-      bar.rotation.z = Math.PI / 2;
-      bar.position.set(0, H - 0.04, Dr / 2 - 0.05);
-      bar.castShadow = true;
-      canopyGroup.add(bar);
-      const cassette = new THREE.Mesh(new THREE.BoxGeometry(Wr + 0.1, 0.18, 0.22), fm);
-      cassette.position.set(0, H + 0.05, -Dr / 2 + 0.06);
-      cassette.castShadow = true;
-      canopyGroup.add(cassette);
+      // Both fabric roofs live in one tilting group so a configured angle
+      // moves cloth and hardware together (same pattern as the solid roof).
+      const fabricMat = fabricMaterial();
+      const roofGroup = new THREE.Group();
+      roofGroup.position.set(0, H + lift, 0);
+      if (slopeAngle) roofGroup.rotation.x = slopeAngle;
+      canopyGroup.add(roofGroup);
+
+      if (state!.roof === 'fabric-retract') {
+        // Retractable awning: cassette on the back beam, cloth running forward
+        // in the side tracks with a gentle fall onto a front profile bar.
+        const cassette = new THREE.Mesh(new THREE.BoxGeometry(Wr + 0.08, 0.18, 0.24), fm);
+        cassette.position.set(0, 0.11, -Dr / 2 + 0.1);
+        cassette.castShadow = true;
+        roofGroup.add(cassette);
+
+        const backZ = -Dr / 2 + 0.22, span = Dr - 0.28, clothW = Wr - 0.16;
+        const yBack = 0.17, yFront = 0.05;
+        // Cloth group origin sits at the cassette mouth so the render loop can
+        // retract the awning by scaling this group towards the cassette.
+        const clothGroup = new THREE.Group();
+        clothGroup.position.set(0, 0, backZ);
+        roofGroup.add(clothGroup);
+
+        const geo = new THREE.PlaneGeometry(clothW, span, 8, 48);
+        geo.rotateX(-Math.PI / 2);
+        geo.translate(0, 0, span / 2); // back edge at local z=0, the cassette mouth
+        const pos = geo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const t = pos.getZ(i) / span; // 0 cassette → 1 front bar
+          const ripple = 0.02 * Math.sin(t * Math.PI * 9) * Math.sin(t * Math.PI);
+          pos.setY(i, yBack + (yFront - yBack) * t + ripple);
+        }
+        geo.computeVertexNormals();
+        // receiveShadow stays off: the rippled cloth self-shadows into acne bands
+        const cloth = new THREE.Mesh(geo, fabricMat);
+        cloth.castShadow = true;
+        clothGroup.add(cloth);
+
+        // Transverse support tubes the cloth rides on — inside clothGroup so
+        // they gather at the cassette when the awning retracts.
+        for (const t of [0.25, 0.5, 0.75]) {
+          const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, clothW, 10), fm);
+          tube.rotation.z = Math.PI / 2;
+          tube.position.set(0, yBack + (yFront - yBack) * t - 0.035, span * t);
+          tube.castShadow = true;
+          clothGroup.add(tube);
+        }
+
+        // Front profile bar + valance stay outside the scaled group so they
+        // keep their shape — the render loop docks them against the cassette.
+        const bar = new THREE.Mesh(new THREE.BoxGeometry(clothW + 0.08, 0.07, 0.09), fm);
+        bar.position.set(0, yFront, backZ + span);
+        bar.castShadow = true;
+        roofGroup.add(bar);
+        const valance = new THREE.Mesh(new THREE.PlaneGeometry(clothW + 0.04, 0.14), fabricMat);
+        valance.position.set(0, -0.1, 0.02);
+        valance.castShadow = true;
+        bar.add(valance);
+
+        awning = { cloth: clothGroup, bar, backZ, span, yBack, yFront, ext: 1 };
+      } else {
+        // Fixed canopy: cloth tensioned over cross rafters inside the beam
+        // perimeter, sagging into each bay — the dark frame stays visible
+        // around the cream fabric so it doesn't read as a solid deck.
+        // The cloth stays clear of the beam tops — draping it over them makes
+        // the beam corners cut through the coarse mesh and show as artifacts.
+        const clothW = Wr - 0.14, clothD = Dr - 0.14;
+        const rafters = Math.max(2, Math.round(Wr / 1.1));
+        for (let i = 1; i < rafters; i++) {
+          const x = -clothW / 2 + (clothW * i) / rafters;
+          const r = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, Dr - 0.1), fm);
+          r.position.set(x, 0, 0);
+          r.castShadow = true;
+          roofGroup.add(r);
+        }
+        const geo = new THREE.PlaneGeometry(clothW, clothD, 64, 24);
+        geo.rotateX(-Math.PI / 2);
+        const pos = geo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          const u = (pos.getX(i) / clothW + 0.5) * rafters; // bay coordinate: whole numbers sit on rafters
+          const tz = pos.getZ(i) / clothD + 0.5;
+          const sag = 0.08 * Math.abs(Math.sin(u * Math.PI)) * Math.sqrt(Math.max(0, Math.sin(tz * Math.PI)));
+          pos.setY(i, 0.05 - sag);
+        }
+        geo.computeVertexNormals();
+        // receiveShadow stays off: the sagging cloth self-shadows into acne bands
+        const cloth = new THREE.Mesh(geo, fabricMat);
+        cloth.castShadow = true;
+        roofGroup.add(cloth);
+      }
     } else if (state!.roof.startsWith('glass')) {
       const roof = new THREE.Mesh(new THREE.BoxGeometry(Wr - 0.04, 0.05, Dr - 0.04), glassMaterial());
       roof.position.set(0, H + 0.03 + lift, 0);
@@ -2575,6 +2660,13 @@ function createScene(container: HTMLElement, onFps?: (fps: number) => void): Sce
     const targetTilt = roofOpen ? -1.15 : 0;
     for (const s of louvreSlats) {
       s.rotation.z += (targetTilt - s.rotation.z) * Math.min(dt * 5, 1);
+    }
+    if (awning) {
+      const targetExt = roofOpen ? 0.05 : 1;
+      awning.ext += (targetExt - awning.ext) * Math.min(dt * 3, 1);
+      awning.cloth.scale.z = awning.ext;
+      awning.bar.position.z = awning.backZ + awning.span * awning.ext;
+      awning.bar.position.y = awning.yBack + (awning.yFront - awning.yBack) * awning.ext;
     }
     controls.update();
     composer.render();

@@ -158,10 +158,12 @@ export function ConfiguratorClient(props: Props) {
               className={`px-2 py-1 rounded ${spin ? 'bg-stone-900 text-white' : 'border border-stone-200 hover:bg-stone-100'}`}>
               {spin ? 'Stop orbit' : 'Auto-orbit'}
             </button>
-            {state.roof === 'louvred-retract' && (
+            {(state.roof === 'louvred-retract' || state.roof === 'fabric-retract') && (
               <button onClick={() => setRoofOpen(o => !o)}
                 className="px-2 py-1 rounded border border-stone-200 hover:bg-stone-100">
-                {roofOpen ? 'Close roof' : 'Open roof'}
+                {state.roof === 'fabric-retract'
+                  ? (roofOpen ? 'Extend awning' : 'Retract awning')
+                  : (roofOpen ? 'Close roof' : 'Open roof')}
               </button>
             )}
             <button onClick={() => {

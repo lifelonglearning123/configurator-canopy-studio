@@ -3,13 +3,14 @@
 // Usage: /dev-scene            → veranda
 //        /dev-scene?p=extension
 //        /dev-scene?p=conservatory-leanto (or -victorian, -edwardian, -orangery)
+//        /dev-scene?roof=fabric-retract  → override the roof system
 // Safe to delete.
 import { defaultPricingLineItems } from '@/lib/catalog';
 import { defaultMatrixFor } from '@/lib/price-matrix';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 
-export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string }> }) {
-  const { p, gate } = await searchParams;
+export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string; roof?: string }> }) {
+  const { p, gate, roof } = await searchParams;
   const key = p ?? 'veranda';
   const schema: Record<string, unknown> =
     key === 'extension' ? { scene: 'extension' } :
@@ -19,6 +20,7 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
     key === 'carport' ? { structure: 'freestanding', roof: 'poly-sloped', scene: 'car' } :
     key === 'studio' ? { structure: 'freestanding', roof: 'glass-flat' } :
     { structure: 'wallmounted', roof: 'glass-sloped' };
+  if (roof) schema.roof = roof;
   const pricing = defaultPricingLineItems().map(r => ({ key: r.key, label: r.label, amountMinor: r.amountMinor }));
   return (
     <ConfiguratorClient
