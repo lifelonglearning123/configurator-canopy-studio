@@ -2,7 +2,7 @@
 
 import { WALL, ROOF, FRAME_COLORS } from './catalog';
 import { upperWindowCount, isUpperWindowPreset } from './openings';
-import { matrixLookup, type PriceMatrix } from './price-matrix';
+import { matrixLookup, type PriceMatrix, type PricingMode } from './price-matrix';
 
 export type Elevation = 'front' | 'back' | 'left' | 'right';
 
@@ -73,10 +73,14 @@ export type PriceLine = { key: string; label: string; amountMinor: number };
 
 // Pure pricing function. Takes the rules map + state, returns the breakdown.
 // Mirrors priceBreakdown() in the HTML prototype but in tenant pricing terms.
-// `priceMatrix` (optional, per product) prices the structural roof line from
-// a seller's size-band grid instead of the base + perM2 formula; sizes/roofs
-// the grid doesn't cover fall back to the formula automatically.
-export function quote(state: ConfigState, prices: Map<string, { label: string; amountMinor: number }>, priceMatrix?: PriceMatrix | null): {
+// `priceMatrix` (optional, per product) prices the structure from a seller's
+// size-band grid instead of the base + perM2 formula; sizes/roofs the grid
+// doesn't cover fall back to the formula automatically. A band price is
+// all-in for the structure (frame + roof), so the base row never stacks on
+// it. `mode` is the seller's detail level: 'detailed' itemises extras
+// (walls, add-ons, service…) on top; 'simple' prices the structure only —
+// extras stay visible in the 3D and on the lead, but unpriced.
+export function quote(state: ConfigState, prices: Map<string, { label: string; amountMinor: number }>, priceMatrix?: PriceMatrix | null, mode: PricingMode = 'detailed'): {
   lines: PriceLine[];
   subtotalMinor: number;
 } {
@@ -104,16 +108,24 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   // band prices are all-inclusive of size, so size surcharges must not stack.
   let usedMatrix = false;
 
-  if (!isNewProduct) {
-    // Base
-    push(`base.${state.structure}`, `Base (${state.structure})`, 0);
+  // 'simple' mode prices the structure only; every extras block below is
+  // gated on this. (Only settable for matrix products, so the conservatory /
+  // extension blocks further down are unaffected in practice.)
+  const detailed = mode !== 'simple';
 
+  if (!isNewProduct) {
     // Roof: seller's size-band matrix when it covers this size + roof,
     // otherwise base + perM2*area formula.
     const rk = state.roof;
     const roofLabel = ROOF[rk as keyof typeof ROOF]?.label ?? rk;
     const hit = priceMatrix ? matrixLookup(priceMatrix, rk, state.length, state.depth) : null;
     usedMatrix = hit != null;
+
+    // Base — formula path only. A band price is the all-in price the seller
+    // would quote for the structure at that size (frame + roof), so the base
+    // row must not stack on top of it.
+    if (!hit) push(`base.${state.structure}`, `Base (${state.structure})`, 0);
+
     if (hit) {
       lines.push({
         key: `roof.${rk}`,
@@ -132,15 +144,17 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
       }
     }
 
-    // Slat upgrades
-    if (rk.startsWith('louvred') && state.slatIsolation) push('slats.isolation', 'Insulated slats', 0);
-    if (state.slatColor !== state.frameColor) {
-      const c = FRAME_COLORS[state.slatColor as keyof typeof FRAME_COLORS];
-      push('slats.twotone', `Two-tone slat colour (${c?.label.split(' — ')[0] ?? state.slatColor})`, 0);
+    // Slat upgrades — extras
+    if (detailed) {
+      if (rk.startsWith('louvred') && state.slatIsolation) push('slats.isolation', 'Insulated slats', 0);
+      if (state.slatColor !== state.frameColor) {
+        const c = FRAME_COLORS[state.slatColor as keyof typeof FRAME_COLORS];
+        push('slats.twotone', `Two-tone slat colour (${c?.label.split(' — ')[0] ?? state.slatColor})`, 0);
+      }
     }
 
-    // Overhang
-    if (state.overhang > 0.05) {
+    // Overhang — a buyer-added extra with its own slider
+    if (detailed && state.overhang > 0.05) {
       const per = get('misc.overhang_per_m')?.amountMinor ?? 0;
       const dim = Math.max(state.length, state.depth);
       if (per > 0) {
@@ -150,28 +164,32 @@ export function quote(state: ConfigState, prices: Map<string, { label: string; a
   }
 
   // Walls per side
-  for (const side of ['front', 'back', 'left', 'right'] as const) {
-    const w = state.walls[side];
-    if (!w || w === 'none') continue;
-    const isFB = side === 'front' || side === 'back';
-    const ruleKey = `wall.${w}.${isFB ? 'frontback' : 'leftright'}`;
-    const rule = get(ruleKey);
-    if (rule && rule.amountMinor > 0) {
-      const label = WALL[w as keyof typeof WALL]?.label ?? w;
-      lines.push({ key: `${ruleKey}.${side}`, label: `${cap(side)}: ${label}`, amountMinor: rule.amountMinor });
+  if (detailed) {
+    for (const side of ['front', 'back', 'left', 'right'] as const) {
+      const w = state.walls[side];
+      if (!w || w === 'none') continue;
+      const isFB = side === 'front' || side === 'back';
+      const ruleKey = `wall.${w}.${isFB ? 'frontback' : 'leftright'}`;
+      const rule = get(ruleKey);
+      if (rule && rule.amountMinor > 0) {
+        const label = WALL[w as keyof typeof WALL]?.label ?? w;
+        lines.push({ key: `${ruleKey}.${side}`, label: `${cap(side)}: ${label}`, amountMinor: rule.amountMinor });
+      }
     }
   }
 
   // Materials & smart features
-  if (state.cladding && state.cladding !== 'none')           push(`cladding.${state.cladding}`,    'Cladding', 0);
-  if (state.flooring && state.flooring !== 'none')           push(`flooring.${state.flooring}`,    'Flooring', 0);
-  if (state.interiorWalls && state.interiorWalls !== 'none') push(`interior.${state.interiorWalls}`,'Interior walls', 0);
+  if (detailed) {
+    if (state.cladding && state.cladding !== 'none')           push(`cladding.${state.cladding}`,    'Cladding', 0);
+    if (state.flooring && state.flooring !== 'none')           push(`flooring.${state.flooring}`,    'Flooring', 0);
+    if (state.interiorWalls && state.interiorWalls !== 'none') push(`interior.${state.interiorWalls}`,'Interior walls', 0);
 
-  for (const [k, on] of Object.entries(state.addons)) if (on) push(`addon.${k}`, `Addon ${k}`, 0);
+    for (const [k, on] of Object.entries(state.addons)) if (on) push(`addon.${k}`, `Addon ${k}`, 0);
 
-  if (state.automation && state.automation !== 'none') push(`automation.${state.automation}`, 'Automation', 0);
-  if (state.electrical && state.electrical !== 'none') push(`electrical.${state.electrical}`, 'Electrical', 0);
-  if (state.service) push(`service.${state.service}`, 'Service', 0);
+    if (state.automation && state.automation !== 'none') push(`automation.${state.automation}`, 'Automation', 0);
+    if (state.electrical && state.electrical !== 'none') push(`electrical.${state.electrical}`, 'Electrical', 0);
+    if (state.service) push(`service.${state.service}`, 'Service', 0);
+  }
 
   // Oversize premium (legacy canopy structures only; a matrix band price
   // already includes the cost of its size — don't stack a size surcharge)

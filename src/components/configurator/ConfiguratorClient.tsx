@@ -7,7 +7,7 @@ import {
   AUTOMATION, ELECTRICAL, SERVICE,
 } from '@/lib/catalog';
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
-import type { PriceMatrix } from '@/lib/price-matrix';
+import type { PriceMatrix, PricingMode } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
 import { PanelRenderer } from './panel/PanelRenderer';
 import { usesNewPanel, productDefaults } from './panel/sections';
@@ -26,6 +26,9 @@ type Props = {
   pricing: { key: string; label: string; amountMinor: number }[];
   /** Seller's size-band price grid for this product (null = formula pricing only). */
   priceMatrix?: PriceMatrix | null;
+  /** Seller's detail level: 'detailed' itemises extras on top of the structural
+   *  price; 'simple' shows the band price as the whole guide price. */
+  pricingMode?: PricingMode;
   /** True when rendered from the public marketing demo. Hides the lead-capture
    *  quote modal (which requires a tenant) and shows a demo banner. */
   demo?: boolean;
@@ -39,7 +42,7 @@ const DEFAULT_STATE: ConfigState = {
   length: 5.0,
   depth: 3.5,
   height: 2.6,
-  overhang: 0.2,
+  overhang: 0, // buyer-added via the Dimensions slider — never a hidden charge
   angle: 0,
   roof: 'louvred-retract',
   slatDirection: 'width',
@@ -82,8 +85,56 @@ export function ConfiguratorClient(props: Props) {
     () => new Map(props.pricing.map(p => [p.key, { label: p.label, amountMinor: p.amountMinor }])),
     [props.pricing]
   );
+  const pricingMode = props.pricingMode ?? 'detailed';
 
-  const { lines, subtotalMinor } = useMemo(() => quote(state, pricingMap, props.priceMatrix), [state, pricingMap, props.priceMatrix]);
+  const { lines, subtotalMinor } = useMemo(
+    () => quote(state, pricingMap, props.priceMatrix, pricingMode),
+    [state, pricingMap, props.priceMatrix, pricingMode]
+  );
+
+  // Options whose pricing row the seller switched off in /admin/pricing are
+  // hidden from the panel entirely — the enabled toggle removes them from
+  // quotes AND from what the buyer can pick. `pricing` only contains enabled
+  // rows on tenant sites; the demo route passes the full default set, so
+  // everything shows there. A roof also counts as offered when the seller's
+  // size-band grid has a column for it.
+  const avail = useMemo(() => {
+    const has = (k: string) => pricingMap.has(k);
+    const withNone = (keys: string[], prefix: string) => keys.filter(k => k === 'none' || has(`${prefix}.${k}`));
+    return {
+      roof: Object.keys(ROOF).filter(k => has(`roof.${k}.base`) || has(`roof.${k}.perM2`) || !!props.priceMatrix?.columns[k]),
+      wallFB: Object.keys(WALL).filter(k => k === 'none' || has(`wall.${k}.frontback`)),
+      wallLR: Object.keys(WALL).filter(k => k === 'none' || has(`wall.${k}.leftright`)),
+      addons: Object.keys(ADDONS).filter(k => has(`addon.${k}`)),
+      cladding: withNone(Object.keys(CLADDING), 'cladding'),
+      flooring: withNone(Object.keys(FLOORING), 'flooring'),
+      interior: withNone(Object.keys(INTERIOR_WALLS), 'interior'),
+      automation: withNone(Object.keys(AUTOMATION), 'automation'),
+      electrical: withNone(Object.keys(ELECTRICAL), 'electrical'),
+      service: Object.keys(SERVICE).filter(k => has(`service.${k}`)),
+    };
+  }, [pricingMap, props.priceMatrix]);
+
+  // If the current selection points at a hidden option (e.g. the product's
+  // default roof was switched off), snap it to something the seller offers
+  // so the 3D, the panel and the price all agree.
+  useEffect(() => {
+    setState(s => {
+      const n = { ...s, walls: { ...s.walls }, addons: { ...s.addons } };
+      let changed = false;
+      if (avail.roof.length && !avail.roof.includes(n.roof)) { n.roof = avail.roof[0]; changed = true; }
+      for (const side of ['front', 'back'] as const) if (!avail.wallFB.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
+      for (const side of ['left', 'right'] as const) if (!avail.wallLR.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
+      for (const k of Object.keys(n.addons) as (keyof ConfigState['addons'])[]) if (n.addons[k] && !avail.addons.includes(k)) { n.addons[k] = false; changed = true; }
+      if (!avail.cladding.includes(n.cladding)) { n.cladding = 'none'; changed = true; }
+      if (!avail.flooring.includes(n.flooring)) { n.flooring = 'none'; changed = true; }
+      if (!avail.interior.includes(n.interiorWalls)) { n.interiorWalls = 'none'; changed = true; }
+      if (!avail.automation.includes(n.automation)) { n.automation = 'none'; changed = true; }
+      if (!avail.electrical.includes(n.electrical)) { n.electrical = 'none'; changed = true; }
+      if (avail.service.length && !avail.service.includes(n.service)) { n.service = avail.service[0]; changed = true; }
+      return changed ? n : s;
+    });
+  }, [avail]);
 
   const visitorKey = `canopy-visitor:${props.tenantSlug}`;
   useEffect(() => {
@@ -117,7 +168,7 @@ export function ConfiguratorClient(props: Props) {
             setState={setState}
           />
         ) : (
-          <LegacyPanel state={state} set={set} setWall={setWall} setAddon={setAddon} productName={props.productName} productTagline={props.productTagline} />
+          <LegacyPanel state={state} set={set} setWall={setWall} setAddon={setAddon} avail={avail} productName={props.productName} productTagline={props.productTagline} />
         )}
       </aside>
 
@@ -219,6 +270,11 @@ export function ConfiguratorClient(props: Props) {
         <p className="text-[11px] text-stone-500 mt-2">
           This is a guide, not a final quote — {props.tenantName} will confirm your exact price after a free survey.
         </p>
+        {pricingMode === 'simple' && (
+          <p className="text-[11px] text-stone-500 mt-2">
+            Walls, add-ons and finishes are shown for your design — {props.tenantName} prices them at the survey.
+          </p>
+        )}
 
         <details className="mt-4 text-xs flex-1">
           <summary className="cursor-pointer select-none text-stone-600 hover:text-stone-900">
@@ -262,6 +318,7 @@ export function ConfiguratorClient(props: Props) {
           currency={props.currency}
           productKey={props.productKey}
           visitor={visitor ?? undefined}
+          pricingMode={pricingMode}
           onClose={() => setModalOpen(false)}
         />
       )}
@@ -345,15 +402,28 @@ function LeadGate({ tenantName, onDone }: { tenantName: string; onDone: (v: Visi
   );
 }
 
-/* LegacyPanel preserves the original 10-product configurator UI verbatim. */
-function LegacyPanel({ state, set, setWall, setAddon, productName, productTagline }: {
+/* Which options the seller offers — anything whose pricing row is switched
+   off in /admin/pricing is absent from these lists and hidden below. */
+type Availability = {
+  roof: string[]; wallFB: string[]; wallLR: string[]; addons: string[];
+  cladding: string[]; flooring: string[]; interior: string[];
+  automation: string[]; electrical: string[]; service: string[];
+};
+
+/* LegacyPanel preserves the original 10-product configurator UI, filtered to
+   the options the seller actually offers. */
+function LegacyPanel({ state, set, setWall, setAddon, avail, productName, productTagline }: {
   state: ConfigState;
   set: <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => void;
   setWall: (side: keyof ConfigState['walls'], v: string) => void;
   setAddon: (k: keyof ConfigState['addons'], v: boolean) => void;
+  avail: Availability;
   productName: string;
   productTagline: string;
 }) {
+  const wallOpts = (list: string[]) => list.map(k => ({ value: k, label: WALL[k as keyof typeof WALL].label }));
+  const showMaterials = avail.cladding.length > 1 || avail.flooring.length > 1 || avail.interior.length > 1;
+  const showSmart = avail.automation.length > 1 || avail.electrical.length > 1;
   return (
     <>
       <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">Configure</div>
@@ -365,7 +435,9 @@ function LegacyPanel({ state, set, setWall, setAddon, productName, productTaglin
       </Section>
 
       <Section title="Frame finish">
-        <Swatches value={state.frameColor} options={Object.entries(FRAME_COLORS).map(([k, v]) => ({ value: k, hex: v.hex, title: v.label }))} onChange={v => set('frameColor', v)} />
+        {/* Slats follow the frame colour — there's no separate slat control,
+            so letting them drift apart silently added the two-tone charge. */}
+        <Swatches value={state.frameColor} options={Object.entries(FRAME_COLORS).map(([k, v]) => ({ value: k, hex: v.hex, title: v.label }))} onChange={v => { set('frameColor', v); set('slatColor', v); }} />
         <p className="text-[11px] text-stone-500 mt-2">{FRAME_COLORS[state.frameColor as keyof typeof FRAME_COLORS]?.label}</p>
       </Section>
 
@@ -373,47 +445,63 @@ function LegacyPanel({ state, set, setWall, setAddon, productName, productTaglin
         <Slider label="Width"      value={state.length}  min={1} max={10} step={0.1}  unit="m" onChange={v => set('length', v)} />
         <Slider label="Projection" value={state.depth}   min={0.05} max={5} step={0.05} unit="m" onChange={v => set('depth', v)} />
         <Slider label="Height"     value={state.height}  min={2.0} max={3.5} step={0.05} unit="m" onChange={v => set('height', v)} />
+        <Slider label="Roof overhang" value={state.overhang} min={0} max={0.6} step={0.05} unit="m" onChange={v => set('overhang', v)} />
         <div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500 flex justify-between">
           <span>Footprint</span>
           <span className="tabular-nums">{(state.length * state.depth).toFixed(1)} m²</span>
         </div>
       </Section>
 
-      <Section title="Roof system">
-        <RadioList value={state.roof} options={Object.entries(ROOF).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('roof', v)} />
-      </Section>
+      {avail.roof.length > 0 && (
+        <Section title="Roof system">
+          <RadioList value={state.roof} options={avail.roof.map(k => ({ value: k, label: ROOF[k as keyof typeof ROOF].label }))} onChange={v => set('roof', v)} />
+        </Section>
+      )}
 
-      <Section title="Walls & enclosures">
-        {(['front', 'back', 'left', 'right'] as const).map(side => (
-          <Select key={side} label={cap(side)} value={state.walls[side]} options={Object.entries(WALL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => setWall(side, v)} />
-        ))}
-      </Section>
+      {(avail.wallFB.length > 1 || avail.wallLR.length > 1) && (
+        <Section title="Walls & enclosures">
+          {(['front', 'back'] as const).map(side => avail.wallFB.length > 1 && (
+            <Select key={side} label={cap(side)} value={state.walls[side]} options={wallOpts(avail.wallFB)} onChange={v => setWall(side, v)} />
+          ))}
+          {(['left', 'right'] as const).map(side => avail.wallLR.length > 1 && (
+            <Select key={side} label={cap(side)} value={state.walls[side]} options={wallOpts(avail.wallLR)} onChange={v => setWall(side, v)} />
+          ))}
+        </Section>
+      )}
 
-      <Section title="Add-ons">
-        {(Object.entries(ADDONS) as [keyof typeof ADDONS, typeof ADDONS[keyof typeof ADDONS]][]).map(([k, v]) => (
-          <Checkbox key={k} label={v.label} checked={!!state.addons[k]} onChange={c => setAddon(k, c)} />
-        ))}
-      </Section>
+      {avail.addons.length > 0 && (
+        <Section title="Add-ons">
+          {avail.addons.map(k => (
+            <Checkbox key={k} label={ADDONS[k as keyof typeof ADDONS].label} checked={!!state.addons[k as keyof typeof ADDONS]} onChange={c => setAddon(k as keyof typeof ADDONS, c)} />
+          ))}
+        </Section>
+      )}
 
-      <Section title="Materials">
-        <Select label="Cladding"        value={state.cladding}       options={Object.entries(CLADDING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('cladding', v)} />
-        <Select label="Flooring"        value={state.flooring}       options={Object.entries(FLOORING).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('flooring', v)} />
-        <Select label="Interior walls"  value={state.interiorWalls}  options={Object.entries(INTERIOR_WALLS).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('interiorWalls', v)} />
-      </Section>
+      {showMaterials && (
+        <Section title="Materials">
+          {avail.cladding.length > 1 && <Select label="Cladding"       value={state.cladding}      options={avail.cladding.map(k => ({ value: k, label: CLADDING[k as keyof typeof CLADDING].label }))} onChange={v => set('cladding', v)} />}
+          {avail.flooring.length > 1 && <Select label="Flooring"       value={state.flooring}      options={avail.flooring.map(k => ({ value: k, label: FLOORING[k as keyof typeof FLOORING].label }))} onChange={v => set('flooring', v)} />}
+          {avail.interior.length > 1 && <Select label="Interior walls" value={state.interiorWalls} options={avail.interior.map(k => ({ value: k, label: INTERIOR_WALLS[k as keyof typeof INTERIOR_WALLS].label }))} onChange={v => set('interiorWalls', v)} />}
+        </Section>
+      )}
 
-      <Section title="Smart features">
-        <Select label="Automation"  value={state.automation} options={Object.entries(AUTOMATION).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('automation', v)} />
-        <Select label="Electrical"  value={state.electrical} options={Object.entries(ELECTRICAL).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('electrical', v)} />
-      </Section>
+      {showSmart && (
+        <Section title="Smart features">
+          {avail.automation.length > 1 && <Select label="Automation" value={state.automation} options={avail.automation.map(k => ({ value: k, label: AUTOMATION[k as keyof typeof AUTOMATION].label }))} onChange={v => set('automation', v)} />}
+          {avail.electrical.length > 1 && <Select label="Electrical" value={state.electrical} options={avail.electrical.map(k => ({ value: k, label: ELECTRICAL[k as keyof typeof ELECTRICAL].label }))} onChange={v => set('electrical', v)} />}
+        </Section>
+      )}
 
-      <Section title="Service & delivery">
-        <Select label="Service tier" value={state.service} options={Object.entries(SERVICE).map(([k, v]) => ({ value: k, label: v.label }))} onChange={v => set('service', v)} />
-      </Section>
+      {avail.service.length > 0 && (
+        <Section title="Service & delivery">
+          <Select label="Service tier" value={state.service} options={avail.service.map(k => ({ value: k, label: SERVICE[k as keyof typeof SERVICE].label }))} onChange={v => set('service', v)} />
+        </Section>
+      )}
     </>
   );
 }
 
-function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; onClose: () => void }) {
+function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, pricingMode, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; pricingMode: PricingMode; onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -479,6 +567,9 @@ function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, onClo
                   <span>Estimated total</span>
                   <span className="font-semibold text-stone-900">{formatMoney(subtotalMinor, currency)}</span>
                 </div>
+                {pricingMode === 'simple' && (
+                  <div className="mt-1 text-[10px] text-stone-500">Extras in your design are priced at the survey.</div>
+                )}
               </div>
               {err && <p className="text-xs text-red-600">{err}</p>}
               <button disabled={busy} className="w-full px-4 py-3 rounded-lg text-white font-medium text-sm" style={{ background: 'var(--brand, #1c1917)' }}>

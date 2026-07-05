@@ -4,13 +4,16 @@
 //        /dev-scene?p=extension
 //        /dev-scene?p=conservatory-leanto (or -victorian, -edwardian, -orangery)
 //        /dev-scene?roof=fabric-retract  → override the roof system
+//        /dev-scene?mode=simple          → preview simple pricing (band = whole guide price)
+//        /dev-scene?drop=wall.sliding,addon.  → strip pricing rows by key prefix, to
+//                                          preview how the panel hides switched-off options
 // Safe to delete.
 import { defaultPricingLineItems } from '@/lib/catalog';
 import { defaultMatrixFor } from '@/lib/price-matrix';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 
-export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string; roof?: string }> }) {
-  const { p, gate, roof } = await searchParams;
+export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string; roof?: string; mode?: string; drop?: string }> }) {
+  const { p, gate, roof, mode, drop } = await searchParams;
   const key = p ?? 'veranda';
   const schema: Record<string, unknown> =
     key === 'extension' ? { scene: 'extension' } :
@@ -21,7 +24,10 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
     key === 'studio' ? { structure: 'freestanding', roof: 'glass-flat' } :
     { structure: 'wallmounted', roof: 'glass-sloped' };
   if (roof) schema.roof = roof;
-  const pricing = defaultPricingLineItems().map(r => ({ key: r.key, label: r.label, amountMinor: r.amountMinor }));
+  const dropPrefixes = (drop ?? '').split(',').map(s => s.trim()).filter(Boolean);
+  const pricing = defaultPricingLineItems()
+    .filter(r => !dropPrefixes.some(pre => r.key.startsWith(pre)))
+    .map(r => ({ key: r.key, label: r.label, amountMinor: r.amountMinor }));
   return (
     <ConfiguratorClient
       tenantName="Dev"
@@ -33,6 +39,7 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
       defaultSchema={schema}
       pricing={pricing}
       priceMatrix={defaultMatrixFor(key)}
+      pricingMode={mode === 'simple' ? 'simple' : 'detailed'}
       demo={gate !== '1'} // ?gate=1 exercises the tenant-mode lead gate locally
     />
   );

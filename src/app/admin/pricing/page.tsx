@@ -35,10 +35,12 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
   const matrixProduct = selected && matrixProductKeys().includes(selected) ? selected : null;
   let matrix: PriceMatrix | null = null;
   let matrixEnabled = false;
+  let matrixMode: 'detailed' | 'simple' = 'detailed';
   if (matrixProduct) {
+    // select('*') keeps this page working before migration 0008 adds `mode`.
     const { data: mrow } = await db
       .from('price_matrices')
-      .select('grid, enabled')
+      .select('*')
       .eq('tenant_id', tenant.id)
       .eq('product_key', matrixProduct)
       .maybeSingle();
@@ -47,6 +49,7 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
       if (parsed.success) {
         matrix = parsed.data;
         matrixEnabled = (mrow as { enabled: boolean }).enabled;
+        matrixMode = (mrow as { mode: string }).mode === 'simple' ? 'simple' : 'detailed';
       }
     }
     if (!matrix) matrix = defaultMatrixFor(matrixProduct); // template prefilled from formula rates
@@ -67,7 +70,10 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
     const amountMinor = Math.round(Number(formData.get('amount')) * 100);
     const enabled = formData.get('enabled') === 'on';
     const db = adminClient();
-    await db.from('pricing_rules').update({ amount_minor: amountMinor, enabled }).eq('id', id).eq('tenant_id', tenant.id);
+    const { error } = await db.from('pricing_rules').update({ amount_minor: amountMinor, enabled }).eq('id', id).eq('tenant_id', tenant.id);
+    // Surface DB failures instead of silently pretending the save worked —
+    // a missing table/column once hid weeks of "saved" edits that never were.
+    if (error) throw new Error(`Saving price failed: ${error.message}`);
     revalidatePath('/admin/pricing');
   }
 
@@ -90,11 +96,13 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
     }
     const parsed = priceMatrixSchema.safeParse({ widths, depths, columns });
     if (!parsed.success) return;
+    const mode = formData.get('mode') === 'simple' ? 'simple' : 'detailed';
     const db = adminClient();
-    await db.from('price_matrices').upsert(
-      { tenant_id: tenant.id, product_key: productKey, grid: parsed.data, enabled, updated_at: new Date().toISOString() },
+    const { error } = await db.from('price_matrices').upsert(
+      { tenant_id: tenant.id, product_key: productKey, grid: parsed.data, enabled, mode, updated_at: new Date().toISOString() },
       { onConflict: 'tenant_id,product_key' }
     );
+    if (error) throw new Error(`Saving grid failed: ${error.message}`);
     revalidatePath('/admin/pricing');
   }
 
@@ -159,12 +167,13 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
         ))}
       </nav>
 
-      {selected && (
-        <p className="text-xs text-stone-500">
-          Rows marked <span className="inline-block px-1.5 rounded bg-stone-100 border border-stone-200">shared</span> are
-          used by other products too — changing them here changes every quote that uses them.
-        </p>
-      )}
+      <p className="text-xs text-stone-500">
+        Switching a row off removes it from quotes <em>and hides that option in the buyer&apos;s configurator</em>.
+        {selected && (
+          <> Rows marked <span className="inline-block px-1.5 rounded bg-stone-100 border border-stone-200">shared</span> are
+          used by other products too — changing them here changes every quote that uses them.</>
+        )}
+      </p>
 
       {matrixProduct && m && (
         <section className="bg-white border border-stone-200 rounded-xl p-5">
@@ -173,8 +182,9 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
             <span className="text-[11px] text-stone-500">£ per structure · width × projection</span>
           </div>
           <p className="text-xs text-stone-500 mb-4">
-            Enter the price you would quote for each size — buyers between sizes are charged at the
-            next band up. Leave a cell blank to price that size with the per-m² rows below instead.
+            Enter the all-in price you would quote for the structure (frame + roof) at each size —
+            buyers between sizes are charged at the next band up. Leave a cell blank to price that
+            size with the base + per-m² rows below instead.
           </p>
           <form action={saveMatrix} className="space-y-5">
             <input type="hidden" name="productKey" value={matrixProduct} />
@@ -211,6 +221,17 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
                 </table>
               </div>
             ))}
+            <div className="space-y-1.5 pt-1">
+              <div className="text-xs font-medium text-stone-700">Detail level</div>
+              <label className="flex items-start gap-2 text-xs text-stone-600">
+                <input type="radio" name="mode" value="detailed" defaultChecked={matrixMode !== 'simple'} className="mt-0.5 accent-stone-900" />
+                <span><strong>Detailed</strong> — extras (walls, add-ons, service…) are itemised on top of the band price.</span>
+              </label>
+              <label className="flex items-start gap-2 text-xs text-stone-600">
+                <input type="radio" name="mode" value="simple" defaultChecked={matrixMode === 'simple'} className="mt-0.5 accent-stone-900" />
+                <span><strong>Simple</strong> — the band price is the whole guide price; buyers still design extras in 3D, priced at the survey.</span>
+              </label>
+            </div>
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 text-xs text-stone-600">
                 <input type="checkbox" name="enabled" defaultChecked={matrixEnabled} className="w-3.5 h-3.5 accent-stone-900" />

@@ -10,7 +10,12 @@
 // Rollout is product-by-product; the veranda is first.
 
 import { z } from 'zod';
-import { ROOF } from './catalog';
+import { ROOF, defaultPricingLineItems } from './catalog';
+
+// Seller-chosen detail level for a product's quotes (stored on the matrix row):
+//   detailed — structural price (band or formula) + itemised extras. Default.
+//   simple   — the band price IS the whole guide price; extras stay unpriced.
+export type PricingMode = 'detailed' | 'simple';
 
 export type PriceMatrix = {
   /** Ascending band upper edges in metres, e.g. [3, 4, 5, 6, 7]. */
@@ -48,12 +53,13 @@ export function matrixLookup(m: PriceMatrix, roofKey: string, lengthM: number, d
 // Per-product matrix configuration: which roof materials get a price column
 // and which size bands the grid uses — the same band steps as real trade
 // price lists (the seller workbook uses 4–7 m × 2.5–4 m). Carports run
-// deeper (a car is ~5 m long).
-const MATRIX_PRODUCTS: Record<string, { roofs: (keyof typeof ROOF)[]; widths: number[]; depths: number[] }> = {
-  veranda: { roofs: ['glass-sloped', 'poly-sloped'],       widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
-  pergola: { roofs: ['louvred-retract', 'louvred-fixed'],  widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
-  carport: { roofs: ['poly-sloped', 'solid-alu'],          widths: [3, 4, 5, 6, 7], depths: [3, 4, 5, 6] },
-  studio:  { roofs: ['glass-flat', 'solid-alu'],           widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4] },
+// deeper (a car is ~5 m long). `structure` picks which base rate gets folded
+// into the default grid cells — band prices are all-in (frame + roof).
+const MATRIX_PRODUCTS: Record<string, { roofs: (keyof typeof ROOF)[]; widths: number[]; depths: number[]; structure: 'freestanding' | 'wallmounted' }> = {
+  veranda: { roofs: ['glass-sloped', 'poly-sloped'],       widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4], structure: 'wallmounted' },
+  pergola: { roofs: ['louvred-retract', 'louvred-fixed'],  widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4], structure: 'freestanding' },
+  carport: { roofs: ['poly-sloped', 'solid-alu'],          widths: [3, 4, 5, 6, 7], depths: [3, 4, 5, 6],     structure: 'freestanding' },
+  studio:  { roofs: ['glass-flat', 'solid-alu'],           widths: [3, 4, 5, 6, 7], depths: [2.5, 3, 3.5, 4], structure: 'freestanding' },
 };
 
 // Which products have matrix pricing available (rollout list).
@@ -61,16 +67,19 @@ export function matrixProductKeys(): string[] {
   return Object.keys(MATRIX_PRODUCTS);
 }
 
-// Default grid for a product — cells derived from the current formula rates,
-// so enabling matrix mode changes nothing until the seller edits cells.
+// Default grid for a product — cells derived from the current formula rates
+// INCLUDING the structure base, so a cell means "the all-in price you would
+// quote for the structure at this size". quote() skips the base row whenever
+// a band price is used, so at the band sizes the totals match formula pricing.
 // Returns null for products without matrix pricing.
 export function defaultMatrixFor(productKey: string): PriceMatrix | null {
   const conf = MATRIX_PRODUCTS[productKey];
   if (!conf) return null;
+  const baseMinor = defaultPricingLineItems().find(r => r.key === `base.${conf.structure}`)?.amountMinor ?? 0;
   const columns: PriceMatrix['columns'] = {};
   for (const rk of conf.roofs) {
     const r = ROOF[rk];
-    columns[rk] = conf.depths.map(d => conf.widths.map(w => Math.round((r.price + r.perM2 * w * d) * 100)));
+    columns[rk] = conf.depths.map(d => conf.widths.map(w => baseMinor + Math.round((r.price + r.perM2 * w * d) * 100)));
   }
   return { widths: conf.widths, depths: conf.depths, columns };
 }

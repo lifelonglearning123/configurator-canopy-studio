@@ -1,8 +1,13 @@
 # Flexible pricing — scoping (draft for discussion)
 
-Status: **PROPOSAL — not implemented.** Drafted 2026-07-03 from a discussion of
-one seller's real pricing workbook (`CALCULATION SHEET Ver7, 2025.xlsx`, repo
-root). Open questions at the bottom need a decision before build.
+Status: **Phase 1 built** (2026-07-05): matrix core (`price-matrix.ts`,
+`quote()` integration, admin grid editor) plus a per-product **detail level**
+(`price_matrices.mode`): `detailed` = band price + itemised extras (default);
+`simple` = the band price is the whole guide price, extras unpriced. Band
+prices are all-in for the structure — the `base.*` row no longer stacks on a
+band price. Tiers/margins, availability constraints and import are still open.
+Drafted 2026-07-03 from a discussion of one seller's real pricing workbook
+(`CALCULATION SHEET Ver7, 2025.xlsx`, repo root).
 
 ## The problem
 

@@ -95,6 +95,7 @@ type PriceMatrixRow = {
   product_key: string;
   grid: Json;
   enabled: boolean;
+  mode: string; // 'detailed' | 'simple'
   updated_at: string;
 };
 

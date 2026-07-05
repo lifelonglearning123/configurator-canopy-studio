@@ -30,7 +30,8 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
   const pricingMap = await loadTenantPricing(tenant.id);
   // Serialize the Map to an array for client transfer
   const pricing = Array.from(pricingMap.entries()).map(([k, v]) => ({ key: k, label: v.label, amountMinor: v.amountMinor }));
-  // Seller's size-band grid (null until the seller saves one → formula pricing).
+  // Seller's size-band grid + detail level (null until the seller saves one
+  // → formula pricing with itemised extras).
   const priceMatrix = await loadTenantPriceMatrix(tenant.id, productKey);
 
   return (
@@ -43,7 +44,8 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
       productTagline={link.custom_tagline ?? link.products.tagline}
       defaultSchema={link.products.default_schema_json}
       pricing={pricing}
-      priceMatrix={priceMatrix}
+      priceMatrix={priceMatrix?.grid ?? null}
+      pricingMode={priceMatrix?.mode ?? 'detailed'}
     />
   );
 }
