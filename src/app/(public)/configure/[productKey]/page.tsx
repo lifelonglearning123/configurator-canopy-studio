@@ -4,6 +4,7 @@ import { adminClient } from '@/lib/supabase-server';
 import { loadTenantPricing, loadTenantPriceMatrix } from '@/lib/pricing-server';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 import { notFound } from 'next/navigation';
+import { presetFor, pricingProductKey } from '@/lib/presets';
 
 export default async function ConfigurePage({ params }: { params: Promise<{ productKey: string }> }) {
   const { productKey } = await params;
@@ -32,7 +33,22 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
   const pricing = Array.from(pricingMap.entries()).map(([k, v]) => ({ key: k, label: v.label, amountMinor: v.amountMinor }));
   // Seller's size-band grid + detail level (null until the seller saves one
   // → formula pricing with itemised extras).
-  const priceMatrix = await loadTenantPriceMatrix(tenant.id, productKey);
+  // Presets share their base product's grid (e.g. veranda-glass → veranda).
+  const priceMatrix = await loadTenantPriceMatrix(tenant.id, pricingProductKey(productKey));
+
+  // Presets link to the fully configurable base product — only when this
+  // tenant actually offers it, so the link never lands on a 404.
+  const preset = presetFor(productKey);
+  let customHref: string | null = null;
+  if (preset) {
+    const { data: base } = await db
+      .from('tenant_products')
+      .select('enabled, products!inner(key)')
+      .eq('tenant_id', tenant.id)
+      .eq('products.key', preset.baseProduct)
+      .maybeSingle();
+    if ((base as { enabled: boolean } | null)?.enabled) customHref = `/configure/${preset.baseProduct}`;
+  }
 
   return (
     <ConfiguratorClient
@@ -46,6 +62,7 @@ export default async function ConfigurePage({ params }: { params: Promise<{ prod
       pricing={pricing}
       priceMatrix={priceMatrix?.grid ?? null}
       pricingMode={priceMatrix?.mode ?? 'detailed'}
+      customHref={customHref}
     />
   );
 }
