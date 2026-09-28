@@ -6,6 +6,7 @@ import { pricingRowAppliesTo, ROOF } from '@/lib/catalog';
 import { defaultMatrixFor, matrixProductKeys, priceMatrixSchema, type PriceMatrix } from '@/lib/price-matrix';
 import { MARKETING_PRODUCTS } from '@/lib/marketing-products';
 import Link from 'next/link';
+import { presetsOf } from '@/lib/presets';
 
 type Rule = { id: string; line_item_key: string; label: string; amount_minor: number; enabled: boolean; product_key: string | null };
 
@@ -135,7 +136,8 @@ export default async function PricingPage({ searchParams }: { searchParams: Prom
           <h1 className="text-2xl font-semibold tracking-tight">Pricing</h1>
           <p className="text-sm text-stone-600">
             {selected
-              ? <>Line items used by <strong>{MARKETING_PRODUCTS.find(p => p.key === selected)?.name}</strong> quotes. Currency: {tenant.currency}.</>
+              ? <>Line items used by <strong>{MARKETING_PRODUCTS.find(p => p.key === selected)?.name}</strong> quotes. Currency: {tenant.currency}.
+                  {presetsOf(selected).length > 0 && <> Also prices its size-only versions ({presetsOf(selected).join(', ')}).</>}</>
               : <>Every line item that can appear in a quote. Pick a product to see only its rows. Currency: {tenant.currency}.</>}
           </p>
         </div>

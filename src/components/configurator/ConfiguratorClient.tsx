@@ -11,6 +11,7 @@ import type { PriceMatrix, PricingMode } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
 import { PanelRenderer } from './panel/PanelRenderer';
 import { usesNewPanel, productDefaults } from './panel/sections';
+import { presetFor, type ProductPreset } from '@/lib/presets';
 
 // Three.js scene is browser-only — bypass SSR
 const Scene = dynamic(() => import('./Scene').then(m => m.Scene), { ssr: false });
@@ -29,6 +30,9 @@ type Props = {
   /** Seller's detail level: 'detailed' itemises extras on top of the structural
    *  price; 'simple' shows the band price as the whole guide price. */
   pricingMode?: PricingMode;
+  /** Size-only presets: link to the fully configurable base product
+   *  (null when the seller doesn't offer it). */
+  customHref?: string | null;
   /** True when rendered from the public marketing demo. Hides the lead-capture
    *  quote modal (which requires a tenant) and shows a demo banner. */
   demo?: boolean;
@@ -60,13 +64,23 @@ const DEFAULT_STATE: ConfigState = {
 };
 
 export function ConfiguratorClient(props: Props) {
-  const [state, setState] = useState<ConfigState>(() => ({
-    ...DEFAULT_STATE,
-    ...productDefaults(props.productKey),
-    product: props.productKey,
-    structure: (props.defaultSchema.structure as ConfigState['structure']) ?? DEFAULT_STATE.structure,
-    roof: (props.defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
-  }));
+  const preset = presetFor(props.productKey);
+  const [state, setState] = useState<ConfigState>(() => {
+    const s: ConfigState = {
+      ...DEFAULT_STATE,
+      ...productDefaults(props.productKey),
+      product: props.productKey,
+      structure: (props.defaultSchema.structure as ConfigState['structure']) ?? DEFAULT_STATE.structure,
+      roof: (props.defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
+      ...preset?.locked,
+    };
+    if (preset) {
+      s.length = clamp(s.length, ...preset.ranges.width);
+      s.depth  = clamp(s.depth,  ...preset.ranges.depth);
+      s.height = clamp(s.height, ...preset.ranges.height);
+    }
+    return s;
+  });
   const [modalOpen, setModalOpen] = useState(false);
   // Who is designing — captured up-front (tenant sites only) so the seller
   // holds a contact even if the buyer never requests the final quote.
@@ -122,7 +136,8 @@ export function ConfiguratorClient(props: Props) {
     setState(s => {
       const n = { ...s, walls: { ...s.walls }, addons: { ...s.addons } };
       let changed = false;
-      if (avail.roof.length && !avail.roof.includes(n.roof)) { n.roof = avail.roof[0]; changed = true; }
+      // A preset's roof IS the product (glass vs poly veranda) — never swap it.
+      if (!preset && avail.roof.length && !avail.roof.includes(n.roof)) { n.roof = avail.roof[0]; changed = true; }
       for (const side of ['front', 'back'] as const) if (!avail.wallFB.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
       for (const side of ['left', 'right'] as const) if (!avail.wallLR.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
       for (const k of Object.keys(n.addons) as (keyof ConfigState['addons'])[]) if (n.addons[k] && !avail.addons.includes(k)) { n.addons[k] = false; changed = true; }
@@ -134,7 +149,7 @@ export function ConfiguratorClient(props: Props) {
       if (avail.service.length && !avail.service.includes(n.service)) { n.service = avail.service[0]; changed = true; }
       return changed ? n : s;
     });
-  }, [avail]);
+  }, [avail, preset]);
 
   const visitorKey = `canopy-visitor:${props.tenantSlug}`;
   useEffect(() => {
@@ -159,7 +174,9 @@ export function ConfiguratorClient(props: Props) {
     <main className="grid grid-cols-1 lg:grid-cols-[340px_minmax(0,1fr)_280px]">
       {/* LEFT: options */}
       <aside className="border-r border-stone-200 bg-white p-5 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
-        {usesNewPanel(props.productKey) ? (
+        {preset ? (
+          <PresetPanel state={state} set={set} preset={preset} customHref={props.customHref ?? null} productName={props.productName} productTagline={props.productTagline} />
+        ) : usesNewPanel(props.productKey) ? (
           <PanelRenderer
             productKey={props.productKey}
             productName={props.productName}
@@ -501,6 +518,41 @@ function LegacyPanel({ state, set, setWall, setAddon, avail, productName, produc
   );
 }
 
+// Size-only panel for presets: every other option is locked in PRODUCT_PRESETS.
+function PresetPanel({ state, set, preset, customHref, productName, productTagline }: {
+  state: ConfigState;
+  set: <K extends keyof ConfigState>(k: K, v: ConfigState[K]) => void;
+  preset: ProductPreset;
+  customHref: string | null;
+  productName: string;
+  productTagline: string;
+}) {
+  const r = preset.ranges;
+  return (
+    <>
+      <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500 mb-1.5">Configure</div>
+      <h2 className="text-3xl tracking-tight" style={{ fontFamily: 'serif' }}>{productName}</h2>
+      <p className="text-xs text-stone-500 mt-2">{productTagline}</p>
+
+      <Section title="Choose your size">
+        <Slider label="Width"      value={state.length} min={r.width[0]}  max={r.width[1]}  step={0.1}  unit="m" onChange={v => set('length', v)} />
+        <Slider label="Projection" value={state.depth}  min={r.depth[0]}  max={r.depth[1]}  step={0.05} unit="m" onChange={v => set('depth', v)} />
+        <Slider label="Height"     value={state.height} min={r.height[0]} max={r.height[1]} step={0.05} unit="m" onChange={v => set('height', v)} />
+        <div className="mt-2 text-[10px] uppercase tracking-wider text-stone-500 flex justify-between">
+          <span>Footprint</span>
+          <span className="tabular-nums">{(state.length * state.depth).toFixed(1)} m²</span>
+        </div>
+      </Section>
+
+      {customHref && (
+        <a href={customHref} className="mt-4 block text-xs text-stone-600 underline underline-offset-2 hover:text-stone-900">
+          Need more options? Customise fully →
+        </a>
+      )}
+    </>
+  );
+}
+
 function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, pricingMode, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; pricingMode: PricingMode; onClose: () => void }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
@@ -584,6 +636,7 @@ function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, prici
 }
 
 /* ---------- small primitives ---------- */
+function clamp(v: number, min: number, max: number) { return Math.min(max, Math.max(min, v)); }
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <details open className="border-b border-stone-100 py-4">

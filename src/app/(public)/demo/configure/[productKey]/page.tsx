@@ -11,6 +11,7 @@ import { defaultPricingLineItems } from '@/lib/catalog';
 import { defaultMatrixFor } from '@/lib/price-matrix';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 import { notFound } from 'next/navigation';
+import { presetFor, pricingProductKey } from '@/lib/presets';
 
 export default async function DemoConfigurePage({ params }: { params: Promise<{ productKey: string }> }) {
   const { productKey } = await params;
@@ -25,6 +26,7 @@ export default async function DemoConfigurePage({ params }: { params: Promise<{ 
   if (!product) notFound();
   const p = product as { key: string; name: string; tagline: string; default_schema_json: Record<string, unknown> };
 
+  const preset = presetFor(p.key);
   const pricing = defaultPricingLineItems().map(r => ({ key: r.key, label: r.label, amountMinor: r.amountMinor }));
 
   return (
@@ -37,7 +39,8 @@ export default async function DemoConfigurePage({ params }: { params: Promise<{ 
       productTagline={p.tagline}
       defaultSchema={p.default_schema_json}
       pricing={pricing}
-      priceMatrix={defaultMatrixFor(p.key)}
+      priceMatrix={defaultMatrixFor(pricingProductKey(p.key))}
+      customHref={preset ? `/demo/configure/${preset.baseProduct}` : null}
       demo
     />
   );

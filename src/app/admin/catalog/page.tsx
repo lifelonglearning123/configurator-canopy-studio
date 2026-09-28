@@ -1,6 +1,7 @@
 import { requireSessionTenant } from '@/lib/session';
 import { adminClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
+import { presetFor } from '@/lib/presets';
 
 export default async function CatalogPage() {
   const { tenant } = await requireSessionTenant();
@@ -47,6 +48,9 @@ export default async function CatalogPage() {
                 <div className="font-medium text-sm">{tp?.custom_name ?? p.name}</div>
                 <div className="text-xs text-stone-500 mt-0.5">{tp?.custom_tagline ?? p.tagline}</div>
                 <div className="text-[10px] uppercase tracking-wider text-stone-400 mt-1.5">{p.key}</div>
+                {presetFor(p.key) && (
+                  <div className="text-[11px] text-stone-500 mt-1">Size-only version · priced from <span className="font-mono">{presetFor(p.key)!.baseProduct}</span> in Pricing</div>
+                )}
               </div>
               <input type="hidden" name="product_id" value={p.id} />
               <label className="inline-flex items-center gap-2 text-xs cursor-pointer">
