@@ -269,6 +269,18 @@ export const LEGACY_PRODUCT_KEYS = [
   'container', 'fence', 'garage', 'glassroom', 'enclosure',
 ];
 
+// Roof systems a product never offers, whatever the seller's price list.
+// Roof prices are shared by all canopy products, so this is a product rule,
+// not a pricing one: a veranda is wall-mounted with a fall away from the
+// house, so a flat glass roof is not a veranda.
+export const PRODUCT_ROOF_EXCLUDE: Record<string, string[]> = {
+  veranda: ['glass-flat'],
+};
+
+export function roofOfferedFor(productKey: string, roofKey: string): boolean {
+  return !(PRODUCT_ROOF_EXCLUDE[productKey] ?? []).includes(roofKey);
+}
+
 export function pricingRowAppliesTo(lineItemKey: string, productKey: string): boolean {
   const k = lineItemKey;
   const starts = (...prefixes: string[]) => prefixes.some(p => k.startsWith(p));
