@@ -7,8 +7,7 @@
   "scripts": {
     "setup": "npx playwright install chromium",
     "start": "node --env-file=.env worker.mjs",
-    "once": "node --env-file=.env worker.mjs --once",
-    "test-render": "node --env-file=.env worker.mjs --url \"%APP_URL%/render?dev=veranda&samples=60\" --out test.jpg"
+    "once": "node --env-file=.env worker.mjs --once"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
