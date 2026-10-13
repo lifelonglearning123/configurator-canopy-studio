@@ -7,7 +7,7 @@ import {
   AUTOMATION, ELECTRICAL, SERVICE,
 } from '@/lib/catalog';
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
-import { roofOfferedFor } from '@/lib/catalog';
+import { roofOfferedFor, fallbackRoof } from '@/lib/catalog';
 import type { PriceMatrix, PricingMode } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
 import type { QualityTier } from './quality';
@@ -176,7 +176,7 @@ export function ConfiguratorClient(props: Props) {
       const n = { ...s, walls: { ...s.walls }, addons: { ...s.addons } };
       let changed = false;
       // A preset's roof IS the product (glass vs poly veranda) — never swap it.
-      if (!preset && avail.roof.length && !avail.roof.includes(n.roof)) { n.roof = avail.roof[0]; changed = true; }
+      if (!preset && avail.roof.length && !avail.roof.includes(n.roof)) { n.roof = fallbackRoof(props.productKey, avail.roof)!; changed = true; }
       for (const side of ['front', 'back'] as const) if (!avail.wallFB.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
       for (const side of ['left', 'right'] as const) if (!avail.wallLR.includes(n.walls[side])) { n.walls[side] = 'none'; changed = true; }
       for (const k of Object.keys(n.addons) as (keyof ConfigState['addons'])[]) if (n.addons[k] && !avail.addons.includes(k)) { n.addons[k] = false; changed = true; }
@@ -188,7 +188,7 @@ export function ConfiguratorClient(props: Props) {
       if (avail.service.length && !avail.service.includes(n.service)) { n.service = avail.service[0]; changed = true; }
       return changed ? n : s;
     });
-  }, [avail, preset]);
+  }, [avail, preset, props.productKey]);
 
   const visitorKey = `canopy-visitor:${props.tenantSlug}`;
   useEffect(() => {
