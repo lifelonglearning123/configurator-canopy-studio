@@ -277,6 +277,17 @@ export const PRODUCT_ROOF_EXCLUDE: Record<string, string[]> = {
   veranda: ['glass-flat'],
 };
 
+// When a product's default roof isn't in the seller's price list, fall back
+// to the first of these that is, before any other roof: a veranda should open
+// sloped (polycarbonate if the seller doesn't sell sloped glass), not louvred.
+export const PRODUCT_ROOF_FALLBACK: Record<string, string[]> = {
+  veranda: ['glass-sloped', 'poly-sloped'],
+};
+
+export function fallbackRoof(productKey: string, offered: string[]): string | undefined {
+  return (PRODUCT_ROOF_FALLBACK[productKey] ?? []).find(k => offered.includes(k)) ?? offered[0];
+}
+
 export function roofOfferedFor(productKey: string, roofKey: string): boolean {
   return !(PRODUCT_ROOF_EXCLUDE[productKey] ?? []).includes(roofKey);
 }
