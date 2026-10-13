@@ -7,6 +7,7 @@ import {
   AUTOMATION, ELECTRICAL, SERVICE,
 } from '@/lib/catalog';
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
+import { roofOfferedFor } from '@/lib/catalog';
 import type { PriceMatrix, PricingMode } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
 import type { QualityTier } from './quality';
@@ -154,7 +155,7 @@ export function ConfiguratorClient(props: Props) {
     const has = (k: string) => pricingMap.has(k);
     const withNone = (keys: string[], prefix: string) => keys.filter(k => k === 'none' || has(`${prefix}.${k}`));
     return {
-      roof: Object.keys(ROOF).filter(k => has(`roof.${k}.base`) || has(`roof.${k}.perM2`) || !!props.priceMatrix?.columns[k]),
+      roof: Object.keys(ROOF).filter(k => roofOfferedFor(props.productKey, k) && (has(`roof.${k}.base`) || has(`roof.${k}.perM2`) || !!props.priceMatrix?.columns[k])),
       wallFB: Object.keys(WALL).filter(k => k === 'none' || has(`wall.${k}.frontback`)),
       wallLR: Object.keys(WALL).filter(k => k === 'none' || has(`wall.${k}.leftright`)),
       addons: Object.keys(ADDONS).filter(k => has(`addon.${k}`)),
@@ -165,7 +166,7 @@ export function ConfiguratorClient(props: Props) {
       electrical: withNone(Object.keys(ELECTRICAL), 'electrical'),
       service: Object.keys(SERVICE).filter(k => has(`service.${k}`)),
     };
-  }, [pricingMap, props.priceMatrix]);
+  }, [pricingMap, props.priceMatrix, props.productKey]);
 
   // If the current selection points at a hidden option (e.g. the product's
   // default roof was switched off), snap it to something the seller offers
