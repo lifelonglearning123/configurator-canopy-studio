@@ -862,6 +862,7 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
   let state: ConfigState | null = null;
   let productScene: string | null = null;
   let lastBuildAt = 0; // the quality probe ignores windows that contain a rebuild
+  let roofWallTop = 0;  // highest point of the roof where it meets the house; the facade keeps its upper windows above it
   let buildCount = 0;
   let view: SceneView = 'iso';
   let timeOfDay = 13;
@@ -1078,6 +1079,7 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
     const W = state.length, D = state.depth, H = state.height;
     const fm = frameMaterial();
     fitShadowFrustum(W, D);
+    roofWallTop = H + 0.1;
 
     pad.scale.set(W + 1.6, D + 1.6, 1);
     paverTex.repeat.set((W + 1.6) / 2.4, (D + 1.6) / 2.4);
@@ -1441,8 +1443,10 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
       outlet.position.set(pipeX, gutterY - 0.08, (gutterZ + pipeZ) / 2);
       canopyGroup.add(outlet);
     }
+    const backEdgeY = H + 0.03 + lift + Math.tan(slopeAngle) * Dr / 2;
+    roofWallTop = backEdgeY + (isFabric ? 0.22 : 0.06);
     if (state!.structure === 'wallmounted' && !isFabric) {
-      const backEdgeY = H + 0.03 + lift + Math.tan(slopeAngle) * Dr / 2;
+      roofWallTop = backEdgeY + 0.18;
       const flashing = new THREE.Mesh(PB(Wr + 0.12, 0.16, 0.025), fm);
       flashing.position.set(0, backEdgeY + 0.1, -D / 2 - 0.005);
       flashing.castShadow = true;
@@ -1721,6 +1725,9 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
 
     // Optional house backdrop behind the extension
     if (state.houseBackdrop && state.houseBackdrop !== 'none') {
+      const shape = state.extensionRoof?.shape;
+      const ridgeH = Math.min(D, W) * 0.28;
+      roofWallTop = shape === 'mono' ? totalH + ridgeH + 0.1 : shape === 'flat' ? totalH + 0.35 : totalH + 0.15;
       buildHouse(W, D, H);
     }
 
@@ -2159,6 +2166,7 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
     else if (style === 'conservatory-orangery')  buildOrangeryRoof(W, D, H, brickKey);
     else if (style === 'conservatory-victorian') buildVictorianRoof(footprint, H);
 
+    roofWallTop = style === 'conservatory-leanto' ? H + D * 0.18 + 0.14 : style === 'conservatory-orangery' ? H + 0.4 : H + 0.1;
     if (state.structure === 'wallmounted') buildHouse(W, D, H);
     if (state.addons.lighting) buildLighting(W, D, H);
     if (state.addons.bar)      buildBarLights(W, D, H);
@@ -2376,7 +2384,11 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
   // roof rising away from the viewer and two storeys of windows: it should
   // read as a house, not a wall.
   function buildHouse(W: number, D: number, H: number) {
-    const houseW = W + 4, houseH = H + 1.9, houseT = 0.35;
+    // The roof attaches to this wall at roofWallTop. A real house has its
+    // first-floor cills above the roof line, so the eaves rise to fit two
+    // storeys around the attachment and the window rows stay clear of it.
+    const attach = Math.max(roofWallTop, H + 0.1);
+    const houseW = W + 4, houseH = Math.max(H + 1.9, attach + 1.75), houseT = 0.35;
     const zFace = -D / 2 - 0.02;                 // front face of the house wall
     const wallMat = claddingMaterial(houseW, houseH)
       ?? setMaterial('house-render', 'plaster', 0xf6f3ec, houseW, houseH, { roughness: 0.95, normalScale: 0.45, fallback: { map: plasterTex, color: 0xe9e4da, bump: 0.15 } });
@@ -2420,7 +2432,9 @@ function createScene(container: HTMLElement, opts: SceneOptions): SceneContext {
     canopyGroup.add(knob);
 
     const winGlass = glazing('houseGlass', { tint: 0x9fb4bd, transmission: 0.5, roughness: 0.05, opacity: 0.75, env: 1 });
-    const rows = [1.5, houseH - 1.3].filter(y => y + 0.65 < houseH - 0.05);
+    const lowerY = Math.min(1.5, H - 0.08 - 0.6);   // under the roof, below its underside at the wall
+    const upperY = attach + 0.2 + 0.6;               // first floor: cill 20 cm above the attachment
+    const rows = [lowerY, upperY].filter(y => y - 0.6 > 0.3 && y + 0.65 < houseH - 0.05);
     for (const wy of rows) for (const wx of [-W * 0.40, W * 0.40]) {
       const f = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.2, 0.06), trimMat);
       f.position.set(wx, wy, zFace + 0.015);
