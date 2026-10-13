@@ -9,7 +9,7 @@ export default async function AdminHome() {
   const [{ count: leadCount }, { count: enabledProducts }, { data: recentLeads }] = await Promise.all([
     db.from('leads').select('id', { count: 'exact', head: true }).eq('tenant_id', tenant.id),
     db.from('tenant_products').select('product_id', { count: 'exact', head: true }).eq('tenant_id', tenant.id).eq('enabled', true),
-    db.from('leads').select('id, first_name, last_name, email, price_quoted_minor, currency, created_at, product_key')
+    db.from('leads').select('id, first_name, last_name, email, price_quoted_minor, currency, created_at, product_key, render_url')
       .eq('tenant_id', tenant.id).order('created_at', { ascending: false }).limit(8),
   ]);
 
@@ -32,11 +32,19 @@ export default async function AdminHome() {
           {recentLeads?.length ? (
             <table className="w-full text-sm">
               <thead className="bg-stone-50 text-xs uppercase tracking-wider text-stone-500">
-                <tr><th className="text-left p-3">Name</th><th className="text-left p-3">Product</th><th className="text-right p-3">Quote</th><th className="text-right p-3">Date</th></tr>
+                <tr><th className="text-left p-3">Design</th><th className="text-left p-3">Name</th><th className="text-left p-3">Product</th><th className="text-right p-3">Quote</th><th className="text-right p-3">Date</th></tr>
               </thead>
               <tbody>
-                {(recentLeads as { id: string; first_name: string; last_name: string; email: string; price_quoted_minor: number; currency: string; created_at: string; product_key: string | null }[]).map(l => (
+                {(recentLeads as { id: string; first_name: string; last_name: string; email: string; price_quoted_minor: number; currency: string; created_at: string; product_key: string | null; render_url: string | null }[]).map(l => (
                   <tr key={l.id} className="border-t border-stone-100">
+                    <td className="p-2 w-24">
+                      {l.render_url ? (
+                        <a href={l.render_url} target="_blank" rel="noreferrer" title="Open the customer's design">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={l.render_url} alt="" className="h-12 w-20 object-cover rounded-md border border-stone-200" />
+                        </a>
+                      ) : <span className="text-xs text-stone-400">—</span>}
+                    </td>
                     <td className="p-3">{l.first_name} {l.last_name}<div className="text-xs text-stone-500">{l.email}</div></td>
                     <td className="p-3 text-stone-600">{l.product_key ?? '—'}</td>
                     <td className="p-3 text-right tabular-nums">{formatMoney(l.price_quoted_minor, l.currency)}</td>

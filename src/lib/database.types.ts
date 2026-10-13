@@ -86,6 +86,7 @@ type LeadRow = {
   source_url: string | null;
   user_agent: string | null;
   ip: string | null;
+  render_url: string | null;
   created_at: string;
 };
 
@@ -97,6 +98,23 @@ type PriceMatrixRow = {
   enabled: boolean;
   mode: string; // 'detailed' | 'simple'
   updated_at: string;
+};
+
+type RenderJobRow = {
+  id: string;
+  tenant_id: string;
+  lead_id: string | null;
+  product_key: string;
+  scene: string | null;
+  config_json: Json;
+  status: string; // 'queued' | 'rendering' | 'done' | 'failed'
+  render_url: string | null;
+  samples: number | null;
+  error: string | null;
+  attempts: number;
+  created_at: string;
+  started_at: string | null;
+  finished_at: string | null;
 };
 
 type R = []; // No declared FK relationships; queries that select related rows still work, just untyped.
@@ -112,6 +130,7 @@ export type Database = {
       pricing_rules:   { Row: PricingRuleRow;   Insert: Partial<PricingRuleRow> & Pick<PricingRuleRow, 'tenant_id' | 'line_item_key' | 'label'>; Update: Partial<PricingRuleRow>; Relationships: R };
       price_matrices:  { Row: PriceMatrixRow;   Insert: Partial<PriceMatrixRow> & Pick<PriceMatrixRow, 'tenant_id' | 'product_key' | 'grid'>; Update: Partial<PriceMatrixRow>; Relationships: R };
       leads:           { Row: LeadRow;          Insert: Partial<LeadRow> & Pick<LeadRow, 'tenant_id' | 'first_name' | 'last_name' | 'email' | 'config_json'>; Update: Partial<LeadRow>; Relationships: R };
+      render_jobs:     { Row: RenderJobRow;     Insert: Partial<RenderJobRow> & Pick<RenderJobRow, 'tenant_id' | 'product_key' | 'config_json'>; Update: Partial<RenderJobRow>; Relationships: R };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

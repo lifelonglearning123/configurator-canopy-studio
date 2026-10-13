@@ -4,11 +4,14 @@
 // Keep this in sync with C:\python\configurator\index.html until the
 // configurator React port lands.
 
+// Powder-coated aluminium is a dielectric paint layer over metal: no metalness
+// (that only darkened the diffuse), moderate roughness, and the scene adds a
+// faint clearcoat sheen on top.
 export const FRAME_COLORS = {
-  anthracite: { hex: '#3a3a3a', label: 'Anthracite — matte powder-coated aluminium', metalness: 0.3, roughness: 0.5 },
-  white:      { hex: '#f5f3ec', label: 'White — RAL 9016 powder-coated',             metalness: 0.05, roughness: 0.6 },
-  black:      { hex: '#101010', label: 'Black — matte powder-coated',                metalness: 0.4, roughness: 0.42 },
-  cream:      { hex: '#e8dcc4', label: 'Cream — RAL 9001 powder-coated',             metalness: 0.08, roughness: 0.6 },
+  anthracite: { hex: '#3f4043', label: 'Anthracite — matte powder-coated aluminium', metalness: 0, roughness: 0.48 },
+  white:      { hex: '#f4f2ec', label: 'White — RAL 9016 powder-coated',             metalness: 0, roughness: 0.5 },
+  black:      { hex: '#17181a', label: 'Black — matte powder-coated',                metalness: 0, roughness: 0.42 },
+  cream:      { hex: '#e8dcc4', label: 'Cream — RAL 9001 powder-coated',             metalness: 0, roughness: 0.5 },
 } as const;
 
 export const ROOF = {
