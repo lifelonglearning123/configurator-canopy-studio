@@ -35,14 +35,14 @@ before a render finishes.
 cd render-worker
 npm install
 npm run setup            # downloads Chromium
-copy .env.example .env   # fill in the values
-node worker.mjs --url "https://<app>/render?dev=veranda&samples=60" --out test.jpg   # only against a dev server
-node worker.mjs --once   # process one queued job
-node worker.mjs          # run as a service (pm2, NSSM or Task Scheduler on Windows)
+copy .env.example .env   # fill in the values (PowerShell: Copy-Item .env.example .env)
+npm run once             # process one queued job and exit
+npm start                # run as a service (pm2, NSSM or Task Scheduler on Windows)
 ```
 
-The worker reads `.env` only if you export it yourself (e.g. `set -a; . ./.env` on
-bash, or a pm2 ecosystem file); plain `node` does not load it.
+The scripts load `.env` through Node's own `--env-file` flag (Node 20.6 or newer),
+so no extra tooling is needed. A dry run that needs no database, against a
+dev server only: `node --env-file=.env worker.mjs --url "http://localhost:3000/render?dev=veranda&samples=60" --out test.jpg`.
 
 ## Behaviour
 
