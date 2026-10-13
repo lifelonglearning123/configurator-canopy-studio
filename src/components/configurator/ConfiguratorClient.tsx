@@ -9,6 +9,7 @@ import {
 import { quote, formatMoney, type ConfigState } from '@/lib/pricing';
 import type { PriceMatrix, PricingMode } from '@/lib/price-matrix';
 import type { SceneHandle, SceneView } from './Scene';
+import type { QualityTier } from './quality';
 import { PanelRenderer } from './panel/PanelRenderer';
 import { usesNewPanel, productDefaults } from './panel/sections';
 import { presetFor, type ProductPreset } from '@/lib/presets';
@@ -36,6 +37,8 @@ type Props = {
   /** True when rendered from the public marketing demo. Hides the lead-capture
    *  quote modal (which requires a tenant) and shows a demo banner. */
   demo?: boolean;
+  /** Rendering budget override for dev / QA; 'auto' adapts to the device. */
+  quality?: QualityTier | 'auto';
 };
 
 const DEFAULT_STATE: ConfigState = {
@@ -63,30 +66,65 @@ const DEFAULT_STATE: ConfigState = {
   elementsPosition: 'perimeter',
 };
 
+/** The configuration a product opens with: catalog defaults, the product's
+ *  schema, then any size-only preset. Shared with the headless render page. */
+export function initialConfigState(productKey: string, defaultSchema: Record<string, unknown>): ConfigState {
+  const preset = presetFor(productKey);
+  const s: ConfigState = {
+    ...DEFAULT_STATE,
+    ...productDefaults(productKey),
+    product: productKey,
+    structure: (defaultSchema.structure as ConfigState['structure']) ?? DEFAULT_STATE.structure,
+    roof: (defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
+    ...preset?.locked,
+  };
+  if (preset) {
+    s.length = clamp(s.length, ...preset.ranges.width);
+    s.depth  = clamp(s.depth,  ...preset.ranges.depth);
+    s.height = clamp(s.height, ...preset.ranges.height);
+  }
+  return s;
+}
+
 export function ConfiguratorClient(props: Props) {
   const preset = presetFor(props.productKey);
-  const [state, setState] = useState<ConfigState>(() => {
-    const s: ConfigState = {
-      ...DEFAULT_STATE,
-      ...productDefaults(props.productKey),
-      product: props.productKey,
-      structure: (props.defaultSchema.structure as ConfigState['structure']) ?? DEFAULT_STATE.structure,
-      roof: (props.defaultSchema.roof as string) ?? DEFAULT_STATE.roof,
-      ...preset?.locked,
-    };
-    if (preset) {
-      s.length = clamp(s.length, ...preset.ranges.width);
-      s.depth  = clamp(s.depth,  ...preset.ranges.depth);
-      s.height = clamp(s.height, ...preset.ranges.height);
-    }
-    return s;
-  });
+  const [state, setState] = useState<ConfigState>(() => initialConfigState(props.productKey, props.defaultSchema));
   const [modalOpen, setModalOpen] = useState(false);
   // Who is designing — captured up-front (tenant sites only) so the seller
   // holds a contact even if the buyer never requests the final quote.
   // undefined = not yet checked (first client render), null = gate required.
   const [visitor, setVisitor] = useState<Visitor | null | undefined>(undefined);
   const [view, setView] = useState<SceneView>('iso');
+  const [tier, setTier] = useState<QualityTier | null>(null);
+  // Photo mode (path-traced still). `photoOk` is re-checked once the scene has
+  // its tier and HDRI; `photo` holds the sample count while rendering.
+  const [photoOk, setPhotoOk] = useState(false);
+  const [photo, setPhoto] = useState<{ samples: number; preparing: boolean } | null>(null);
+  const [denoise, setDenoise] = useState(true);
+  const photoTick = useRef(0);
+  useEffect(() => {
+    const check = () => setPhotoOk(!!sceneRef.current?.photoSupported());
+    check();
+    const t = setTimeout(check, 3500);
+    return () => clearTimeout(t);
+  }, [tier]);
+  const startPhoto = async () => {
+    setPhoto({ samples: 0, preparing: true });
+    await sceneRef.current?.startPhoto(
+      samples => {
+        const now = performance.now();
+        if (now - photoTick.current < 250) return; // a few UI updates per second is plenty
+        photoTick.current = now;
+        setPhoto({ samples: Math.floor(samples), preparing: samples < 1 });
+      },
+      () => setPhoto(null),
+    );
+  };
+  const savePhoto = () => {
+    const url = sceneRef.current?.photoDataUrl();
+    if (!url) return;
+    const a = document.createElement('a'); a.href = url; a.download = `${props.productKey}-photo-${Date.now()}.jpg`; a.click();
+  };
   const [time, setTime] = useState(13);
   const [spin, setSpin] = useState(false);
   const [roofOpen, setRoofOpen] = useState(false);
@@ -210,9 +248,11 @@ export function ConfiguratorClient(props: Props) {
           spin={spin}
           roofOpen={roofOpen}
           onFps={setFps}
+          quality={props.quality ?? 'auto'}
+          onTier={setTier}
         />
         {/* Top-left: view toggle + scene buttons */}
-        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
+        {!photo && <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
           <div className="bg-white/70 backdrop-blur rounded-xl p-1 border border-white/30 shadow-sm inline-flex gap-0.5">
             {(['iso', 'front', 'side', 'top'] as const).map(v => (
               <button key={v} onClick={() => setView(v)}
@@ -235,15 +275,42 @@ export function ConfiguratorClient(props: Props) {
               </button>
             )}
             <button onClick={() => {
-              const url = sceneRef.current?.snapshot();
+              const url = sceneRef.current?.snapshot(2400);
               if (!url) return;
               const a = document.createElement('a'); a.href = url; a.download = `canopy-${Date.now()}.png`; a.click();
             }} className="px-2 py-1 rounded border border-stone-200 hover:bg-stone-100">Snapshot</button>
+            {photoOk && (
+              <button onClick={startPhoto} title="Photoreal path-traced render of this exact build (takes a little while)"
+                className="px-2 py-1 rounded bg-stone-900 text-white hover:bg-stone-700">Photo</button>
+            )}
           </div>
-        </div>
+        </div>}
+
+        {/* Photo mode: progress + save / back */}
+        {photo && (
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 bg-white/85 backdrop-blur rounded-xl px-4 py-3 border border-white/30 shadow-sm flex items-center gap-4 pointer-events-auto">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-stone-500">Photo render</div>
+              <div className="text-sm tabular-nums">
+                {photo.preparing ? 'Preparing renderer…' : `${photo.samples} samples`}
+                <span className="text-[11px] text-stone-500 ml-2">
+                  {photo.preparing ? 'the first photo can take a minute or two on laptop graphics' : photo.samples < 64 ? 'still noisy, keep going' : photo.samples < 250 ? 'good, improving' : 'clean'}
+                </span>
+              </div>
+            </div>
+            <label className="text-[11px] text-stone-600 flex items-center gap-1.5 select-none">
+              <input type="checkbox" checked={denoise} onChange={e => { setDenoise(e.target.checked); sceneRef.current?.setPhotoDenoise(e.target.checked); }} />
+              Denoise
+            </label>
+            <button onClick={savePhoto} disabled={photo.preparing}
+              className="text-[11px] px-3 py-1.5 rounded-lg bg-stone-900 text-white disabled:opacity-40">Save photo</button>
+            <button onClick={() => { sceneRef.current?.stopPhoto(); setPhoto(null); }}
+              className="text-[11px] px-3 py-1.5 rounded-lg border border-stone-300 hover:bg-stone-100">Back to live</button>
+          </div>
+        )}
 
         {/* Top-right: time-of-day */}
-        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2 pointer-events-auto">
+        {!photo && <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2 pointer-events-auto">
           <div className="bg-white/70 backdrop-blur rounded-xl p-1 border border-white/30 shadow-sm inline-flex gap-0.5">
             {[
               { t: 13,    label: 'Day' },
@@ -265,9 +332,9 @@ export function ConfiguratorClient(props: Props) {
           </div>
           <div className="bg-white/70 backdrop-blur rounded-xl px-3 py-1.5 border border-white/30 shadow-sm text-[11px] text-stone-600 flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            WebGL · {fps} fps
+            WebGL · {fps} fps{tier ? ` · ${tier}` : ''}
           </div>
-        </div>
+        </div>}
 
         {/* Bottom-left: config summary */}
         <div className="absolute bottom-4 left-4 z-10 bg-white/70 backdrop-blur rounded-xl px-4 py-3 border border-white/30 shadow-sm max-w-md pointer-events-auto">
@@ -337,6 +404,15 @@ export function ConfiguratorClient(props: Props) {
           visitor={visitor ?? undefined}
           pricingMode={pricingMode}
           onClose={() => setModalOpen(false)}
+          scene={productScene}
+          // The quote carries a picture of the exact build: the photo render if
+          // one is on screen, otherwise a hi-res snapshot of the live view.
+          getRender={() => {
+            const photo = sceneRef.current?.photoDataUrl();
+            if (photo) return { dataUrl: photo, kind: 'photo' as const };
+            const snap = sceneRef.current?.snapshot(1600, 'image/jpeg', 0.86);
+            return snap ? { dataUrl: snap, kind: 'snapshot' as const } : null;
+          }}
         />
       )}
 
@@ -553,16 +629,24 @@ function PresetPanel({ state, set, preset, customHref, productName, productTagli
   );
 }
 
-function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, pricingMode, onClose }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; pricingMode: PricingMode; onClose: () => void }) {
+type RenderCapture = { dataUrl: string; kind: 'photo' | 'snapshot' };
+function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, pricingMode, onClose, getRender, scene }: { state: ConfigState; subtotalMinor: number; currency: string; productKey: string; visitor?: Visitor; pricingMode: PricingMode; onClose: () => void; getRender: () => RenderCapture | null; scene: string | null }) {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [render, setRender] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true); setErr(null);
     const fd = new FormData(e.currentTarget);
+    let capture: RenderCapture | null = null;
+    try { capture = getRender(); } catch { /* a missing picture must not block the request */ }
+    const renderDataUrl = capture?.dataUrl ?? null;
     const payload = {
+      render_data_url: renderDataUrl ?? undefined,
+      render_kind: capture?.kind ?? 'none',
+      scene: scene ?? undefined,
       product_key: productKey,
       configuration: state as unknown as Record<string, unknown>,
       price_quoted_minor: subtotalMinor,
@@ -579,6 +663,7 @@ function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, prici
     const r = await fetch('/api/leads', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
     const body = await r.json();
     if (!r.ok) { setErr(body.error ?? 'Failed to submit'); setBusy(false); return; }
+    setRender((body.render_url as string | undefined) ?? renderDataUrl);
     setDone(true); setBusy(false);
   }
 
@@ -589,6 +674,15 @@ function QuoteModal({ state, subtotalMinor, currency, productKey, visitor, prici
           <div className="text-center py-6">
             <h3 className="text-2xl" style={{ fontFamily: 'serif' }}>Request received.</h3>
             <p className="text-xs text-stone-500 mt-1">We'll be in touch within 1 working day.</p>
+            {render && (
+              <div className="mt-4">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={render} alt="Your configured design" className="rounded-lg border border-stone-200 w-full" />
+                <a href={render} download={`${productKey}-design.jpg`} className="inline-block mt-2 text-xs underline underline-offset-2 text-stone-600">
+                  Save a copy of your design
+                </a>
+              </div>
+            )}
             <button onClick={onClose} className="mt-5 px-4 py-2 rounded-lg border border-stone-300 text-sm">Close</button>
           </div>
         ) : (

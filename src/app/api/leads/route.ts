@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { adminClient } from '@/lib/supabase-server';
 import { resolveTenantByHost } from '@/lib/tenant';
 import { deliverCrm } from '@/lib/crm';
+import { env } from '@/lib/env';
 
 const Body = z.object({
   product_key: z.string().min(1),
@@ -17,7 +18,33 @@ const Body = z.object({
     notes: z.string().max(2000).optional(),
   }),
   source_url: z.string().url().optional(),
+  /** JPEG of the configured build, captured at submit time (hi-res snapshot
+   *  or the photo render). Stored in the `renders` bucket; its public URL
+   *  travels with the lead to the CRM and the admin lead list. */
+  render_data_url: z.string().regex(/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/).max(2_400_000).optional(),
+  /** What `render_data_url` is: a path-traced photo, a raster snapshot, or
+   *  nothing (phones). Anything but a photo queues a photoreal render for
+   *  the GPU render worker when that is enabled. */
+  render_kind: z.enum(['photo', 'snapshot', 'none']).optional(),
+  /** Product scene id, needed to rebuild the exact scene off-device. */
+  scene: z.string().max(50).optional(),
 });
+
+// Upload the lead's render and return its public URL, or null. Never throws:
+// a missing picture must not lose the lead.
+async function storeRender(db: ReturnType<typeof adminClient>, tenantId: string, leadId: string, dataUrl: string | undefined): Promise<string | null> {
+  if (!dataUrl) return null;
+  try {
+    const bytes = Buffer.from(dataUrl.slice(dataUrl.indexOf(',') + 1), 'base64');
+    const path = `${tenantId}/${leadId}.jpg`;
+    const { error } = await db.storage.from('renders').upload(path, bytes, { contentType: 'image/jpeg', upsert: true });
+    if (error) { console.warn('lead render upload failed', error.message); return null; }
+    return db.storage.from('renders').getPublicUrl(path).data.publicUrl;
+  } catch (e) {
+    console.warn('lead render upload failed', e);
+    return null;
+  }
+}
 
 export async function POST(req: NextRequest) {
   let parsed;
@@ -56,6 +83,23 @@ export async function POST(req: NextRequest) {
     .select('id')
     .single();
   if (error || !lead) return NextResponse.json({ error: 'db_insert_failed', detail: error?.message }, { status: 500 });
+  const leadId = (lead as { id: string }).id;
+
+  const renderUrl = await storeRender(db, tenant.id, leadId, parsed.render_data_url);
+  if (renderUrl) await db.from('leads').update({ render_url: renderUrl }).eq('id', leadId);
+
+  // Queue a photoreal still for the render worker unless the request already
+  // carries one. Best effort: the lead is stored whatever happens here.
+  if (env.renderJobsEnabled() && parsed.render_kind !== 'photo') {
+    const { error: jobErr } = await db.from('render_jobs').insert({
+      tenant_id: tenant.id,
+      lead_id: leadId,
+      product_key: parsed.product_key,
+      scene: parsed.scene ?? null,
+      config_json: parsed.configuration as never,
+    });
+    if (jobErr) console.warn('render job enqueue failed', jobErr.message);
+  }
 
   // Look up the tenant's CRM webhook URL.
   // (DB column is still named `ghl_webhook_url` — it's a generic webhook now.)
@@ -67,8 +111,8 @@ export async function POST(req: NextRequest) {
   const webhook = (ten as { ghl_webhook_url: string | null } | null)?.ghl_webhook_url;
 
   if (!webhook) {
-    await db.from('leads').update({ ghl_status: 'skipped' }).eq('id', (lead as { id: string }).id);
-    return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, crm: 'skipped' });
+    await db.from('leads').update({ ghl_status: 'skipped' }).eq('id', leadId);
+    return NextResponse.json({ ok: true, lead_id: leadId, crm: 'skipped', render_url: renderUrl ?? undefined });
   }
 
   // Fire-and-await CRM delivery (this route is invoked from a form submit;
@@ -81,6 +125,7 @@ export async function POST(req: NextRequest) {
     price_quoted_minor: parsed.price_quoted_minor,
     currency: tenant.currency,
     source_url: parsed.source_url,
+    render_url: renderUrl ?? undefined,
   });
 
   await db
@@ -90,7 +135,7 @@ export async function POST(req: NextRequest) {
       ghl_response: { status: result.status, body: result.body.slice(0, 2000) },
       ghl_attempts: 1,
     })
-    .eq('id', (lead as { id: string }).id);
+    .eq('id', leadId);
 
-  return NextResponse.json({ ok: true, lead_id: (lead as { id: string }).id, crm: result.ok ? 'sent' : 'failed' });
+  return NextResponse.json({ ok: true, lead_id: leadId, crm: result.ok ? 'sent' : 'failed', render_url: renderUrl ?? undefined });
 }

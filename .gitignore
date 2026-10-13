@@ -45,3 +45,11 @@ next-env.d.ts
 /research/scrape/.syntax-check.mjs
 /research/scrape/*.partial.json
 /research/scrape/explore-*.png
+
+# render worker (own install + secrets)
+/render-worker/node_modules
+/render-worker/*.jpg
+
+# local secrets saved without the leading dot by mistake
+/env.local
+/env.*.local

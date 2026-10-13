@@ -7,22 +7,18 @@
 //        /dev-scene?mode=simple          → preview simple pricing (band = whole guide price)
 //        /dev-scene?drop=wall.sliding,addon.  → strip pricing rows by key prefix, to
 //                                          preview how the panel hides switched-off options
+//        /dev-scene?q=high|medium|low    → pin the rendering quality tier (default: auto)
 // Safe to delete.
 import { defaultPricingLineItems } from '@/lib/catalog';
 import { defaultMatrixFor } from '@/lib/price-matrix';
+import { productSchema } from '@/lib/product-schemas';
 import { ConfiguratorClient } from '@/components/configurator/ConfiguratorClient';
 
-export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string; roof?: string; mode?: string; drop?: string }> }) {
-  const { p, gate, roof, mode, drop } = await searchParams;
+export default async function DevScenePage({ searchParams }: { searchParams: Promise<{ p?: string; gate?: string; roof?: string; mode?: string; drop?: string; q?: string }> }) {
+  const { p, gate, roof, mode, drop, q } = await searchParams;
+  const quality = q === 'high' || q === 'medium' || q === 'low' ? q : 'auto';
   const key = p ?? 'veranda';
-  const schema: Record<string, unknown> =
-    key === 'extension' ? { scene: 'extension' } :
-    key.startsWith('conservatory-') ? { scene: key, structure: 'wallmounted' } :
-    key === 'carport-premium' ? { structure: 'freestanding', roof: 'solid-alu', scene: 'car' } :
-    key === 'pergola' ? { structure: 'freestanding', roof: 'louvred-retract' } :
-    key === 'carport' ? { structure: 'freestanding', roof: 'poly-sloped', scene: 'car' } :
-    key === 'studio' ? { structure: 'freestanding', roof: 'glass-flat' } :
-    { structure: 'wallmounted', roof: 'glass-sloped' };
+  const schema: Record<string, unknown> = productSchema(key);
   if (roof) schema.roof = roof;
   const dropPrefixes = (drop ?? '').split(',').map(s => s.trim()).filter(Boolean);
   const pricing = defaultPricingLineItems()
@@ -41,6 +37,7 @@ export default async function DevScenePage({ searchParams }: { searchParams: Pro
       priceMatrix={defaultMatrixFor(key)}
       pricingMode={mode === 'simple' ? 'simple' : 'detailed'}
       demo={gate !== '1'} // ?gate=1 exercises the tenant-mode lead gate locally
+      quality={quality}
     />
   );
 }

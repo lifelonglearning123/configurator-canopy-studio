@@ -11,6 +11,8 @@ export type CrmPayload = {
   price_quoted_minor: number;
   currency: string;
   source_url?: string;
+  /** Public URL of the rendered design captured with the request. */
+  render_url?: string;
 };
 
 export type CrmResult = { ok: boolean; status: number; body: string };

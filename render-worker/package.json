@@ -1,0 +1,19 @@
+{
+  "name": "canopy-render-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GPU render worker: turns queued quote requests into path-traced photoreal stills",
+  "scripts": {
+    "setup": "npx playwright install chromium",
+    "start": "node --env-file=.env worker.mjs",
+    "once": "node --env-file=.env worker.mjs --once"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.1",
+    "playwright": "^1.48.2"
+  },
+  "engines": {
+    "node": ">=20.6"
+  }
+}

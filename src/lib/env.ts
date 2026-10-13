@@ -16,6 +16,10 @@ export const env = {
   cnameTarget: () => process.env.CNAME_TARGET ?? 'cname.canopystudio.io',
   platformGhlLocation: () => process.env.PLATFORM_GHL_LOCATION_ID || null,
   platformGhlToken: () => process.env.PLATFORM_GHL_API_TOKEN || null,
+  /** Shared secret gating the headless /render page used by render-worker/. */
+  renderWorkerToken: () => process.env.RENDER_WORKER_TOKEN || null,
+  /** Queue photoreal render jobs for quote requests (needs a running worker). */
+  renderJobsEnabled: () => process.env.RENDER_JOBS_ENABLED === '1',
   superAdminEmails: (): string[] =>
     (process.env.SUPER_ADMIN_EMAILS ?? '')
       .split(',')
