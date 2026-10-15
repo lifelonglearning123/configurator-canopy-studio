@@ -39,7 +39,7 @@ export default async function Showroom() {
             <Link
               key={p.key}
               href={`/configure/${p.key}`}
-              className="group bg-white rounded-2xl border border-stone-200 overflow-hidden transition hover:-translate-y-1 hover:shadow-lg"
+              className="group flex flex-col h-full bg-white rounded-2xl border border-stone-200 overflow-hidden transition hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="aspect-[3/2] bg-gradient-to-br from-stone-200 to-stone-300 overflow-hidden relative">
                 {/* Real 3D snapshot from /public/products/<key>.jpg. All 15 are
@@ -55,10 +55,10 @@ export default async function Showroom() {
                   className="absolute inset-0 w-full h-full object-cover transition group-hover:scale-[1.03]"
                 />
               </div>
-              <div className="p-5">
+              <div className="p-5 flex flex-1 flex-col">
                 <h3 className="text-2xl tracking-tight" style={{ fontFamily: 'serif' }}>{p.name}</h3>
                 <p className="text-[11px] text-stone-500 mt-1 leading-relaxed">{p.tagline}</p>
-                <div className="mt-4 flex items-center justify-between">
+                <div className="mt-auto pt-4 flex items-center justify-between">
                   <span className="text-[10px] uppercase tracking-wider text-stone-500">Starting from</span>
                   <span className="text-xs px-3 py-1.5 rounded-md border border-stone-300 group-hover:bg-stone-900 group-hover:text-white transition">
                     Configure →
